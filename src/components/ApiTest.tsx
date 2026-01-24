@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { API_CONFIG } from '../config/api.config';
+import { toast } from 'sonner';
 
 export const ApiTest: React.FC = () => {
   const [testStatus, setTestStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -16,13 +17,24 @@ export const ApiTest: React.FC = () => {
       
       if (response.ok) {
         setTestStatus('success');
+        toast.success('Connection successful!', {
+          description: 'Backend is running properly.',
+        });
       } else {
         setTestStatus('error');
-        setErrorMessage(`HTTP ${response.status}: ${response.statusText}`);
+        const errorMsg = `HTTP ${response.status}: ${response.statusText}`;
+        setErrorMessage(errorMsg);
+        toast.error('Connection failed', {
+          description: errorMsg,
+        });
       }
     } catch (error: any) {
       setTestStatus('error');
-      setErrorMessage(error.message || 'Network error. Is the backend running?');
+      const errorMsg = error.message || 'Network error. Is the backend running?';
+      setErrorMessage(errorMsg);
+      toast.error('Connection error', {
+        description: errorMsg,
+      });
     }
   };
 

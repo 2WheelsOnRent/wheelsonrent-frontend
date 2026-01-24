@@ -8,12 +8,12 @@ import { Button } from '../components/ui/button';
 import { Calendar,  MapPin,  ArrowLeft, AlertCircle } from 'lucide-react';
 import BackgroundSlideshow from '../components/BackgroundSlideshow';
 import { useGetVehicleByIdQuery } from '../store/api/vehicleApi';
-import { useGetLocationsByDistrictIdQuery } from '../store/api/locationApi';
 import { useCreateBookingMutation } from '../store/api/bookingApi';
 import { useAppSelector } from '../store/hooks';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { enhanceVehicleData, calculateTotalPrice, calculateDuration } from '../utils/vehicleUtils';
+import { toast } from 'sonner';
 
 export default function BookNow() {
   const { id } = useParams<{ id: string }>();
@@ -22,15 +22,15 @@ export default function BookNow() {
   const { user } = useAppSelector((state) => state.auth);
 
   // Get search params from URL (if any)
-  const districtId = searchParams.get('districtId') || '';
+  //const districtId = searchParams.get('districtId') || '';
   const startDateParam = searchParams.get('startDate') || '';
   const startTimeParam = searchParams.get('startTime') || '';
   const endDateParam = searchParams.get('endDate') || '';
   const endTimeParam = searchParams.get('endTime') || '';
 
   const [selectedLocation, setSelectedLocation] = useState<any>(null);
-  const [selectedPickup, setSelectedPickup] = useState('');
-  const [selectedDrop, setSelectedDrop] = useState('');
+  const [selectedPickup] = useState('');
+  const [selectedDrop] = useState('');
   const [bookingError, setBookingError] = useState('');
 
   // Booking dates state
@@ -47,10 +47,10 @@ export default function BookNow() {
   );
 
   // Fetch locations for the vehicle's district
-  const { data: locationsData, isLoading: locationsLoading } = useGetLocationsByDistrictIdQuery(
-    vehicleData?.districtId || parseInt(districtId) || 1,
-    { skip: !vehicleData && !districtId }
-  );
+  // const { data: locationsData, isLoading: locationsLoading } = useGetLocationsByDistrictIdQuery(
+  //   vehicleData?.districtId || parseInt(districtId) || 1,
+  //   { skip: !vehicleData && !districtId }
+  // );
 
   // Create booking mutation
   const [createBooking, { isLoading: bookingLoading }] = useCreateBookingMutation();
@@ -122,7 +122,7 @@ export default function BookNow() {
       await createBooking(bookingRequest).unwrap();
       
       // Success - redirect to dashboard
-      alert('Booking created successfully!');
+      toast.success('Booking created successfully!');
       navigate('/dashboard');
     } catch (error: any) {
       console.error('Booking error:', error);
@@ -182,7 +182,7 @@ export default function BookNow() {
                   </div>
                 )}
 
-                {/* Location Dropdowns (Fallback/Additional) */}
+                {/* Location Dropdowns (Fallback/Additional)
                 {locationsLoading ? (
                   <div className="mt-4 text-sm text-gray-500">Loading locations...</div>
                 ) : (
@@ -221,7 +221,7 @@ export default function BookNow() {
                       </select>
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
 
               {/* Vehicle Details */}
@@ -298,7 +298,7 @@ export default function BookNow() {
                 )}
               </div>
 
-              {/* Important Information */}
+              {/* Important Information
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
                 <h3 className="text-black mb-3">Important Information</h3>
                 <ul className="space-y-2 text-sm text-gray-700">
@@ -307,7 +307,7 @@ export default function BookNow() {
                   <li>• Vehicle will be provided with full fuel tank</li>
                   <li>• Helmets are charged separately</li>
                 </ul>
-              </div>
+              </div> */}
             </div>
 
             {/* Right Column - Price Calculator */}

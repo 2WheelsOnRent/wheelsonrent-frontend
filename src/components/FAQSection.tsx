@@ -28,11 +28,6 @@ export default function FAQSection() {
         'Each vehicle has a daily kilometer limit. If you exceed this limit, excess kilometer charges will apply as mentioned in the booking details.',
     },
     {
-      question: 'Can I cancel my booking?',
-      answer:
-        'Yes, you can cancel your booking. Cancellation charges apply based on when you cancel. Check our cancellation policy for detailed information.',
-    },
-    {
       question: 'What if the vehicle breaks down?',
       answer:
         'In case of any breakdown or issue, contact our 24/7 support immediately. We will provide roadside assistance or a replacement vehicle based on the situation.',

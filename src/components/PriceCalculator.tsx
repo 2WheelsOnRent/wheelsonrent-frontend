@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Tag, AlertCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import { toast } from 'sonner';
 
 interface PriceCalculatorProps {
   basePrice: number; // hourly rate
@@ -37,7 +38,7 @@ export default function PriceCalculator({
     } else {
       setDiscount(0);
       setPromoApplied(false);
-      alert('Invalid promo code');
+      toast.error('Invalid promo code');
     }
   };
 
@@ -142,9 +143,10 @@ export default function PriceCalculator({
       <div className="bg-blue-50 rounded-lg p-4 mb-6">
         <h4 className="text-sm font-medium text-black mb-2">Additional Charges</h4>
         <ul className="text-sm text-gray-600 space-y-1">
+          <li>• Valid driving license and ID proof required at pickup</li>
+          <li>• Security Deposit: ₹2000 (refundable)</li>
           <li>• Excess KM: ₹5-8/km (based on vehicle)</li>
           <li>• Late Return: ₹80-150/hour</li>
-          <li>• Security Deposit: ₹2000 (refundable)</li>
         </ul>
       </div>
 
@@ -169,7 +171,7 @@ export default function PriceCalculator({
         </div>
       )}
 
-      {/* Cancellation Policy */}
+      {/* Cancellation Policy
       <div className="mt-6 pt-6 border-t border-gray-200">
         <h4 className="text-sm font-medium text-black mb-2">Cancellation Policy</h4>
         <ul className="text-sm text-gray-600 space-y-1">
@@ -177,7 +179,7 @@ export default function PriceCalculator({
           <li>• 50% refund if cancelled 12-24 hours before</li>
           <li>• No refund if cancelled within 12 hours</li>
         </ul>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Lock, Phone, ArrowLeft, Loader2, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Phone, ArrowLeft, Loader2 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLoginMutation } from '../store/api/authApi';
 import { useAppDispatch } from '../store/hooks';
 import { setCredentials, setLoading } from '../store/slices/authSlice';
 import { API_CONFIG } from '../config/api.config';
+import { toast } from 'sonner';
 import type { User as UserType } from '../store/slices/authSlice';
 
 const AuthPage: React.FC = () => {
   const [userType, setUserType] = useState<'user' | 'admin' | 'superadmin'>('user');
   const [otpSent, setOtpSent] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   
   const [loginData, setLoginData] = useState({
     identifier: '',
@@ -26,8 +25,6 @@ const AuthPage: React.FC = () => {
   // Auto-fill dummy data based on user type
   useEffect(() => {
     setOtpSent(false);
-    setErrorMessage('');
-    setSuccessMessage('');
     
     if (userType === 'user') {
       setLoginData({
@@ -52,27 +49,25 @@ const AuthPage: React.FC = () => {
 
   const handleSendOtp = async () => {
     if (!loginData.identifier.trim()) {
-      setErrorMessage('Please enter phone number');
+      toast.error('Please enter phone number');
       return;
     }
-    
-    setErrorMessage('');
-    setSuccessMessage('');
     
     try {
       // For now, just simulate OTP send (backend skeleton)
       await new Promise(resolve => setTimeout(resolve, 500));
       setOtpSent(true);
-      setSuccessMessage(`OTP sent to ${loginData.identifier}. Use: ${API_CONFIG.OTP_BYPASS}`);
+      toast.success(`OTP sent to ${loginData.identifier}`, {
+        description: `Use OTP: ${API_CONFIG.OTP_BYPASS}`,
+        duration: 5000,
+      });
     } catch (error) {
-      setErrorMessage('Failed to send OTP. Please try again.');
+      toast.error('Failed to send OTP. Please try again.');
     }
   };
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage('');
-    setSuccessMessage('');
     dispatch(setLoading(true));
 
     try {
@@ -87,18 +82,18 @@ const AuthPage: React.FC = () => {
       // Validate inputs
       if (userType === 'user') {
         if (!otpSent) {
-          setErrorMessage('Please send OTP first');
+          toast.error('Please send OTP first');
           dispatch(setLoading(false));
           return;
         }
         if (!loginData.otpCode.trim()) {
-          setErrorMessage('Please enter OTP');
+          toast.error('Please enter OTP');
           dispatch(setLoading(false));
           return;
         }
       } else {
         if (!loginData.password.trim()) {
-          setErrorMessage('Please enter password');
+          toast.error('Please enter password');
           dispatch(setLoading(false));
           return;
         }
@@ -128,26 +123,42 @@ const AuthPage: React.FC = () => {
           })
         );
 
+        toast.success('Login successful!', {
+          description: `Welcome back, ${user.name}!`,
+        });
+
         // Navigate based on user type
-        if (userType === 'user') {
-          navigate('/dashboard');
-        } else {
-          navigate('/admin');
-        }
+        setTimeout(() => {
+          if (userType === 'user') {
+            navigate('/dashboard');
+          } else {
+            navigate('/admin');
+          }
+        }, 500);
       } else {
-        setErrorMessage(response.message || 'Login failed. Please check your credentials.');
+        toast.error('Login failed', {
+          description: response.message || 'Please check your credentials.',
+        });
       }
     } catch (error: any) {
       console.error('Login error:', error);
       
       if (error.status === 400) {
-        setErrorMessage(error.data?.message || 'Invalid credentials');
+        toast.error('Invalid credentials', {
+          description: error.data?.message || 'Please check your input.',
+        });
       } else if (error.status === 401) {
-        setErrorMessage('Invalid email/password or OTP');
+        toast.error('Authentication failed', {
+          description: 'Invalid email/password or OTP',
+        });
       } else if (error.status === 404) {
-        setErrorMessage('User not found');
+        toast.error('User not found', {
+          description: 'Please check your credentials.',
+        });
       } else {
-        setErrorMessage('Network error. Please check if backend is running.');
+        toast.error('Network error', {
+          description: 'Please check if backend is running.',
+        });
       }
     } finally {
       dispatch(setLoading(false));
@@ -170,20 +181,6 @@ const AuthPage: React.FC = () => {
 
           <div className="p-8">
             <form onSubmit={handleLoginSubmit} className="space-y-6">
-              {errorMessage && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start">
-                  <AlertCircle className="w-5 h-5 text-red-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-red-800">{errorMessage}</p>
-                </div>
-              )}
-
-              {successMessage && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-start">
-                  <AlertCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-green-800">{successMessage}</p>
-                </div>
-              )}
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Login As</label>
                 <div className="grid grid-cols-3 gap-2">

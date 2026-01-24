@@ -9,6 +9,7 @@ import {
 } from '../store/api/websiteReviewApi';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
+import { toast } from 'sonner';
 
 const AdminReviewsManagement: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
@@ -123,7 +124,7 @@ const AdminReviewsManagement: React.FC = () => {
       refetch();
     } catch (error) {
       console.error('Failed to delete review:', error);
-      alert('Failed to delete review');
+      toast.error('Failed to delete review');
     }
   };
 
@@ -136,7 +137,7 @@ const AdminReviewsManagement: React.FC = () => {
       refetch();
     } catch (error) {
       console.error('Failed to toggle review status:', error);
-      alert('Failed to update review status');
+      toast.error('Failed to update review status');
     }
   };
 

@@ -9,6 +9,7 @@ import { locationApi } from './api/locationApi';
 import { paymentApi } from './api/paymentApi';
 import { vehicleImageApi } from './api/vehicleImageApi'; // NEW
 import { websiteReviewApi } from './api/websiteReviewApi'; // NEW
+import { pickupLocationApi } from './api/pickupLocationApi';
 import authReducer from './slices/authSlice';
 
 export const store = configureStore({
@@ -23,6 +24,7 @@ export const store = configureStore({
     [paymentApi.reducerPath]: paymentApi.reducer,
     [vehicleImageApi.reducerPath]: vehicleImageApi.reducer, // NEW
     [websiteReviewApi.reducerPath]: websiteReviewApi.reducer, // NEW
+    [pickupLocationApi.reducerPath]: pickupLocationApi.reducer,
     // Add regular reducers
     auth: authReducer,
   },
@@ -40,6 +42,7 @@ export const store = configureStore({
       locationApi.middleware,
       paymentApi.middleware,
       vehicleImageApi.middleware, // NEW
+      pickupLocationApi.middleware,
       websiteReviewApi.middleware // NEW
     ),
 });

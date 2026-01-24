@@ -10,6 +10,7 @@ import {
 } from '../store/api/vehicleImageApi';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
+import { toast } from 'sonner';
 
 const AdminVehicleImagesManagement: React.FC = () => {
   const [selectedVehicleId, setSelectedVehicleId] = useState<number | null>(null);
@@ -65,7 +66,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
 
   const handleOpenModal = (image?: VehicleImageDto) => {
     if (!selectedVehicleId) {
-      alert('Please select a vehicle first');
+      toast.message('Please select a vehicle first');
       return;
     }
 
@@ -140,7 +141,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
       refetch();
     } catch (error) {
       console.error('Failed to delete image:', error);
-      alert('Failed to delete image');
+      toast.error('Failed to delete image');
     }
   };
 
@@ -153,7 +154,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
       refetch();
     } catch (error) {
       console.error('Failed to set primary image:', error);
-      alert('Failed to set primary image');
+      toast.error('Failed to set primary image');
     }
   };
 
