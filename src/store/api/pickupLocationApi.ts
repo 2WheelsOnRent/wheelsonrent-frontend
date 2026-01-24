@@ -34,7 +34,7 @@ export const pickupLocationApi = createApi({
     }),
     getPickupLocationById: builder.query<PickupLocationDto, number>({
       query: (id) => `/PickupLocations/${id}`,
-      providesTags: (result, error, id) => [{ type: 'PickupLocation', id }],
+      providesTags: (_result, _error, id) => [{ type: 'PickupLocation', id }],
     }),
     getPickupLocationsByDistrict: builder.query<PickupLocationDto[], number>({
       query: (districtId) => `/PickupLocations/district/${districtId}`,
