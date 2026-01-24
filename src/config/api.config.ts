@@ -49,7 +49,12 @@ export const API_ENDPOINTS = {
   // Alerts
   ALERTS_BY_ADMIN: (adminId: number) => `/Alerts/admin/${adminId}`,
   MARK_ALERT_READ: (id: number) => `/Alerts/${id}/read`,
-  
+
+  // Pickup Locations (NEW)
+  PICKUP_LOCATIONS: '/PickupLocations',
+  PICKUP_LOCATIONS_BY_DISTRICT: (districtId: number) => `/PickupLocations/district/${districtId}`,
+  PICKUP_LOCATIONS_ACTIVE_BY_DISTRICT: (districtId: number) => `/PickupLocations/district/${districtId}/active`,
+
   // Website Reviews (NEW)
   WEBSITE_REVIEWS: '/WebsiteReviews',
   WEBSITE_REVIEWS_ACTIVE: '/WebsiteReviews/active',

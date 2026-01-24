@@ -8,6 +8,7 @@ import { useAppSelector } from '../store/hooks';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { enhanceVehicleData, calculateTotalPrice, calculateDuration } from '../utils/vehicleUtils';
+import { toast } from 'sonner';
 
 const VehicleDetailsPage: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -119,7 +120,7 @@ const VehicleDetailsPage: React.FC = () => {
       await createBooking(bookingRequest).unwrap();
       
       // Success - redirect to dashboard
-      alert('Booking created successfully!');
+      toast.success('Booking created successfully!');
       navigate('/dashboard');
     } catch (error: any) {
       console.error('Booking error:', error);

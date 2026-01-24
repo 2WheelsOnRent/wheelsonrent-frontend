@@ -7,6 +7,7 @@ import { Input } from '../components/ui/input';
 import { Checkbox } from '../components/ui/checkbox';
 import { Label } from '../components/ui/label';
 import { Phone, KeyRound } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -19,25 +20,25 @@ export default function Login() {
     if (phoneNumber.length === 10) {
       // Mock OTP send
       setStep('otp');
-      alert('OTP sent to your phone number: 1234');
+      toast.message('OTP sent to your phone number: 1234');
     } else {
-      alert('Please enter a valid 10-digit phone number');
+      toast.error('Please enter a valid 10-digit phone number');
     }
   };
 
   const handleVerifyOTP = () => {
     if (!termsAccepted) {
-      alert('Please accept the Terms & Conditions');
+      toast.error('Please accept the Terms & Conditions');
       return;
     }
 
     // Mock OTP verification
     if (otp === '1234') {
       localStorage.setItem('isLoggedIn', 'true');
-      alert('Login successful!');
+      toast.success('Login successful!');
       navigate('/profile');
     } else {
-      alert('Invalid OTP. Please try: 1234');
+      toast.error('Invalid OTP. Please try: 1234');
     }
   };
 
@@ -146,12 +147,12 @@ export default function Login() {
             )}
           </div>
 
-          {/* Demo credentials */}
+          {/* Demo credentials
           <div className="mt-6 p-4 bg-blue-50 rounded-lg">
             <p className="text-sm text-gray-700 mb-2">Demo Credentials:</p>
             <p className="text-sm text-gray-600">• Any 10-digit phone number</p>
             <p className="text-sm text-gray-600">• OTP: 1234</p>
-          </div>
+          </div> */}
         </div>
       </div>
 

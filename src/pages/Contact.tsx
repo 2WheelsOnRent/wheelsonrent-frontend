@@ -7,6 +7,7 @@ import { Textarea } from '../components/ui/textarea';
 import { Label } from '../components/ui/label';
 import { Mail, Phone, MapPin, Clock } from 'lucide-react';
 import BackgroundSlideshow from '../components/BackgroundSlideshow';
+import { toast } from 'sonner';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -19,7 +20,7 @@ export default function Contact() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Thank you for your message! We will get back to you soon.');
+    toast.success('Thank you for your message! We will get back to you soon.');
     setFormData({
       name: '',
       email: '',
@@ -94,7 +95,7 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Quick Links */}
+            {/* Quick Links
             <div className="bg-blue-50 rounded-lg border border-blue-200 p-6">
               <h3 className="text-black mb-4">Quick Support</h3>
               <p className="text-sm text-gray-700 mb-4">
@@ -103,7 +104,7 @@ export default function Contact() {
               <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white">
                 Chat on WhatsApp
               </Button>
-            </div>
+            </div> */}
           </div>
 
           {/* Contact Form */}

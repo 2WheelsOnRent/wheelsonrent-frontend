@@ -50,11 +50,11 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-blue-500" />
-                Jaipur
+                Jaipur (Launching Soon)
               </li>
               <li className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-blue-500" />
-                Jodhpur
+                Jodhpur (Launching Soon)
               </li>
             </ul>
 
