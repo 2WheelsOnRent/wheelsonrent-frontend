@@ -38,44 +38,69 @@ export default function Header() {
     };
   }, []);
 
-  const handleVehiclesClick = (e: React.MouseEvent) => {
-    // Only scroll if we're on the homepage
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleHomeClick = (e: React.MouseEvent) => {
     if (location.pathname === '/') {
       e.preventDefault();
-      const featuredSection = document.getElementById('featured-vehicles');
-      if (featuredSection) {
-        featuredSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      scrollToTop();
     }
-    // If not on homepage, let the Link navigate normally to /vehicles
+  };
+
+  const handleLogoClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (location.pathname === '/') {
+      scrollToTop();
+    } else {
+      navigate('/');
+    }
+  };
+
+  const handleVehiclesClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Always navigate to vehicles page WITHOUT any filters
+    navigate('/vehicles');
   };
 
   return (
-    <header className="border-b border-gray-200 bg-white sticky top-0 z-50">
+    <header className="border-b border-gray-200 bg-white sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex-1">
-            <Link to="/" className="flex items-center">
-              <h1 className="text-2xl tracking-tight text-black">
+            <a 
+              href="/" 
+              onClick={handleLogoClick}
+              className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              <h1 className="text-2xl tracking-tight text-black font-bold">
                 2wheels<span className="text-blue-500">onrent</span>
               </h1>
-            </Link>
+            </a>
           </div>
 
           {/* Navigation - Centered */}
           <nav className="hidden md:flex items-center gap-8 flex-1 justify-center">
-            <Link to="/" className="text-black hover:text-blue-500 transition-colors">
+            <Link 
+              to="/" 
+              onClick={handleHomeClick}
+              className="text-black hover:text-blue-500 transition-colors font-medium"
+            >
               Home
             </Link>
-            <Link 
-              to="/vehicles" 
+            <a 
+              href="/vehicles" 
               onClick={handleVehiclesClick}
-              className="text-black hover:text-blue-500 transition-colors"
+              className="text-black hover:text-blue-500 transition-colors font-medium cursor-pointer"
             >
               Vehicles
-            </Link>
-            <Link to="/contact" className="text-black hover:text-blue-500 transition-colors">
+            </a>
+            <Link 
+              to="/contact" 
+              className="text-black hover:text-blue-500 transition-colors font-medium"
+            >
               Contact Us
             </Link>
           </nav>
@@ -86,7 +111,7 @@ export default function Header() {
               <Button
                 onClick={() => navigate('/profile')}
                 variant="outline"
-                className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
+                className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-all"
               >
                 <User className="w-4 h-4 mr-2" />
                 Profile
@@ -94,7 +119,7 @@ export default function Header() {
             ) : (
               <Button
                 onClick={() => navigate('/login')}
-                className="bg-blue-500 hover:bg-blue-600 text-white"
+                className="bg-blue-500 hover:bg-blue-600 text-white transition-all"
               >
                 Login
               </Button>

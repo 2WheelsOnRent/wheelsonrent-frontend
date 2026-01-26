@@ -1,35 +1,14 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import VehicleCard from './VehicleCard';
-import { vehicleAPI } from '../service/api';
-import { mapBackendVehicle, type Vehicle } from '../Data/Vehicles';
+import { useGetFeaturedVehiclesQuery } from '../store/api/vehicleApi';
 
 export default function VehicleCarousel() {
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  // Fetch featured vehicles on mount
-  useEffect(() => {
-    const fetchFeaturedVehicles = async () => {
-      try {
-        setLoading(true);
-        const data = await vehicleAPI.getFeaturedVehicles();
-        const mapped = data.map(mapBackendVehicle);
-        setVehicles(mapped);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching featured vehicles:', err);
-        setError('Failed to load vehicles. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFeaturedVehicles();
-  }, []);
+  // ✅ Use RTK Query hook instead of manual fetch
+  const { data: vehicles = [], isLoading, error } = useGetFeaturedVehiclesQuery();
 
   // Auto-rotate carousel every 6 seconds
   useEffect(() => {
@@ -43,7 +22,7 @@ export default function VehicleCarousel() {
   }, [isAutoPlaying, vehicles.length]);
 
   const goToPrevious = () => {
-    setCurrentIndex((prev) => (prev - 1 + vehicles.length) % vehicles.length);
+    setCurrentIndex((prev) => ((prev - 1 + vehicles.length) % vehicles.length));
     setIsAutoPlaying(false);
   };
 
@@ -60,10 +39,10 @@ export default function VehicleCarousel() {
   // Calculate visible slides (5 vehicles)
   const getVisibleSlides = () => {
     if (vehicles.length === 0) return [];
-    
+
     const total = vehicles.length;
-    const farLeftIndex = (currentIndex - 2 + total) % total;
-    const leftIndex = (currentIndex - 1 + total) % total;
+    const farLeftIndex = ((currentIndex - 2 + total) % total);
+    const leftIndex = ((currentIndex - 1 + total) % total);
     const rightIndex = (currentIndex + 1) % total;
     const farRightIndex = (currentIndex + 2) % total;
 
@@ -76,7 +55,7 @@ export default function VehicleCarousel() {
     ];
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-16 flex items-center justify-center">
         <div className="text-center">
@@ -91,9 +70,9 @@ export default function VehicleCarousel() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-16 flex items-center justify-center">
         <div className="text-center max-w-md">
-          <p className="text-red-500 mb-4">{error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <p className="text-red-500 mb-4">Failed to load vehicles. Please try again later.</p>
+          <button
+            onClick={() => window.location.reload()}
             className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
           >
             Retry
@@ -144,22 +123,21 @@ export default function VehicleCarousel() {
                 className={`absolute transition-all duration-700 ease-in-out cursor-pointer ${
                   slide.position === 'center'
                     ? 'z-10 scale-100 opacity-100'
-                    : slide.position === 'left'
-                    ? 'z-5 scale-85 opacity-70'
-                    : slide.position === 'right'
+                    : slide.position === 'left' || slide.position === 'right'
                     ? 'z-5 scale-85 opacity-70'
                     : 'z-0 scale-70 opacity-40'
                 }`}
                 style={{
-                  transform: slide.position === 'center'
-                    ? 'translateX(0) translateZ(0px) rotateY(0deg) scale(1)'
-                    : slide.position === 'left'
-                    ? 'translateX(-380px) translateZ(-150px) rotateY(25deg) scale(0.85)'
-                    : slide.position === 'right'
-                    ? 'translateX(380px) translateZ(-150px) rotateY(-25deg) scale(0.85)'
-                    : slide.position === 'far-left'
-                    ? 'translateX(-680px) translateZ(-300px) rotateY(40deg) scale(0.7)'
-                    : 'translateX(680px) translateZ(-300px) rotateY(-40deg) scale(0.7)',
+                  transform:
+                    slide.position === 'center'
+                      ? 'translateX(0) translateZ(0px) rotateY(0deg) scale(1)'
+                      : slide.position === 'left'
+                      ? 'translateX(-380px) translateZ(-150px) rotateY(25deg) scale(0.85)'
+                      : slide.position === 'right'
+                      ? 'translateX(380px) translateZ(-150px) rotateY(-25deg) scale(0.85)'
+                      : slide.position === 'far-left'
+                      ? 'translateX(-680px) translateZ(-300px) rotateY(40deg) scale(0.7)'
+                      : 'translateX(680px) translateZ(-300px) rotateY(-40deg) scale(0.7)',
                 }}
                 onClick={() => slide.position !== 'center' && goToSlide(slide.index)}
               >

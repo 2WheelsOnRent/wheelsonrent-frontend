@@ -141,7 +141,7 @@ export default function PriceCalculator({
 
       {/* Additional Info */}
       <div className="bg-blue-50 rounded-lg p-4 mb-6">
-        <h4 className="text-sm font-medium text-black mb-2">Additional Charges</h4>
+        <h4 className="text-sm font-medium text-black mb-2">Important Information</h4>
         <ul className="text-sm text-gray-600 space-y-1">
           <li>• Valid driving license and ID proof required at pickup</li>
           <li>• Security Deposit: ₹2000 (refundable)</li>
