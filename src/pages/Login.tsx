@@ -6,8 +6,8 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Checkbox } from '../components/ui/checkbox';
 import { Label } from '../components/ui/label';
-import { Phone, KeyRound } from 'lucide-react';
 import { toast } from 'sonner';
+import { Phone } from 'lucide-react';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -90,7 +90,7 @@ export default function Login() {
                     Enter OTP
                   </Label>
                   <div className="relative">
-                    <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    {/* <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" /> */}
                     <Input
                       id="otp"
                       type="text"
@@ -111,23 +111,25 @@ export default function Login() {
                   </button>
                 </div>
 
-                <div className="flex items-start gap-2">
-                  <Checkbox
-                    id="terms"
-                    checked={termsAccepted}
-                    onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
-                  />
-                  <Label htmlFor="terms" className="text-sm cursor-pointer">
-                    I accept the{' '}
-                    <a href="#" className="text-blue-500 hover:underline">
-                      Terms & Conditions
-                    </a>{' '}
-                    and{' '}
-                    <a href="#" className="text-blue-500 hover:underline">
-                      Privacy Policy
-                    </a>
-                  </Label>
-                </div>
+               <div className="flex items-start gap-2">
+  <Checkbox
+    id="terms"
+    className="self-start mt-1"
+    checked={termsAccepted}
+    onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+  />
+  <Label htmlFor="terms" className="text-sm cursor-pointer leading-5">
+    I accept the{' '}
+    <a href="#" className="text-blue-500 hover:underline">
+      Terms & Conditions
+    </a>{' '}
+    and{' '}
+    <a href="#" className="text-blue-500 hover:underline">
+      Privacy Policy
+    </a>
+  </Label>
+</div>
+
 
                 <Button
                   onClick={handleVerifyOTP}

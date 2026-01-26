@@ -23,7 +23,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  const { data: vehicles, isLoading: vehiclesLoading } = useGetVehiclesQuery({ page: 1, size: 100 });
+  const { data: vehicles, isLoading: vehiclesLoading } = useGetVehiclesQuery();
   const {
     data: images,
     isLoading: imagesLoading,

@@ -1,6 +1,22 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { API_CONFIG, API_ENDPOINTS } from '../../config/api.config';
+import { API_CONFIG } from '../../config/api.config';
 import type { RootState } from '../store';
+
+export interface VehiclePackagesDto {
+  fourHours: number;
+  oneDay: number;
+  threeDays: number;
+  sevenDays: number;
+  fifteenDays: number;
+  monthly: number;
+}
+
+export interface VehicleSpecsDto {
+  mileage: string;
+  engineCapacity: string;
+  topSpeed: string;
+  weight: string;
+}
 
 export interface VehicleDto {
   id: number;
@@ -8,15 +24,55 @@ export interface VehicleDto {
   make: string;
   model: string;
   districtId: number;
-  hourlyRate: number;
-  minBookingHours: number;
   isAvailable: boolean;
+  featured: boolean;
+  pricePerHour: number;
+  pricePerDay: number;
+  minBookingHours: number;
+  kmLimit: number;
+  excessKmCharge: number;
+  lateReturnCharge: number;
+  rating: number;
+  fuelType: string;
+  vehicleType: string;
   lastServiceTime?: string;
   nextServiceTime?: string;
   insuranceExpiryDate?: string;
   insuranceDetails?: string;
   kmTravelled: number;
   gpsDeviceId?: string;
+  packages?: VehiclePackagesDto;
+  specs?: VehicleSpecsDto;
+}
+
+export interface VehicleImageDto {
+  id: number;
+  vehicleId: number;
+  imageUrl: string;
+  isPrimary: boolean;
+  displayOrder: number;
+}
+
+export interface VehicleWithImagesDto extends VehicleDto {
+  images: VehicleImageDto[];
+  primaryImageUrl?: string;
+  availableCount?: number;
+}
+
+export interface VehicleSearchParams {
+  startDate?: string;
+  startTime?: string;
+  endDate?: string;
+  endTime?: string;
+  districtId?: number;
+}
+
+export interface VehicleFilterParams {
+  vehicleType?: string;
+  fuelType?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  districtId?: number;
 }
 
 export const vehicleApi = createApi({
@@ -34,41 +90,76 @@ export const vehicleApi = createApi({
   }),
   tagTypes: ['Vehicle'],
   endpoints: (builder) => ({
-    getVehicles: builder.query<VehicleDto[], { page?: number; size?: number }>({
-      query: ({ page = 1, size = 10 }) => `${API_ENDPOINTS.VEHICLES}?page=${page}&size=${size}`,
+    // Get ALL vehicles (NO PAGINATION)
+    getVehicles: builder.query<VehicleDto[], void>({
+      query: () => '/Vehicles',
       providesTags: ['Vehicle'],
     }),
-    getVehicleById: builder.query<VehicleDto, number>({
-      query: (id) => API_ENDPOINTS.VEHICLE_BY_ID(id)
-      //providesTags: (result, error, id) => [{ type: 'Vehicle', id }],
+
+    // Get vehicle by ID with images
+    getVehicleById: builder.query<VehicleWithImagesDto, number>({
+      query: (id) => `/Vehicles/${id}`,
+      providesTags: (_result, _error, id) => [{ type: 'Vehicle', id }],
     }),
-    getAvailableVehicles: builder.query<
-      VehicleDto[],
-      { districtId: number; start: string; end: string }
-    >({
-      query: ({ districtId, start, end }) =>
-        `${API_ENDPOINTS.AVAILABLE_VEHICLES}?districtId=${districtId}&start=${start}&end=${end}`,
+
+    // Get featured vehicles
+    getFeaturedVehicles: builder.query<VehicleWithImagesDto[], void>({
+      query: () => '/Vehicles/featured',
       providesTags: ['Vehicle'],
     }),
+
+    // Search available vehicles by date/time
+    searchAvailableVehicles: builder.query<VehicleWithImagesDto[], VehicleSearchParams>({
+      query: (params) => {
+        const queryParams = new URLSearchParams();
+        if (params.startDate) queryParams.append('startDate', params.startDate);
+        if (params.startTime) queryParams.append('startTime', params.startTime);
+        if (params.endDate) queryParams.append('endDate', params.endDate);
+        if (params.endTime) queryParams.append('endTime', params.endTime);
+        if (params.districtId) queryParams.append('districtId', params.districtId.toString());
+        
+        return `/Vehicles/search?${queryParams.toString()}`;
+      },
+      providesTags: ['Vehicle'],
+    }),
+
+    // Filter vehicles
+    filterVehicles: builder.query<VehicleWithImagesDto[], VehicleFilterParams>({
+      query: (params) => {
+        const queryParams = new URLSearchParams();
+        if (params.vehicleType) queryParams.append('vehicleType', params.vehicleType);
+        if (params.fuelType) queryParams.append('fuelType', params.fuelType);
+        if (params.minPrice) queryParams.append('minPrice', params.minPrice.toString());
+        if (params.maxPrice) queryParams.append('maxPrice', params.maxPrice.toString());
+        if (params.districtId) queryParams.append('districtId', params.districtId.toString());
+        
+        return `/Vehicles/filter?${queryParams.toString()}`;
+      },
+      providesTags: ['Vehicle'],
+    }),
+
+    // Admin endpoints
     createVehicle: builder.mutation<VehicleDto, Omit<VehicleDto, 'id'>>({
       query: (vehicle) => ({
-        url: API_ENDPOINTS.VEHICLES,
+        url: '/Vehicles',
         method: 'POST',
         body: vehicle,
       }),
       invalidatesTags: ['Vehicle'],
     }),
+
     updateVehicle: builder.mutation<void, { id: number; vehicle: VehicleDto }>({
       query: ({ id, vehicle }) => ({
-        url: API_ENDPOINTS.VEHICLE_BY_ID(id),
+        url: `/Vehicles/${id}`,
         method: 'PUT',
         body: vehicle,
       }),
-      //invalidatesTags: (result, error, { id }) => [{ type: 'Vehicle', id }, 'Vehicle'],
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Vehicle', id }, 'Vehicle'],
     }),
+
     deleteVehicle: builder.mutation<void, number>({
       query: (id) => ({
-        url: API_ENDPOINTS.VEHICLE_BY_ID(id),
+        url: `/Vehicles/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Vehicle'],
@@ -79,7 +170,9 @@ export const vehicleApi = createApi({
 export const {
   useGetVehiclesQuery,
   useGetVehicleByIdQuery,
-  useGetAvailableVehiclesQuery,
+  useGetFeaturedVehiclesQuery,
+  useSearchAvailableVehiclesQuery,
+  useFilterVehiclesQuery,
   useCreateVehicleMutation,
   useUpdateVehicleMutation,
   useDeleteVehicleMutation,
