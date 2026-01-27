@@ -4,7 +4,7 @@ import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 import { useGetActivePickupLocationsByDistrictQuery } from '../store/api/pickupLocationApi';
 import { toast } from 'sonner';
 
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_KEY || 'AIzaSyBsiYekfFU57JlhQaHSJbn7NauD1mJs8Pg';
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_KEY;
 
 interface Location {
   id: number;

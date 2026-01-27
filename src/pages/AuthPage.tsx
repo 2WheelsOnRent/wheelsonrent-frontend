@@ -243,37 +243,30 @@ const AuthPage: React.FC = () => {
 
               {userType === 'user' && (
                 <>
-                  {!otpSent ? (
-                    <button
-                      type="button"
-                      onClick={handleSendOtp}
-                      disabled={isLoading}
-                      className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition disabled:opacity-50"
-                    >
-                      Send OTP
-                    </button>
-                  ) : (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Enter OTP</label>
-                      <input
-                        type="text"
-                        value={loginData.otpCode}
-                        onChange={(e) => setLoginData({ ...loginData, otpCode: e.target.value })}
-                        placeholder="Enter 6-digit OTP"
-                        maxLength={6}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                        disabled={isLoading}
-                      />
-                      <button
-                        type="button"
-                        onClick={handleSendOtp}
-                        className="text-sm text-blue-600 hover:text-blue-700 mt-2"
-                        disabled={isLoading}
-                      >
-                        Resend OTP
-                      </button>
-                    </div>
-                  )}
+                  {otpSent && (
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-2">
+      Enter OTP
+    </label>
+    <input
+      type="text"
+      value={loginData.otpCode}
+      onChange={(e) => setLoginData({ ...loginData, otpCode: e.target.value })}
+      placeholder="Enter 6-digit OTP"
+      maxLength={6}
+      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-center text-2xl tracking-widest font-semibold"
+      disabled={isLoading}
+    />
+    <button
+      type="button"
+      onClick={handleSendOtp}
+      className="text-sm text-blue-600 hover:text-blue-700 mt-2 block"
+      disabled={isLoading}
+    >
+      Resend OTP
+    </button>
+  </div>
+)}
                 </>
               )}
 

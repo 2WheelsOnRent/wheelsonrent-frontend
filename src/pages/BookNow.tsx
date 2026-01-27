@@ -5,15 +5,14 @@ import Footer from '../components/Footer';
 import MapWithLocations from '../components/MapWithLocations';
 import PriceCalculator from '../components/PriceCalculator';
 import { Button } from '../components/ui/button';
-import { Calendar,  MapPin,  ArrowLeft, AlertCircle } from 'lucide-react';
+import { Calendar, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react';
 import BackgroundSlideshow from '../components/BackgroundSlideshow';
 import { useGetVehicleByIdQuery } from '../store/api/vehicleApi';
 import { useCreateBookingMutation } from '../store/api/bookingApi';
 import { useAppSelector } from '../store/hooks';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
-import { enhanceVehicleData, calculateTotalPrice, calculateDuration } from '../utils/vehicleUtils';
-import { toast } from 'sonner';
+import { calculateTotalPrice, calculateDuration } from '../utils/vehicleUtils';
 
 export default function BookNow() {
   const { id } = useParams<{ id: string }>();
@@ -22,14 +21,12 @@ export default function BookNow() {
   const { user } = useAppSelector((state) => state.auth);
 
   // Get search params from URL (if any)
-  //const districtId = searchParams.get('districtId') || '';
   const startDateParam = searchParams.get('startDate') || '';
   const startTimeParam = searchParams.get('startTime') || '';
   const endDateParam = searchParams.get('endDate') || '';
   const endTimeParam = searchParams.get('endTime') || '';
 
-  const [selectedLocation, setSelectedLocation] = useState<any>(null);
-  const [selectedPickup] = useState('');
+  const [selectedPickup, setSelectedPickup] = useState('');
   const [selectedDrop] = useState('');
   const [bookingError, setBookingError] = useState('');
 
@@ -47,7 +44,7 @@ export default function BookNow() {
   );
 
   // Fetch locations for the vehicle's district
-  // const { data: locationsData, isLoading: locationsLoading } = useGetLocationsByDistrictIdQuery(
+  // const { data: locationsData, isLoading: locationsLoading } = useGetActivePickupLocationsByDistrictQuery(
   //   vehicleData?.districtId || parseInt(districtId) || 1,
   //   { skip: !vehicleData && !districtId }
   // );
@@ -55,7 +52,16 @@ export default function BookNow() {
   // Create booking mutation
   const [createBooking, { isLoading: bookingLoading }] = useCreateBookingMutation();
 
-  const enhancedVehicle = vehicleData ? enhanceVehicleData(vehicleData) : null;
+  // Handle location selection from map
+  const handleMapLocationSelect = (location: any) => {
+    // Update the pickup dropdown to match the map selection
+    setSelectedPickup(location.id.toString());
+  };
+
+  // Handle pickup dropdown change
+  // const handlePickupChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setSelectedPickup(e.target.value);
+  // };
 
   // Calculate total hours
   const calculateTotalHours = () => {
@@ -72,11 +78,11 @@ export default function BookNow() {
 
   // Calculate total price
   const calculateTotal = () => {
-    if (!enhancedVehicle || !bookingDates.startDate || !bookingDates.startTime || !bookingDates.endDate || !bookingDates.endTime) {
+    if (!vehicleData || !bookingDates.startDate || !bookingDates.startTime || !bookingDates.endDate || !bookingDates.endTime) {
       return 0;
     }
     return calculateTotalPrice(
-      enhancedVehicle.hourlyRate,
+      vehicleData.pricePerHour,
       bookingDates.startDate,
       bookingDates.startTime,
       bookingDates.endDate,
@@ -106,12 +112,22 @@ export default function BookNow() {
       return;
     }
 
+    if (!selectedPickup) {
+      setBookingError('Please select a pickup location');
+      return;
+    }
+
+    if (!selectedDrop) {
+      setBookingError('Please select a drop location');
+      return;
+    }
+
     try {
       const bookingRequest = {
         vehicleId: vehicleData.id,
         userId: user.id,
-        pickupLocationId: selectedPickup ? parseInt(selectedPickup) : undefined,
-        dropLocationId: selectedDrop ? parseInt(selectedDrop) : undefined,
+        pickupLocationId: parseInt(selectedPickup),
+        dropLocationId: parseInt(selectedDrop),
         bookingStartDate: bookingDates.startDate,
         bookingEndDate: bookingDates.endDate,
         startTime: bookingDates.startTime,
@@ -122,7 +138,7 @@ export default function BookNow() {
       await createBooking(bookingRequest).unwrap();
       
       // Success - redirect to dashboard
-      toast.success('Booking created successfully!');
+      alert('Booking created successfully!');
       navigate('/dashboard');
     } catch (error: any) {
       console.error('Booking error:', error);
@@ -136,7 +152,7 @@ export default function BookNow() {
   }
 
   // Error state
-  if (vehicleError || !enhancedVehicle) {
+  if (vehicleError || !vehicleData) {
     return (
       <ErrorMessage 
         fullScreen
@@ -171,19 +187,14 @@ export default function BookNow() {
               {/* Map and Pickup Locations */}
               <div>
                 <h3 className="text-xl text-black mb-4">Select Pickup Location</h3>
-                <MapWithLocations onLocationSelect={setSelectedLocation} />
-                {selectedLocation && (
-                  <div className="mt-4 p-4 bg-blue-50 rounded-lg flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-blue-500 mt-1" />
-                    <div>
-                      <p className="text-black">{selectedLocation.name}</p>
-                      <p className="text-sm text-gray-600">{selectedLocation.address}</p>
-                    </div>
-                  </div>
-                )}
+                <MapWithLocations 
+                  districtId={vehicleData.districtId}
+                  onLocationSelect={handleMapLocationSelect}
+                  selectedLocationId={selectedPickup ? parseInt(selectedPickup) : undefined}
+                />
 
-                {/* Location Dropdowns (Fallback/Additional)
-                {locationsLoading ? (
+                {/* Location Dropdowns */}
+                {/* {locationsLoading ? (
                   <div className="mt-4 text-sm text-gray-500">Loading locations...</div>
                 ) : (
                   <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -194,7 +205,7 @@ export default function BookNow() {
                       </label>
                       <select
                         value={selectedPickup}
-                        onChange={(e) => setSelectedPickup(e.target.value)}
+                        onChange={handlePickupChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                       >
                         <option value="">Select pickup location</option>
@@ -224,8 +235,30 @@ export default function BookNow() {
                 )} */}
               </div>
 
-              {/* Vehicle Details */}
-              
+              {/* Vehicle Details Card */}
+              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <div className="flex gap-4">
+                  <img
+                    src={vehicleData.primaryImageUrl || vehicleData.images?.[0]?.imageUrl || '/placeholder.jpg'}
+                    alt={vehicleData.name}
+                    className="w-32 h-32 object-cover rounded-lg"
+                  />
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{vehicleData.name}</h3>
+                    <p className="text-gray-600 mb-3">{vehicleData.make} • {vehicleData.model}</p>
+                    {/* <div className="flex gap-4 text-sm text-gray-600">
+                      <div className="flex items-center gap-1">
+                        <Fuel className="w-4 h-4" />
+                        {vehicleData.fuelType}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Gauge className="w-4 h-4" />
+                        {vehicleData.kmTravelled.toLocaleString()} km
+                      </div>
+                    </div> */}
+                  </div>
+                </div>
+              </div>
 
               {/* Rental Period */}
               <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -236,6 +269,16 @@ export default function BookNow() {
                   <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 flex items-start">
                     <AlertCircle className="w-5 h-5 text-red-600 mr-2 mt-0.5 flex-shrink-0" />
                     <p className="text-sm text-red-800">{bookingError}</p>
+                  </div>
+                )}
+
+                {/* Show message if dates are pre-filled */}
+                {(startDateParam && startTimeParam && endDateParam && endTimeParam) && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 flex items-start">
+                    <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-blue-800">
+                      Booking dates and times have been pre-filled from your search. You can modify them if needed.
+                    </p>
                   </div>
                 )}
 
@@ -288,9 +331,9 @@ export default function BookNow() {
                   <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                     <p className="text-sm text-blue-800">
                       Total Duration: <strong>{totalHours} hours</strong>
-                      {enhancedVehicle.minBookingHours && totalHours < enhancedVehicle.minBookingHours && (
+                      {vehicleData.minBookingHours && totalHours < vehicleData.minBookingHours && (
                         <span className="text-red-600 ml-2">
-                          (Minimum {enhancedVehicle.minBookingHours} hours required)
+                          (Minimum {vehicleData.minBookingHours} hours required)
                         </span>
                       )}
                     </p>
@@ -298,8 +341,8 @@ export default function BookNow() {
                 )}
               </div>
 
-              {/* Important Information
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+              {/* Important Information */}
+              {/* <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
                 <h3 className="text-black mb-3">Important Information</h3>
                 <ul className="space-y-2 text-sm text-gray-700">
                   <li>• Valid driving license and ID proof required at pickup</li>
@@ -312,29 +355,31 @@ export default function BookNow() {
 
             {/* Right Column - Price Calculator */}
             <div>
-              <PriceCalculator
-                basePrice={enhancedVehicle.hourlyRate}
-                hours={totalHours}
-                vehicleName={enhancedVehicle.name}
-                onProceedToPayment={handleBooking}
-                isLoading={bookingLoading}
-                isLoggedIn={!!user}
-                minBookingHours={enhancedVehicle.minBookingHours}
-              />
+              <div className="sticky top-24">
+                <PriceCalculator
+                  basePrice={vehicleData.pricePerHour}
+                  hours={totalHours}
+                  vehicleName={vehicleData.name}
+                  onProceedToPayment={handleBooking}
+                  isLoading={bookingLoading}
+                  isLoggedIn={!!user}
+                  minBookingHours={vehicleData.minBookingHours}
+                />
 
-              {!user && (
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg text-center">
-                  <p className="text-sm text-gray-700 mb-3">
-                    Please login to complete your booking
-                  </p>
-                  <Button
-                    onClick={() => navigate('/login')}
-                    className="bg-blue-500 hover:bg-blue-600 text-white"
-                  >
-                    Login to Continue
-                  </Button>
-                </div>
-              )}
+                {!user && (
+                  <div className="mt-6 p-4 bg-blue-50 rounded-lg text-center">
+                    <p className="text-sm text-gray-700 mb-3">
+                      Please login to complete your booking
+                    </p>
+                    <Button
+                      onClick={() => navigate('/login')}
+                      className="bg-blue-500 hover:bg-blue-600 text-white"
+                    >
+                      Login to Continue
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
