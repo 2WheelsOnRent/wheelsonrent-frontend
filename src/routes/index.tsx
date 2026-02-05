@@ -11,6 +11,8 @@ import Login from '../pages/Login';
 import Profile from '../pages/Profile';
 import BookNow from '../pages/BookNow';
 import Contact from '../pages/Contact';
+import TermsAndConditions from '../pages/TermsAndConditions';
+import PrivacyPolicy from '../pages/PrivacyPolicy';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +38,14 @@ const router = createBrowserRouter([
   {
     path: '/vehicles',
     element: <VehicleListingPage />,
+  },
+  {
+    path: '/terms',
+    element: <TermsAndConditions />,
+  },
+  {
+    path: '/privacy-policy',
+    element: <PrivacyPolicy />,
   },
   {
     path: '/book/:id',

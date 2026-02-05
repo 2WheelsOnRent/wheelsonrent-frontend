@@ -112,23 +112,23 @@ export default function Login() {
                 </div>
 
                <div className="flex items-start gap-2">
-  <Checkbox
-    id="terms"
-    className="self-start mt-1"
-    checked={termsAccepted}
-    onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
-  />
-  <Label htmlFor="terms" className="text-sm cursor-pointer leading-5">
-    I accept the{' '}
-    <a href="#" className="text-blue-500 hover:underline">
-      Terms & Conditions
-    </a>{' '}
-    and{' '}
-    <a href="#" className="text-blue-500 hover:underline">
-      Privacy Policy
-    </a>
-  </Label>
-</div>
+                    <Checkbox
+                      id="terms"
+                      className="self-start mt-1"
+                      checked={termsAccepted}
+                      onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+                    />
+                    <Label htmlFor="terms" className="text-sm cursor-pointer leading-5">
+                      I accept the{' '}
+                      <a href="/terms" className="text-blue-500 hover:underline">
+                        Terms & Conditions
+                      </a>{' '}
+                      and{' '}
+                      <a href="/privacy-policy" className="text-blue-500 hover:underline">
+                        Privacy Policy
+                      </a>
+                    </Label>
+                  </div>
 
 
                 <Button
