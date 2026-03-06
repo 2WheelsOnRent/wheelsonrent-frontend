@@ -1,300 +1,381 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Lock, Phone, ArrowLeft, Loader2 } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useLoginMutation } from '../store/api/authApi';
-import { useAppDispatch } from '../store/hooks';
-import { setCredentials, setLoading } from '../store/slices/authSlice';
-import { API_CONFIG } from '../config/api.config';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Phone, Lock, Mail, User, ArrowRight, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import type { User as UserType } from '../store/slices/authSlice';
+import { useSendOtpMutation, useVerifyOtpMutation } from '../store/api/authApi';
+import { useAppDispatch } from '../store/hooks';
+import { setCredentials } from '../store/slices/authSlice';
 
 const AuthPage: React.FC = () => {
-  const [userType, setUserType] = useState<'user' | 'admin' | 'superadmin'>('user');
-  const [otpSent, setOtpSent] = useState(false);
-  
-  const [loginData, setLoginData] = useState({
-    identifier: '',
-    password: '',
-    otpCode: ''
-  });
-
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useAppDispatch();
-  const [login, { isLoading }] = useLoginMutation();
+  
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [otp, setOtp] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [step, setStep] = useState<'phone' | 'otp' | 'details'>('phone');
+  const [isNewUser, setIsNewUser] = useState(false);
+  const [generatedOtp, setGeneratedOtp] = useState('');
 
-  // Auto-fill dummy data based on user type
+  const [sendOtp, { isLoading: isSendingOtp }] = useSendOtpMutation();
+  const [verifyOtp, { isLoading: isVerifyingOtp }] = useVerifyOtpMutation();
+
+  const from = (location.state as any)?.from?.pathname || '/';
+
   useEffect(() => {
-    setOtpSent(false);
-    
-    if (userType === 'user') {
-      setLoginData({
-        identifier: '9876543210',
-        password: '',
-        otpCode: ''
-      });
-    } else if (userType === 'admin') {
-      setLoginData({
-        identifier: 'admin@2wheelsonrent.com',
-        password: 'password123',
-        otpCode: ''
-      });
-    } else {
-      setLoginData({
-        identifier: 'superadmin@2wheelsonrent.com',
-        password: 'password123',
-        otpCode: ''
-      });
+    // Check if already logged in
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate(from, { replace: true });
     }
-  }, [userType]);
+  }, [navigate, from]);
 
-  const handleSendOtp = async () => {
-    if (!loginData.identifier.trim()) {
-      toast.error('Please enter phone number');
+  const handleSendOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!phoneNumber || phoneNumber.length !== 10) {
+      toast.error('Please enter a valid 10-digit phone number');
       return;
     }
-    
+
     try {
-      // For now, just simulate OTP send (backend skeleton)
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setOtpSent(true);
-      toast.success(`OTP sent to ${loginData.identifier}`, {
-        description: `Use OTP: ${API_CONFIG.OTP_BYPASS}`,
-        duration: 5000,
-      });
-    } catch (error) {
-      toast.error('Failed to send OTP. Please try again.');
+      const response = await sendOtp({ phoneNumber: `+91${phoneNumber}` }).unwrap();
+      
+      if (response.success) {
+        setGeneratedOtp(response.otp || '');
+        setStep('otp');
+        toast.success(response.message, {
+          description: response.otp ? `Development OTP: ${response.otp}` : undefined,
+          duration: 10000,
+        });
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error: any) {
+      console.error('Send OTP error:', error);
+      toast.error(error?.data?.message || 'Failed to send OTP. Please try again.');
     }
   };
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
+  const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(setLoading(true));
+
+    if (!otp || otp.length !== 6) {
+      toast.error('Please enter a valid 6-digit OTP');
+      return;
+    }
 
     try {
-      // Prepare login request based on user type
-      const loginRequest = {
-        type: userType,
-        identifier: loginData.identifier.trim(),
-        password: userType !== 'user' ? loginData.password : undefined,
-        otpCode: userType === 'user' ? loginData.otpCode : undefined,
-      };
+      const response = await verifyOtp({
+        phoneNumber: `+91${phoneNumber}`,
+        otp,
+        name: name || undefined,
+        email: email || undefined,
+      }).unwrap();
 
-      // Validate inputs
-      if (userType === 'user') {
-        if (!otpSent) {
-          toast.error('Please send OTP first');
-          dispatch(setLoading(false));
-          return;
-        }
-        if (!loginData.otpCode.trim()) {
-          toast.error('Please enter OTP');
-          dispatch(setLoading(false));
-          return;
-        }
-      } else {
-        if (!loginData.password.trim()) {
-          toast.error('Please enter password');
-          dispatch(setLoading(false));
-          return;
-        }
-      }
+      // if (response.success && response.token && response.user) {
+      //   // Check if new user needs to provide details
+      //   if (response.isNewUser && (!response.user.userNumber || response.user.name === 'User')) {
+      //     setIsNewUser(true);
+      //     setStep('details');
+      //     toast.info('Please complete your profile');
+      //     return;
+      //   }
 
-      // Call login API
-      const response = await login(loginRequest).unwrap();
+      //   // Store auth data
+      //   localStorage.setItem('token', response.token);
+      //   localStorage.setItem('userId', response.user.id.toString());
+      //   localStorage.setItem('userPhone', response.user.phoneNumber);
+      //   localStorage.setItem('userName', response.user.name);
+      //   localStorage.setItem('isLoggedIn', 'true');
 
-      if (response.success && response.token && response.userData) {
-        // Map backend response to frontend User type
-        const user: UserType = {
-          id: response.userData.id,
-          name: response.userData.username || response.userData.userNumber || 'User',
-          email: response.userData.email,
-          phone: response.userData.userNumber,
-          userType: userType,
-          districtId: response.userData.districtId,
-          role: response.userData.role,
-        };
+      //   dispatch(setCredentials({
+      //     user: response.user,
+      //     token: response.token,
+      //   }));
 
-        // Store credentials in Redux + localStorage
-        dispatch(
-          setCredentials({
-            user,
-            token: response.token,
-            refreshToken: response.refreshToken,
-          })
-        );
-
-        toast.success('Login successful!', {
-          description: `Welcome back, ${user.name}!`,
-        });
-
-        // Navigate based on user type
-        setTimeout(() => {
-          if (userType === 'user') {
-            navigate('/dashboard');
-          } else {
-            navigate('/admin');
-          }
-        }, 500);
-      } else {
-        toast.error('Login failed', {
-          description: response.message || 'Please check your credentials.',
-        });
-      }
+      //   toast.success(response.message);
+        
+      //   // Navigate to intended page
+      //   setTimeout(() => {
+      //     navigate(from, { replace: true });
+      //   }, 500);
+      // } else {
+      //   toast.error(response.message);
+      // }
     } catch (error: any) {
-      console.error('Login error:', error);
+      console.error('Verify OTP error:', error);
+      toast.error(error?.data?.message || 'Invalid OTP. Please try again.');
+    }
+  };
+
+  const handleCompleteProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!name || name.trim().length < 2) {
+      toast.error('Please enter your name');
+      return;
+    }
+
+    try {
+      const response = await verifyOtp({
+        phoneNumber: `+91${phoneNumber}`,
+        otp,
+        name,
+        email: email || undefined,
+      }).unwrap();
+
+      // if (response.success && response.token && response.user) {
+      //   // Store auth data
+      //   localStorage.setItem('token', response.token);
+      //   localStorage.setItem('userId', response.user.id.toString());
+      //   localStorage.setItem('userPhone', response.user.phoneNumber);
+      //   localStorage.setItem('userName', response.user.name);
+      //   localStorage.setItem('isLoggedIn', 'true');
+
+      //   dispatch(setCredentials({
+      //     user: response.user,
+      //     token: response.token,
+      //   }));
+
+      //   toast.success('Profile completed successfully!');
+        
+      //   setTimeout(() => {
+      //     navigate(from, { replace: true });
+      //   }, 500);
+      // }
+    } catch (error: any) {
+      console.error('Profile update error:', error);
+      toast.error('Failed to update profile. Please try again.');
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      const response = await sendOtp({ phoneNumber: `+91${phoneNumber}` }).unwrap();
       
-      if (error.status === 400) {
-        toast.error('Invalid credentials', {
-          description: error.data?.message || 'Please check your input.',
-        });
-      } else if (error.status === 401) {
-        toast.error('Authentication failed', {
-          description: 'Invalid email/password or OTP',
-        });
-      } else if (error.status === 404) {
-        toast.error('User not found', {
-          description: 'Please check your credentials.',
-        });
-      } else {
-        toast.error('Network error', {
-          description: 'Please check if backend is running.',
+      if (response.success) {
+        setGeneratedOtp(response.otp || '');
+        toast.success('OTP resent successfully', {
+          description: response.otp ? `Development OTP: ${response.otp}` : undefined,
+          duration: 10000,
         });
       }
-    } finally {
-      dispatch(setLoading(false));
+    } catch (error) {
+      toast.error('Failed to resend OTP');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4 py-8">
       <div className="max-w-md w-full">
-        <Link to="/" className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-8 transition">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Home
-        </Link>
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold mb-2">
+            2wheels<span className="text-blue-600">onrent</span>
+          </h1>
+          <p className="text-gray-600">
+            {step === 'phone' && 'Enter your phone number to continue'}
+            {step === 'otp' && 'Verify your phone number'}
+            {step === 'details' && 'Complete your profile'}
+          </p>
+        </div>
 
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white text-center">
-            <h2 className="text-2xl font-bold">Welcome to 2WheelsOnRent</h2>
-            <p className="text-blue-100 text-sm mt-1">Login to continue</p>
-          </div>
-
-          <div className="p-8">
-            <form onSubmit={handleLoginSubmit} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Login As</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {(['user', 'admin', 'superadmin'] as const).map((type) => (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => setUserType(type)}
-                      className={`py-2 px-3 rounded-lg text-sm font-medium transition ${
-                        userType === type ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {type === 'user' ? 'User' : type === 'admin' ? 'Admin' : 'Super Admin'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-xs text-blue-800">
-                  {userType === 'user' && `📱 Phone: +919876543210 | OTP: ${API_CONFIG.OTP_BYPASS}`}
-                  {userType === 'admin' && '📧 Email: admin@2wheelsonrent.com | 🔒 Password: password123'}
-                  {userType === 'superadmin' && '📧 Email: superadmin@2wheelsonrent.com | 🔒 Password: password123'}
-                </p>
-              </div>
-
-              <div>
+        {/* Auth Card */}
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          {/* Phone Number Step */}
+          {step === 'phone' && (
+            <form onSubmit={handleSendOtp}>
+              <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {userType === 'user' ? (
-                    <><Phone className="inline w-4 h-4 mr-1" />Phone Number</>
-                  ) : (
-                    <><Mail className="inline w-4 h-4 mr-1" />Email Address</>
-                  )}
+                  Phone Number
                 </label>
-                <input
-                  type={userType === 'user' ? 'tel' : 'email'}
-                  value={loginData.identifier}
-                  onChange={(e) => setLoginData({ ...loginData, identifier: e.target.value })}
-                  placeholder={userType === 'user' ? '9876543210' : 'admin@example.com'}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                  disabled={isLoading}
-                />
-              </div>
-
-              {userType !== 'user' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Lock className="inline w-4 h-4 mr-1" />Password
-                  </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Phone className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <div className="absolute inset-y-0 left-12 flex items-center pointer-events-none">
+                    <span className="text-gray-500">+91</span>
+                  </div>
                   <input
-                    type="password"
-                    value={loginData.password}
-                    onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                    placeholder="Enter your password"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                    disabled={isLoading}
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    placeholder="9876543210"
+                    className="w-full pl-24 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                    maxLength={10}
+                    required
                   />
                 </div>
-              )}
-
-              {userType === 'user' && (
-                <>
-                  {otpSent && (
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-2">
-      Enter OTP
-    </label>
-    <input
-      type="text"
-      value={loginData.otpCode}
-      onChange={(e) => setLoginData({ ...loginData, otpCode: e.target.value })}
-      placeholder="Enter 6-digit OTP"
-      maxLength={6}
-      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-center text-2xl tracking-widest font-semibold"
-      disabled={isLoading}
-    />
-    <button
-      type="button"
-      onClick={handleSendOtp}
-      className="text-sm text-blue-600 hover:text-blue-700 mt-2 block"
-      disabled={isLoading}
-    >
-      Resend OTP
-    </button>
-  </div>
-)}
-                </>
-              )}
+                {phoneNumber.length > 0 && phoneNumber.length !== 10 && (
+                  <p className="text-xs text-red-600 mt-1 flex items-center">
+                    <AlertCircle className="w-3 h-3 mr-1" />
+                    Phone number must be 10 digits
+                  </p>
+                )}
+              </div>
 
               <button
                 type="submit"
-                disabled={isLoading}
-                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
+                disabled={isSendingOtp || phoneNumber.length !== 10}
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
               >
-                {isLoading ? (
+                {isSendingOtp ? (
                   <>
                     <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Logging in...
+                    Sending OTP...
                   </>
                 ) : (
-                  'Login'
+                  <>
+                    Send OTP
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </>
+                )}
+              </button>
+            </form>
+          )}
+
+          {/* OTP Verification Step */}
+          {step === 'otp' && (
+            <form onSubmit={handleVerifyOtp}>
+              <div className="mb-4">
+                <button
+                  type="button"
+                  onClick={() => setStep('phone')}
+                  className="text-sm text-blue-600 hover:text-blue-700 flex items-center mb-4"
+                >
+                  ← Change Phone Number
+                </button>
+                <p className="text-sm text-gray-600 mb-4">
+                  OTP sent to +91-{phoneNumber}
+                </p>
+              </div>
+
+              {generatedOtp && (
+                <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-sm text-green-800 flex items-center">
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Development OTP: <strong className="ml-2">{generatedOtp}</strong>
+                  </p>
+                </div>
+              )}
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Enter OTP
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    placeholder="123456"
+                    className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-center text-2xl tracking-widest"
+                    maxLength={6}
+                    required
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isVerifyingOtp || otp.length !== 6}
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center mb-4"
+              >
+                {isVerifyingOtp ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  <>
+                    Verify OTP
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </>
                 )}
               </button>
 
-              {userType !== 'user' && (
-                <div className="text-center">
-                  <a href="#" className="text-sm text-blue-600 hover:text-blue-700">Forgot Password?</a>
-                </div>
-              )}
+              <button
+                type="button"
+                onClick={handleResendOtp}
+                disabled={isSendingOtp}
+                className="w-full text-blue-600 hover:text-blue-700 text-sm font-medium"
+              >
+                Resend OTP
+              </button>
             </form>
-          </div>
+          )}
+
+          {/* Profile Details Step */}
+          {step === 'details' && (
+            <form onSubmit={handleCompleteProfile}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name *
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="John Doe"
+                    className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email (Optional)
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="john@example.com"
+                    className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isVerifyingOtp || !name || name.trim().length < 2}
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
+              >
+                {isVerifyingOtp ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    Complete Registration
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </>
+                )}
+              </button>
+            </form>
+          )}
         </div>
 
-        <div className="mt-4 text-center text-xs text-gray-500">API: {API_CONFIG.BASE_URL}</div>
+        {/* Footer */}
+        <p className="text-center text-sm text-gray-600 mt-6">
+          By continuing, you agree to our Terms of Service and Privacy Policy
+        </p>
       </div>
     </div>
   );

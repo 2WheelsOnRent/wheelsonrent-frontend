@@ -68,9 +68,8 @@ export default function DateTimePicker() {
     
     // Auto-update return date to next day if not set
     if (!returnDate && value) {
-      const nextDay = new Date(value);
-      nextDay.setDate(nextDay.getDate() + 1);
-      setReturnDate(nextDay.toISOString().split('T')[0]);
+      const sameDay = new Date(value);
+      setReturnDate(sameDay.toISOString().split('T')[0]);
     }
   };
 

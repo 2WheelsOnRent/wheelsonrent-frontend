@@ -3,12 +3,12 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import HomePage from '../pages/HomePage';
 import AuthPage from '../pages/AuthPage';
 import VehicleListingPage from '../pages/VehicleListingPage';
-//import VehicleDetailsPage from '../pages/VehicleDetailsPage';
 import UserDashboard from '../pages/UserDashboard';
 import AdminDashboard from '../pages/AdminDashboard';
+import AdminLogin from '../pages/AdminLogin';
 import { ProtectedRoute } from './ProtectedRoute';
 import Login from '../pages/Login';
-import Profile from '../pages/Profile';
+import Profile from '../pages/ProfilePage';
 import BookNow from '../pages/BookNow';
 import Contact from '../pages/Contact';
 import TermsAndConditions from '../pages/TermsAndConditions';
@@ -20,39 +20,39 @@ const router = createBrowserRouter([
     element: <HomePage />,
   },
   {
-    path: '/auth',
+    path: 'auth',
     element: <AuthPage />,
   },
   {
-    path: '/contact',
+    path: 'contact',
     element: <Contact />,
   },
   {
-    path: '/login',
+    path: 'login',
     element: <Login />,
   },
   {
-    path: '/profile',
+    path: 'profile',
     element: <Profile />,
   },
   {
-    path: '/vehicles',
+    path: 'vehicles',
     element: <VehicleListingPage />,
   },
   {
-    path: '/terms',
+    path: 'terms',
     element: <TermsAndConditions />,
   },
   {
-    path: '/privacy-policy',
+    path: 'privacy-policy',
     element: <PrivacyPolicy />,
   },
   {
-    path: '/book/:id',
+    path: 'book/:id',
     element: <BookNow />,
   },
   {
-    path: '/dashboard',
+    path: 'dashboard',
     element: (
       <ProtectedRoute allowedRoles={['user']}>
         <UserDashboard />
@@ -60,11 +60,14 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/admin',
+    // ✅ Admin login — public route, no ProtectedRoute wrapper
+    path: 'admin-login',
+    element: <AdminLogin />,
+  },
+  {
+    path: 'admin',
     element: (
-      <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
         <AdminDashboard />
-      </ProtectedRoute>
     ),
   },
   {

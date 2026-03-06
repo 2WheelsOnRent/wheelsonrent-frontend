@@ -1,18 +1,25 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { UserDto } from '../../types/user.types';
 import type { RootState } from '../store';
+import { API_CONFIG } from '../../config/api.config';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7001/api';
+export interface UserDto {
+  id: number;
+  userNumber: string;
+  districtId?: number;
+  name?: string;
+  email?: string;
+}
 
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: API_BASE_URL,
+    baseUrl: API_CONFIG.BASE_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
       }
+      headers.set('Content-Type', 'application/json');
       return headers;
     },
   }),
@@ -24,7 +31,7 @@ export const userApi = createApi({
     }),
     getUserById: builder.query<UserDto, number>({
       query: (id) => `/Users/${id}`,
-      //providesTags: (result, error, id) => [{ type: 'User', id }],
+      providesTags: (_result, _error, id) => [{ type: 'User', id }],
     }),
     createUser: builder.mutation<UserDto, Omit<UserDto, 'id'>>({
       query: (user) => ({
@@ -40,8 +47,13 @@ export const userApi = createApi({
         method: 'PUT',
         body: user,
       }),
-      //invalidatesTags: (result, error, { id }) => [{ type: 'User', id }, 'User'],
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'User', id }, 'User'],
     }),
+    deleteUser: builder.mutation<void, number>({
+      query: (id) => ({ url: `Users/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['User'],
+    }),
+
   }),
 });
 
@@ -50,4 +62,5 @@ export const {
   useGetUserByIdQuery,
   useCreateUserMutation,
   useUpdateUserMutation,
+  useDeleteUserMutation
 } = userApi;

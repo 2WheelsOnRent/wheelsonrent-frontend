@@ -34,7 +34,7 @@ const PrivacyPolicy: React.FC = () => {
               Last updated: {new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
             <p className="mt-2 text-green-100">
-              This Privacy Policy describes how 2WheelsOnRent collects, uses, and protects your personal information.
+              This Privacy Policy describes how scootyonrent collects, uses, and protects your personal information.
             </p>
           </div>
 
@@ -47,7 +47,7 @@ const PrivacyPolicy: React.FC = () => {
                 Introduction
               </h2>
               <p className="text-gray-700 leading-relaxed">
-                At 2WheelsOnRent, we are committed to protecting your privacy and personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website and services. By using our Service, you agree to the collection and use of information in accordance with this policy.
+                At scootyonrent, we are committed to protecting your privacy and personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website and services. By using our Service, you agree to the collection and use of information in accordance with this policy.
               </p>
             </section>
 
@@ -58,14 +58,14 @@ const PrivacyPolicy: React.FC = () => {
                 <h3 className="text-lg font-semibold text-gray-800">Definitions</h3>
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-3 text-sm">
                   <p><strong>Account:</strong> A unique account created for you to access our Service or parts of our Service.</p>
-                  <p><strong>Company:</strong> Refers to 2WheelsOnRent, Surat, Gujarat, India.</p>
+                  <p><strong>Company:</strong> Refers to scootyonrent, Surat, Gujarat, India.</p>
                   <p><strong>Cookies:</strong> Small files placed on your device containing browsing history details.</p>
                   <p><strong>Country:</strong> Refers to Gujarat, India.</p>
                   <p><strong>Device:</strong> Any device that can access the Service (computer, phone, tablet).</p>
                   <p><strong>Personal Data:</strong> Any information relating to an identified or identifiable individual.</p>
-                  <p><strong>Service:</strong> Refers to the 2WheelsOnRent website and mobile application.</p>
+                  <p><strong>Service:</strong> Refers to the scootyonrent website and mobile application.</p>
                   <p><strong>Usage Data:</strong> Data collected automatically through use of the Service.</p>
-                  <p><strong>Website:</strong> Refers to 2WheelsOnRent, accessible from https://2wheelsonrent.com</p>
+                  <p><strong>Website:</strong> Refers to scootyonrent, accessible from https://scootyonrent.com</p>
                 </div>
               </div>
             </section>
@@ -385,9 +385,9 @@ const PrivacyPolicy: React.FC = () => {
                 If you have any questions about this Privacy Policy, please contact us:
               </p>
               <div className="space-y-2 text-gray-700">
-                <p><strong>Company:</strong> 2WheelsOnRent</p>
-                <p><strong>Email:</strong> privacy@2wheelsonrent.com</p>
-                <p><strong>Support Email:</strong> support@2wheelsonrent.com</p>
+                <p><strong>Company:</strong> scootyonrent</p>
+                <p><strong>Email:</strong> privacy@scootyonrent.com</p>
+                <p><strong>Support Email:</strong> support@scootyonrent.com</p>
                 <p><strong>Phone:</strong> +91 98765 43210</p>
                 <p><strong>Address:</strong> Surat, Gujarat, India</p>
                 <p><strong>Response Time:</strong> We respond to privacy inquiries within 48 hours</p>
@@ -397,7 +397,7 @@ const PrivacyPolicy: React.FC = () => {
             {/* Agreement Notice */}
             <div className="bg-gray-800 text-white rounded-xl p-6 text-center">
               <p className="text-sm">
-                By using 2WheelsOnRent services, you acknowledge that you have read and understood this Privacy Policy and consent to the collection, use, and disclosure of your personal information as described herein.
+                By using scootyonrent services, you acknowledge that you have read and understood this Privacy Policy and consent to the collection, use, and disclosure of your personal information as described herein.
               </p>
             </div>
           </div>

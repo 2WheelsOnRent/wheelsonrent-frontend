@@ -1,60 +1,193 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Phone, Loader2 } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { Checkbox } from '../components/ui/checkbox';
 import { Label } from '../components/ui/label';
+import BackgroundSlideshow from '../components/BackgroundSlideshow';
+import { useSendOtpMutation, useVerifyOtpMutation } from '../store/api/authApi';
+import { useAppDispatch } from '../store/hooks';
+import { setCredentials } from '../store/slices/authSlice';
 import { toast } from 'sonner';
-import { Phone } from 'lucide-react';
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useAppDispatch();
+
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [otp, setOtp] = useState('');
-  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [countdown, setCountdown] = useState(0);
 
-  const handleSendOTP = () => {
-    if (phoneNumber.length === 10) {
-      // Mock OTP send
-      setStep('otp');
-      toast.message('OTP sent to your phone number: 1234');
-    } else {
-      toast.error('Please enter a valid 10-digit phone number');
+  const [sendOtp, { isLoading: isSending }] = useSendOtpMutation();
+  const [verifyOtp, { isLoading: isVerifying }] = useVerifyOtpMutation();
+
+  // Countdown timer for resend OTP
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [countdown]);
 
-  const handleVerifyOTP = () => {
-    if (!termsAccepted) {
-      toast.error('Please accept the Terms & Conditions');
+  const handleSendOTP = async () => {
+    const cleanPhone = phoneNumber.replace(/\D/g, '');
+    if (cleanPhone.length !== 10) {
+      toast.error('Please enter a valid 10-digit mobile number');
       return;
     }
 
-    // Mock OTP verification
-    if (otp === '1234') {
-      localStorage.setItem('isLoggedIn', 'true');
-      toast.success('Login successful!');
-      navigate('/profile');
-    } else {
-      toast.error('Invalid OTP. Please try: 1234');
+    try {
+      const response = await sendOtp({ phoneNumber: cleanPhone }).unwrap();
+      if (response.success) {
+        setStep('otp');
+        setCountdown(60);
+        toast.success('OTP sent successfully!', {
+          description: response.otp ? `OTP: ${response.otp}` : 'Check your phone',
+          duration: 10000,
+        });
+      } else {
+        toast.error('Failed to send OTP', { description: response.message });
+      }
+    } catch (error: any) {
+      console.error('Send OTP error:', error);
+      toast.error('Failed to send OTP', {
+        description: error?.data?.message || 'Please try again',
+      });
     }
   };
 
+  const handleVerifyOTP = async () => {
+    if (otp.length !== 6) {
+      toast.error('Please enter a valid 6-digit OTP');
+      return;
+    }
+
+    try {
+      const response = await verifyOtp({
+        phoneNumber: phoneNumber.replace(/\D/g, ''),
+        otp: otp,
+      }).unwrap();
+
+      if (response.success && response.token && response.user) {
+        // ── 1. Store credentials in Redux
+        dispatch(
+          setCredentials({
+            user: {
+              id: response.user.id,
+              name: response.user.userNumber,
+              phone: response.user.userNumber,
+              userType: 'user',
+              districtId: response.user.districtId,
+            },
+            token: response.token,
+          })
+        );
+
+        // ── 2. Store in localStorage for Header/other components
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('authToken', response.token);
+        localStorage.setItem('userId', response.user.id.toString());
+        localStorage.setItem('userPhone', response.user.userNumber);
+        localStorage.setItem('isLoggedIn', 'true');
+
+        toast.success(response.message || 'Login successful!', {
+          description: response.isNewUser ? 'Welcome to scootyonrent!' : 'Welcome back!',
+        });
+
+        // ── 3. Redirect Priority Chain ──
+
+        // Priority 1: ?redirect= query param (set by BookNow when unauthenticated)
+        const redirectUrl = new URLSearchParams(window.location.search).get('redirect');
+        if (redirectUrl) {
+          setTimeout(() => navigate(redirectUrl, { replace: true }), 300);
+          return;
+        }
+
+        // Priority 2: sessionStorage bookingIntent (set by BookNow handleBooking)
+        const intentRaw = sessionStorage.getItem('bookingIntent');
+        if (intentRaw) {
+          try {
+            const intent = JSON.parse(intentRaw);
+            sessionStorage.removeItem('bookingIntent'); // consume once
+            if (intent.vehicleId) {
+              const params = new URLSearchParams();
+              if (intent.startDate) params.set('startDate', intent.startDate);
+              if (intent.startTime) params.set('startTime', intent.startTime);
+              if (intent.endDate) params.set('endDate', intent.endDate);
+              if (intent.endTime) params.set('endTime', intent.endTime);
+              setTimeout(
+                () =>
+                  navigate(`/book/${intent.vehicleId}?${params.toString()}`, {
+                    replace: true,
+                  }),
+                300
+              );
+              return;
+            }
+          } catch {
+            sessionStorage.removeItem('bookingIntent');
+          }
+        }
+
+        // Priority 3: react-router location.state.from (standard protected route redirect)
+        const from = (location.state as any)?.from?.pathname;
+        if (from && from !== '/login' && from !== '/auth') {
+          setTimeout(() => navigate(from, { replace: true }), 300);
+          return;
+        }
+
+        // Default: go to dashboard
+        setTimeout(() => navigate('/dashboard', { replace: true }), 300);
+      } else {
+        toast.error('Verification failed', { description: response.message });
+      }
+    } catch (error: any) {
+      console.error('Verify OTP error:', error);
+      toast.error('Verification failed', {
+        description: error?.data?.message || 'Invalid OTP. Please try again.',
+      });
+    }
+  };
+
+  const handleResendOTP = async () => {
+    if (countdown > 0) return;
+    await handleSendOTP();
+  };
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white relative">
+      <BackgroundSlideshow />
       <Header />
 
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-16 relative z-10">
         <div className="max-w-md mx-auto">
-          <div className="bg-white rounded-lg border border-gray-200 p-8 shadow-sm">
+          <div className="bg-white/95 backdrop-blur-sm rounded-lg border border-gray-200 p-8 shadow-lg">
+
+            {/* Header */}
             <div className="text-center mb-8">
-              <h1 className="text-3xl text-black mb-2">Welcome Back</h1>
-              <p className="text-gray-600">Login to continue your booking</p>
+              <h1 className="text-3xl font-bold text-black mb-2">
+                {step === 'phone' ? 'Welcome Back' : 'Enter OTP'}
+              </h1>
+              <p className="text-gray-600">
+                {step === 'phone'
+                  ? 'Login to continue your booking'
+                  : `OTP sent to +91 ${phoneNumber}`}
+              </p>
             </div>
 
-            {step === 'phone' ? (
+            {/* Demo Info Banner */}
+            <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-sm font-semibold text-blue-900 mb-1">Demo Mode</p>
+              <p className="text-sm text-blue-800">Use any 10-digit phone number</p>
+              <p className="text-xs text-blue-700 mt-1">OTP will be displayed after sending</p>
+            </div>
+
+            {/* Phone Step */}
+            {step === 'phone' && (
               <div className="space-y-6">
                 <div>
                   <Label htmlFor="phone" className="mb-2 block">
@@ -67,8 +200,13 @@ export default function Login() {
                       type="tel"
                       placeholder="Enter 10-digit mobile number"
                       value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                      onChange={(e) =>
+                        setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))
+                      }
                       className="pl-10"
+                      maxLength={10}
+                      disabled={isSending}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSendOTP()}
                     />
                   </div>
                   <p className="text-sm text-gray-500 mt-2">
@@ -78,83 +216,89 @@ export default function Login() {
 
                 <Button
                   onClick={handleSendOTP}
+                  disabled={isSending || phoneNumber.length !== 10}
                   className="w-full bg-blue-500 hover:bg-blue-600 text-white py-6"
                 >
-                  Send OTP
+                  {isSending ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Sending OTP...
+                    </>
+                  ) : (
+                    'Send OTP'
+                  )}
                 </Button>
               </div>
-            ) : (
+            )}
+
+            {/* OTP Step */}
+            {step === 'otp' && (
               <div className="space-y-6">
+                <div className="text-center">
+                  <button
+                    onClick={() => {
+                      setStep('phone');
+                      setOtp('');
+                    }}
+                    className="text-sm text-blue-500 hover:text-blue-600 mb-2 block w-full"
+                  >
+                    ← Change number
+                  </button>
+                </div>
+
                 <div>
                   <Label htmlFor="otp" className="mb-2 block">
                     Enter OTP
                   </Label>
-                  <div className="relative">
-                    {/* <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" /> */}
-                    <Input
-                      id="otp"
-                      type="text"
-                      placeholder="Enter 4-digit OTP"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                      className="pl-10 tracking-widest text-center text-xl"
-                    />
-                  </div>
-                  <p className="text-sm text-gray-500 mt-2">
-                    OTP sent to +91 {phoneNumber}
-                  </p>
-                  <button
-                    onClick={() => setStep('phone')}
-                    className="text-sm text-blue-500 hover:text-blue-600 mt-2"
-                  >
-                    Change number
-                  </button>
+                  <Input
+                    id="otp"
+                    type="text"
+                    placeholder="Enter 6-digit OTP"
+                    value={otp}
+                    onChange={(e) =>
+                      setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))
+                    }
+                    className="text-center text-2xl tracking-widest font-semibold"
+                    maxLength={6}
+                    disabled={isVerifying}
+                    autoFocus
+                    onKeyDown={(e) => e.key === 'Enter' && handleVerifyOTP()}
+                  />
+                  <p className="text-sm text-gray-500 mt-2">OTP expires in 10 minutes</p>
                 </div>
-
-               <div className="flex items-start gap-2">
-                    <Checkbox
-                      id="terms"
-                      className="self-start mt-1"
-                      checked={termsAccepted}
-                      onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
-                    />
-                    <Label htmlFor="terms" className="text-sm cursor-pointer leading-5">
-                      I accept the{' '}
-                      <a href="/terms" className="text-blue-500 hover:underline">
-                        Terms & Conditions
-                      </a>{' '}
-                      and{' '}
-                      <a href="/privacy-policy" className="text-blue-500 hover:underline">
-                        Privacy Policy
-                      </a>
-                    </Label>
-                  </div>
-
 
                 <Button
                   onClick={handleVerifyOTP}
+                  disabled={isVerifying || otp.length !== 6}
                   className="w-full bg-blue-500 hover:bg-blue-600 text-white py-6"
-                  disabled={!termsAccepted}
                 >
-                  Verify & Login
+                  {isVerifying ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Verifying...
+                    </>
+                  ) : (
+                    'Verify & Login'
+                  )}
                 </Button>
 
-                <button
-                  onClick={handleSendOTP}
-                  className="w-full text-center text-sm text-gray-600 hover:text-blue-500"
-                >
-                  Didn't receive OTP? Resend
-                </button>
+                {/* Resend OTP */}
+                <div className="text-center">
+                  <button
+                    onClick={handleResendOTP}
+                    disabled={countdown > 0 || isSending}
+                    className={`text-sm ${
+                      countdown > 0
+                        ? 'text-gray-400 cursor-not-allowed'
+                        : 'text-blue-500 hover:text-blue-600'
+                    }`}
+                  >
+                    {countdown > 0 ? `Resend OTP in ${countdown}s` : 'Resend OTP'}
+                  </button>
+                </div>
               </div>
             )}
           </div>
-
-          {/* Demo credentials
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-gray-700 mb-2">Demo Credentials:</p>
-            <p className="text-sm text-gray-600">• Any 10-digit phone number</p>
-            <p className="text-sm text-gray-600">• OTP: 1234</p>
-          </div> */}
         </div>
       </div>
 

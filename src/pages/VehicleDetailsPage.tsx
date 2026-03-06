@@ -3,22 +3,25 @@ import { MapPin, Gauge, Clock, Shield, AlertCircle, ChevronLeft, Fuel, Calendar 
 import { useNavigate, useParams, Link, useSearchParams } from 'react-router-dom';
 import { useGetVehicleByIdQuery } from '../store/api/vehicleApi';
 import { useGetActivePickupLocationsByDistrictQuery } from '../store/api/pickupLocationApi';
-//import { useCreateBookingMutation } from '../store/api/bookingApi';
-//import { useAppSelector } from '../store/hooks';
+import { useCreateBookingMutation } from '../store/api/bookingApi';
+import { useInitiatePaymentMutation } from '../store/api/paymentApi';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { calculateTotalPrice, calculateDuration } from '../utils/vehicleUtils';
+import { toast } from 'sonner';
+// assuming you already have toast imported or using a toast library
+// import { toast } from 'sonner';   ← add this if you're using sonner / react-hot-toast
 
 const VehicleDetailsPage: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedPickup, setSelectedPickup] = useState('');
   const [selectedDrop, setSelectedDrop] = useState('');
   const [bookingError] = useState('');
+  const [bookingLoading, setBookingLoading] = useState(false);
 
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  //const user = useAppSelector((state) => state.auth);
 
   // Get search params from URL
   const districtId = searchParams.get('districtId');
@@ -45,8 +48,8 @@ const VehicleDetailsPage: React.FC = () => {
     { skip: !vehicleData && !districtId }
   );
 
-  // Create booking mutation
-  // const [createBooking, { isLoading: bookingLoading }] = useCreateBookingMutation();
+  const [createBooking] = useCreateBookingMutation();
+  const [initiatePayment] = useInitiatePaymentMutation();
 
   // Get vehicle images
   const vehicleImages = vehicleData?.images || [];
@@ -77,51 +80,97 @@ const VehicleDetailsPage: React.FC = () => {
     );
   };
 
-  // const handleBooking = async () => {
-  //   if (!user) {
-  //     navigate('/login');
-  //     return;
-  //   }
+  const handleProceedToPayment = async () => {
+    // Check if user is logged in
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
 
-  //   if (!vehicleData) return;
+    if (!token || !userId) {
+      toast.error('Please login to continue', {
+        description: 'You need to be logged in to make a booking',
+      });
+      // Redirect to auth page with return URL
+      navigate('/auth', { state: { from: { pathname: `/vehicles/${id}` } } });
+      return;
+    }
 
-  //   setBookingError('');
+    // Validate all required fields
+    if (!selectedPickup || !selectedDrop) {
+      toast.error('Please select pickup and drop locations');
+      return;
+    }
 
-  //   // Validation
-  //   if (!bookingDates.startDate || !bookingDates.startTime || !bookingDates.endDate || !bookingDates.endTime) {
-  //     setBookingError('Please fill all date and time fields');
-  //     return;
-  //   }
+    if (!bookingDates.startDate || !bookingDates.startTime || !bookingDates.endDate || !bookingDates.endTime) {
+      toast.error('Please select booking dates and times');
+      return;
+    }
 
-  //   const duration = calculateTotalHours();
-  //   if (duration < vehicleData.minBookingHours) {
-  //     setBookingError(`Minimum booking duration is ${vehicleData.minBookingHours} hours`);
-  //     return;
-  //   }
+    const totalHours = calculateTotalHours();
+    if (totalHours <= 0) {
+      toast.error('Invalid booking duration');
+      return;
+    }
 
-  //   try {
-  //     // const bookingRequest = {
-  //     //   vehicleId: vehicleData.id,
-  //     //   userId: user.id,
-  //     //   pickupLocationId: selectedPickup ? parseInt(selectedPickup) : undefined,
-  //     //   dropLocationId: selectedDrop ? parseInt(selectedDrop) : undefined,
-  //     //   bookingStartDate: bookingDates.startDate,
-  //     //   bookingEndDate: bookingDates.endDate,
-  //     //   startTime: bookingDates.startTime,
-  //     //   endTime: bookingDates.endTime,
-  //     //   totalAmount: calculateTotal(),
-  //     // };
+    try {
+      setBookingLoading(true);
 
-  //     // await createBooking(bookingRequest).unwrap();
+      // Validate vehicleData exists
+      if (!vehicleData) {
+        throw new Error('Vehicle data not available');
+      }
 
-  //     // Success - redirect to dashboard
-  //     toast.success('Booking created successfully!');
-  //     navigate('/dashboard');
-  //   } catch (error: any) {
-  //     console.error('Booking error:', error);
-  //     setBookingError(error.data?.message || 'Failed to create booking. Please try again.');
-  //   }
-  // };
+      // Create booking first
+      const bookingData = {
+        userId: parseInt(userId),
+        vehicleId: vehicleData.id,
+        pickupLocationId: parseInt(selectedPickup),
+        dropLocationId: parseInt(selectedDrop),
+        bookingStartDate: bookingDates.startDate,
+        startTime: bookingDates.startTime,
+        bookingEndDate: bookingDates.endDate,
+        endTime: bookingDates.endTime,
+        totalAmount: calculateTotal(),
+        status: 0, // Pending payment
+      };
+
+      const bookingResponse = await createBooking(bookingData).unwrap();
+
+      if (!bookingResponse || !bookingResponse.id) {
+        throw new Error('Failed to create booking');
+      }
+
+      toast.success('Booking created! Redirecting to payment...');
+
+      // Get user details from localStorage
+      const userName = localStorage.getItem('userName') || 'Customer';
+      const userEmail = localStorage.getItem('userEmail') || '';
+      const userPhone = localStorage.getItem('userPhone') || '';
+
+      // Initiate payment
+      const paymentData = {
+        bookingId: bookingResponse.id,
+        userId: parseInt(userId),
+        amount: calculateTotal(),
+        userName: userName,
+        userEmail: userEmail || `${userPhone}@scootyonrent.com`,
+        userPhone: userPhone.replace('+91', ''),
+      };
+
+      const paymentResponse = await initiatePayment(paymentData).unwrap();
+
+      if (paymentResponse.success && paymentResponse.paymentUrl) {
+        // Redirect to EaseBuzz payment gateway
+        window.location.href = paymentResponse.paymentUrl;
+      } else {
+        throw new Error(paymentResponse.message || 'Failed to initiate payment');
+      }
+    } catch (error: any) {
+      console.error('Payment initiation error:', error);
+      toast.error(error?.data?.message || error?.message || 'Failed to proceed with payment');
+    } finally {
+      setBookingLoading(false);
+    }
+  };
 
   if (vehicleLoading) return <LoadingSpinner fullScreen message="Loading vehicle details..." />;
 
@@ -139,7 +188,7 @@ const VehicleDetailsPage: React.FC = () => {
               <ChevronLeft className="w-6 h-6" />
             </button>
             <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              2WheelsOnRent
+              scootyonrent
             </Link>
           </div>
         </div>
@@ -415,13 +464,13 @@ const VehicleDetailsPage: React.FC = () => {
                   </p>
                 </div>
 
-                {/* <button
-                  onClick={handleBooking}
-                  disabled={bookingLoading}
+                <button
+                  onClick={handleProceedToPayment}
+                  disabled={bookingLoading || !selectedPickup || !selectedDrop || !bookingDates.startDate || !bookingDates.endDate}
                   className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
-                  {bookingLoading ? 'Creating Booking...' : 'Proceed to Payment'}
-                </button> */}
+                  {bookingLoading ? 'Processing...' : 'Proceed to Payment'}
+                </button>
               </div>
             </div>
           </div>

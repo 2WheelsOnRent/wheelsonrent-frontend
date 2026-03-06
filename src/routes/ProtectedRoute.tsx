@@ -1,5 +1,6 @@
+// src/routes/ProtectedRoute.tsx
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAppSelector } from '../store/hooks';
 
 interface ProtectedRouteProps {
@@ -7,25 +8,24 @@ interface ProtectedRouteProps {
   allowedRoles?: ('user' | 'admin' | 'superadmin')[];
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  children,
-  allowedRoles,
-}) => {
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const location = useLocation();
 
-  // If not authenticated, redirect to auth page
+  // Not logged in → send to appropriate login page
   if (!isAuthenticated || !user) {
-    return <Navigate to="/auth" replace />;
+    const loginPath = location.pathname.startsWith('/admin') ? '/admin-login' : '/auth';
+    return <Navigate to={loginPath} replace />;
   }
 
-  // If specific roles are required, check if user has permission
+  // Logged in but wrong role
   if (allowedRoles && !allowedRoles.includes(user.userType)) {
-    // Redirect to appropriate dashboard based on user type
+    // ✅ FIX: Redirect to the CORRECT dashboard — NOT back to the same page
     if (user.userType === 'user') {
       return <Navigate to="/dashboard" replace />;
-    } else {
-      return <Navigate to="/admin" replace />;
     }
+    // admin/superadmin trying to access a user-only route
+    return <Navigate to="/admin" replace />;
   }
 
   return <>{children}</>;

@@ -34,7 +34,7 @@ const TermsAndConditions: React.FC = () => {
               Last updated: {new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
             <p className="mt-2 text-blue-100">
-              Please read these terms and conditions carefully before using 2WheelsOnRent service.
+              Please read these terms and conditions carefully before using scootyonrent service.
             </p>
           </div>
 
@@ -47,7 +47,7 @@ const TermsAndConditions: React.FC = () => {
                 1. Acceptance of Terms
               </h2>
               <p className="text-gray-700 leading-relaxed">
-                By accessing and using 2WheelsOnRent services, you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to these terms, please do not use our services.
+                By accessing and using scootyonrent services, you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to these terms, please do not use our services.
               </p>
             </section>
 
@@ -277,7 +277,7 @@ const TermsAndConditions: React.FC = () => {
                   <div>
                     <p className="font-semibold mb-2">Accident/Collision:</p>
                     <ul className="list-disc list-inside space-y-1 text-sm">
-                      <li>Inform 2WheelsOnRent and police immediately</li>
+                      <li>Inform scootyonrent and police immediately</li>
                       <li>Rider accountable for repair costs</li>
                       <li>Insurance liability beyond ₹10,000</li>
                       <li>Vehicle downtime charges apply until repaired</li>
@@ -342,7 +342,7 @@ const TermsAndConditions: React.FC = () => {
               <h2 className="text-2xl font-bold text-gray-900 mb-4">15. Liability Disclaimer</h2>
               <div className="space-y-3 text-gray-700">
                 <p className="leading-relaxed">
-                  2WheelsOnRent shall not be liable for:
+                  scootyonrent shall not be liable for:
                 </p>
                 <ul className="list-disc list-inside space-y-2 ml-4">
                   <li>Personal injury or death resulting from vehicle operation</li>
@@ -358,7 +358,7 @@ const TermsAndConditions: React.FC = () => {
               <h2 className="text-2xl font-bold text-gray-900 mb-4">16. Amendments to Terms</h2>
               <div className="space-y-3 text-gray-700">
                 <p className="leading-relaxed">
-                  2WheelsOnRent reserves the right to modify these terms at any time. Continued use of services after modifications constitutes acceptance of updated terms. Users will be notified of significant changes via email or website notification.
+                  scootyonrent reserves the right to modify these terms at any time. Continued use of services after modifications constitutes acceptance of updated terms. Users will be notified of significant changes via email or website notification.
                 </p>
               </div>
             </section>
@@ -367,8 +367,8 @@ const TermsAndConditions: React.FC = () => {
             <section className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Contact Us</h2>
               <div className="space-y-2 text-gray-700">
-                <p><strong>Company:</strong> 2WheelsOnRent</p>
-                <p><strong>Email:</strong> support@2wheelsonrent.com</p>
+                <p><strong>Company:</strong> scootyonrent</p>
+                <p><strong>Email:</strong> support@scootyonrent.com</p>
                 <p><strong>Phone:</strong> +91 98765 43210</p>
                 <p><strong>Address:</strong> Surat, Gujarat, India</p>
                 <p><strong>Customer Support Hours:</strong> 9:00 AM - 8:00 PM (All Days)</p>

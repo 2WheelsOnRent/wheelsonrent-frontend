@@ -1,42 +1,14 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
-import { User } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { useAppSelector } from '../store/hooks';
+import { User, LogOut } from 'lucide-react';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { logout } from '../store/slices/authSlice';
 
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useAppDispatch();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // Check login status from both Redux and localStorage
-  useEffect(() => {
-    const loginStatus = localStorage.getItem('isLoggedIn');
-    setIsLoggedIn(isAuthenticated || loginStatus === 'true');
-  }, [isAuthenticated]);
-
-  // Listen for storage changes (when user logs out in another tab or from Profile page)
-  useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'isLoggedIn') {
-        setIsLoggedIn(e.newValue === 'true');
-      }
-    };
-
-    // Listen for custom logout event
-    const handleLogout = () => {
-      setIsLoggedIn(false);
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('user-logout', handleLogout);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('user-logout', handleLogout);
-    };
-  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -60,8 +32,12 @@ export default function Header() {
 
   const handleVehiclesClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    // Always navigate to vehicles page WITHOUT any filters
     navigate('/vehicles');
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/');
   };
 
   return (
@@ -70,8 +46,8 @@ export default function Header() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex-1">
-            <a 
-              href="/" 
+            <a
+              href="/"
               onClick={handleLogoClick}
               className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
             >
@@ -83,39 +59,49 @@ export default function Header() {
 
           {/* Navigation - Centered */}
           <nav className="hidden md:flex items-center gap-8 flex-1 justify-center">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               onClick={handleHomeClick}
               className="text-black hover:text-blue-500 transition-colors font-medium"
             >
               Home
             </Link>
-            <a 
-              href="/vehicles" 
+            <a
+              href="/vehicles"
               onClick={handleVehiclesClick}
               className="text-black hover:text-blue-500 transition-colors font-medium cursor-pointer"
             >
               Vehicles
             </a>
-            <Link 
-              to="/contact" 
+            <Link
+              to="/contact"
               className="text-black hover:text-blue-500 transition-colors font-medium"
             >
               Contact Us
             </Link>
           </nav>
 
-          {/* Login/Profile Button */}
-          <div className="flex items-center gap-4 flex-1 justify-end">
-            {isLoggedIn ? (
-              <Button
-                onClick={() => navigate('/profile')}
-                variant="outline"
-                className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-all"
-              >
-                <User className="w-4 h-4 mr-2" />
-                Profile
-              </Button>
+          {/* Login/Profile/Logout Buttons */}
+          <div className="flex items-center gap-3 flex-1 justify-end">
+            {isAuthenticated ? (
+              <>
+                <Button
+                  onClick={() => navigate('/profile')}
+                  variant="outline"
+                  className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-all"
+                >
+                  <User className="w-4 h-4 mr-2" />
+                  Profile
+                </Button>
+                <Button
+                  onClick={handleLogout}
+                  variant="outline"
+                  className="border-red-400 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </Button>
+              </>
             ) : (
               <Button
                 onClick={() => navigate('/login')}

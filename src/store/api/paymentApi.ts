@@ -1,35 +1,47 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { PaymentDto } from '../../types/payment.types';
+import { API_CONFIG } from '../../config/api.config';
 import type { RootState } from '../store';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7001/api';
+export interface InitiatePaymentRequest {
+  bookingId: number;
+  userId: number;
+  amount: number;
+  userName: string;
+  userEmail: string;
+  userPhone: string;
+}
+
+export interface InitiatePaymentResponse {
+  success: boolean;
+  message: string;
+  paymentUrl: string;
+  transactionId: string;
+}
 
 export const paymentApi = createApi({
   reducerPath: 'paymentApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: API_BASE_URL,
+    baseUrl: API_CONFIG.BASE_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
       }
+      headers.set('Content-Type', 'application/json');
       return headers;
     },
   }),
   tagTypes: ['Payment'],
   endpoints: (builder) => ({
-    getPayments: builder.query<PaymentDto[], { page?: number; size?: number }>({
-      query: ({ page = 1, size = 10 }) => `/Payments?page=${page}&size=${size}`,
-      providesTags: ['Payment'],
-    }),
-    getPaymentsByUserId: builder.query<PaymentDto[], number>({
-      query: (userId) => `/Payments/user/${userId}`,
-      providesTags: ['Payment'],
+    initiatePayment: builder.mutation<InitiatePaymentResponse, InitiatePaymentRequest>({
+      query: (data) => ({
+        url: '/Payments/initiate',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Payment'],
     }),
   }),
 });
 
-export const {
-  useGetPaymentsQuery,
-  useGetPaymentsByUserIdQuery,
-} = paymentApi;
+export const { useInitiatePaymentMutation } = paymentApi;

@@ -82,7 +82,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {currentYear} 2wheelsonrent. All rights reserved.</p>
+          <p>&copy; {currentYear} scootyonrent. All rights reserved.</p>
         </div>
       </div>
     </footer>

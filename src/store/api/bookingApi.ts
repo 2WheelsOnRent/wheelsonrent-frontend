@@ -7,7 +7,6 @@ export interface BookingDto {
   vehicleId: number;
   userId: number;
   pickupLocationId?: number;
-  dropLocationId?: number;
   paymentId?: number;
   bookingStartDate: string;
   bookingEndDate: string;
@@ -21,7 +20,6 @@ export interface CreateBookingRequest {
   vehicleId: number;
   userId: number;
   pickupLocationId?: number;
-  dropLocationId?: number;
   bookingStartDate: string;
   bookingEndDate: string;
   startTime: string;
