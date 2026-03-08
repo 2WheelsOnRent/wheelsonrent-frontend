@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { X, CreditCard, Loader2 } from "lucide-react";
 import { Button } from "./ui/button";
-import { toast } from "sonner";
 
 interface PaymentModalProps {
   isOpen: boolean;

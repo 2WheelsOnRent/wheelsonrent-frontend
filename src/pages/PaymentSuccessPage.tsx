@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { CheckCircle, Home, Calendar, MapPin, Clock, CreditCard, Download } from 'lucide-react';
+import { CheckCircle, Home, Calendar, MapPin, CreditCard } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import Header from '../components/Header';
 import { useGetBookingByIdQuery } from '../store/api/bookingApi';

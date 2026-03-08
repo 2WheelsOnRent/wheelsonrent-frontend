@@ -3,24 +3,20 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Phone, Lock, Mail, User, ArrowRight, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSendOtpMutation, useVerifyOtpMutation } from '../store/api/authApi';
-import { useAppDispatch } from '../store/hooks';
-import { setCredentials } from '../store/slices/authSlice';
 
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useAppDispatch();
   
   const [phoneNumber, setPhoneNumber] = useState('');
   const [otp, setOtp] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [step, setStep] = useState<'phone' | 'otp' | 'details'>('phone');
-  const [isNewUser, setIsNewUser] = useState(false);
   const [generatedOtp, setGeneratedOtp] = useState('');
 
   const [sendOtp, { isLoading: isSendingOtp }] = useSendOtpMutation();
-  const [verifyOtp, { isLoading: isVerifyingOtp }] = useVerifyOtpMutation();
+  const [/*verifyOtp*/, { isLoading: isVerifyingOtp }] = useVerifyOtpMutation();
 
   const from = (location.state as any)?.from?.pathname || '/';
 
@@ -68,12 +64,12 @@ const AuthPage: React.FC = () => {
     }
 
     try {
-      const response = await verifyOtp({
-        phoneNumber: `+91${phoneNumber}`,
-        otp,
-        name: name || undefined,
-        email: email || undefined,
-      }).unwrap();
+      // const response = await verifyOtp({
+      //   phoneNumber: `+91${phoneNumber}`,
+      //   otp,
+      //   name: name || undefined,
+      //   email: email || undefined,
+      // }).unwrap();
 
       // if (response.success && response.token && response.user) {
       //   // Check if new user needs to provide details
@@ -120,12 +116,12 @@ const AuthPage: React.FC = () => {
     }
 
     try {
-      const response = await verifyOtp({
-        phoneNumber: `+91${phoneNumber}`,
-        otp,
-        name,
-        email: email || undefined,
-      }).unwrap();
+      // const response = await verifyOtp({
+      //   phoneNumber: `+91${phoneNumber}`,
+      //   otp,
+      //   name,
+      //   email: email || undefined,
+      // }).unwrap();
 
       // if (response.success && response.token && response.user) {
       //   // Store auth data

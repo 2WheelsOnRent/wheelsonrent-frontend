@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Slider } from './ui/slider';
 import { Checkbox } from './ui/checkbox';
 import { Label } from './ui/label';
-import { Button } from './ui/button';
 import { ChevronDown, SlidersHorizontal, RotateCcw } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
 
