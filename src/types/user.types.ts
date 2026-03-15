@@ -2,6 +2,8 @@ export interface UserDto {
   id: number;
   userNumber: string;
   districtId?: number;
+  name?: string;
+  email?: string;
 }
 
 export interface AdminDto {

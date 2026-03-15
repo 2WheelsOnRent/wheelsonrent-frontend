@@ -90,25 +90,21 @@ export const vehicleApi = createApi({
   }),
   tagTypes: ['Vehicle'],
   endpoints: (builder) => ({
-    // Get ALL vehicles (NO PAGINATION)
     getVehicles: builder.query<VehicleDto[], void>({
       query: () => '/Vehicles',
       providesTags: ['Vehicle'],
     }),
 
-    // Get vehicle by ID with images
     getVehicleById: builder.query<VehicleWithImagesDto, number>({
       query: (id) => `/Vehicles/${id}`,
       providesTags: (_result, _error, id) => [{ type: 'Vehicle', id }],
     }),
 
-    // Get featured vehicles
     getFeaturedVehicles: builder.query<VehicleWithImagesDto[], void>({
       query: () => '/Vehicles/featured',
       providesTags: ['Vehicle'],
     }),
 
-    // Search available vehicles by date/time
     searchAvailableVehicles: builder.query<VehicleWithImagesDto[], VehicleSearchParams>({
       query: (params) => {
         const queryParams = new URLSearchParams();
@@ -123,7 +119,6 @@ export const vehicleApi = createApi({
       providesTags: ['Vehicle'],
     }),
 
-    // Filter vehicles
     filterVehicles: builder.query<VehicleWithImagesDto[], VehicleFilterParams>({
       query: (params) => {
         const queryParams = new URLSearchParams();
@@ -138,7 +133,6 @@ export const vehicleApi = createApi({
       providesTags: ['Vehicle'],
     }),
 
-    // Admin endpoints
     createVehicle: builder.mutation<VehicleDto, Omit<VehicleDto, 'id'>>({
       query: (vehicle) => ({
         url: '/Vehicles',

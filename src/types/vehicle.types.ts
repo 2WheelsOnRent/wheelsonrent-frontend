@@ -32,8 +32,7 @@ export interface VehicleFilters {
   sortBy?: 'recommended' | 'price-low' | 'price-high' | 'rating';
 }
 
-// Extended vehicle with calculated fields for frontend display
 export interface VehicleDisplay extends VehicleDto {
-  image: string; // Fallback to placeholder
+  image: string; 
   districtName?: string;
 }

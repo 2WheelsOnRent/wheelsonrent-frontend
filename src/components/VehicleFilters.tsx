@@ -2,19 +2,10 @@ import { useState } from 'react';
 import { Slider } from './ui/slider';
 import { Checkbox } from './ui/checkbox';
 import { Label } from './ui/label';
-import { Button } from './ui/button';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from './ui/collapsible';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, SlidersHorizontal, RotateCcw } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
 
-interface VehicleFiltersProps {
-  onFilterChange: (filters: FilterState) => void;
-}
-
-export interface FilterState {
+interface FilterState {
   vehicleTypes: string[];
   fuelTypes: string[];
   companies: string[];
@@ -22,179 +13,211 @@ export interface FilterState {
   minRating: number;
 }
 
-//const companies = ['Honda', 'TVS', 'Royal Enfield', 'Bajaj', 'Hero', 'Yamaha', 'Ather', 'KTM'];
+interface VehicleFiltersProps {
+  onFilterChange: (filters: FilterState) => void;
+}
+
+const VEHICLE_TYPES = ['Scooter', 'Bike', 'Sports'];
+const FUEL_TYPES = ['Petrol', 'Electric'];
+const COMPANY_LIST = ['Honda', 'TVS', 'Royal Enfield', 'Bajaj', 'Hero', 'Yamaha', 'Ather', 'KTM'];
+const PRICE_MIN = 0;
+const PRICE_MAX = 1500;
+
+const DEFAULT_FILTERS: FilterState = {
+  vehicleTypes: [],
+  fuelTypes: [],
+  companies: [],
+  priceRange: [PRICE_MIN, PRICE_MAX],
+  minRating: 0,
+};
 
 export default function VehicleFilters({ onFilterChange }: VehicleFiltersProps) {
-  const [vehicleTypes, setVehicleTypes] = useState<string[]>([]);
-  const [fuelTypes, setFuelTypes] = useState<string[]>([]);
-  const [companies, setCompanies] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<number[]>([0, 1500]);
-  const [minRating, setMinRating] = useState<number>(0);
+  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
   const [isCompanyOpen, setIsCompanyOpen] = useState(false);
 
-  const companyList = ['Honda', 'TVS', 'Royal Enfield', 'Bajaj', 'Hero', 'Yamaha', 'Ather', 'KTM'];
-
-  const handleVehicleTypeChange = (type: string, checked: boolean) => {
-    const newTypes = checked
-      ? [...vehicleTypes, type]
-      : vehicleTypes.filter((t) => t !== type);
-    setVehicleTypes(newTypes);
-    onFilterChange({ vehicleTypes: newTypes, fuelTypes, companies, priceRange, minRating });
+  const updateFilters = (partial: Partial<FilterState>) => {
+    const updated = { ...filters, ...partial };
+    setFilters(updated);
+    onFilterChange(updated);
   };
 
-  const handleFuelTypeChange = (type: string, checked: boolean) => {
-    const newTypes = checked
-      ? [...fuelTypes, type]
-      : fuelTypes.filter((t) => t !== type);
-    setFuelTypes(newTypes);
-    onFilterChange({ vehicleTypes, fuelTypes: newTypes, companies, priceRange, minRating });
+  const toggleArrayItem = (key: 'vehicleTypes' | 'fuelTypes' | 'companies', value: string, checked: boolean) => {
+    const current = filters[key];
+    const updated = checked ? [...current, value] : current.filter((v) => v !== value);
+    updateFilters({ [key]: updated });
   };
-
-  const handleCompanyChange = (company: string, checked: boolean) => {
-    const newCompanies = checked
-      ? [...companies, company]
-      : companies.filter((c) => c !== company);
-    setCompanies(newCompanies);
-    onFilterChange({ vehicleTypes, fuelTypes, companies: newCompanies, priceRange, minRating });
-  };
-
-  const handlePriceChange = (value: number[]) => {
-    setPriceRange(value);
-    onFilterChange({ vehicleTypes, fuelTypes, companies, priceRange: value, minRating });
-  };
-
-  // const handleRatingChange = (rating: number) => {
-  //   setMinRating(rating);
-  //   onFilterChange({ vehicleTypes, fuelTypes, companies, priceRange, minRating: rating });
-  // };
 
   const resetFilters = () => {
-    setVehicleTypes([]);
-    setFuelTypes([]);
-    setCompanies([]);
-    setPriceRange([0, 1500]);
-    setMinRating(0);
-    onFilterChange({
-      vehicleTypes: [],
-      fuelTypes: [],
-      companies: [],
-      priceRange: [0, 1500],
-      minRating: 0,
-    });
+    setFilters(DEFAULT_FILTERS);
+    onFilterChange(DEFAULT_FILTERS);
   };
 
+  const activeFilterCount = [
+    filters.vehicleTypes.length,
+    filters.fuelTypes.length,
+    filters.companies.length,
+    filters.priceRange[0] > PRICE_MIN || filters.priceRange[1] < PRICE_MAX ? 1 : 0,
+  ].reduce((a, b) => a + b, 0);
+
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6 sticky top-24">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg text-black">Filters</h3>
-        <Button
-          variant="ghost"
-          onClick={resetFilters}
-          className="text-blue-500 hover:text-blue-600"
-        >
-          Reset
-        </Button>
+    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden sticky top-24">
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <div className="flex items-center gap-2">
+          <SlidersHorizontal className="w-5 h-5 text-blue-500" />
+          <span className="font-bold text-gray-900">Filters</span>
+          {activeFilterCount > 0 && (
+            <span className="w-5 h-5 bg-blue-500 text-white rounded-full text-xs font-bold flex items-center justify-center">
+              {activeFilterCount}
+            </span>
+          )}
+        </div>
+        {activeFilterCount > 0 && (
+          <button
+            onClick={resetFilters}
+            className="flex items-center gap-1 text-sm text-blue-500 hover:text-blue-600 transition-colors font-medium"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            Reset
+          </button>
+        )}
       </div>
 
-      {/* Vehicle Type */}
-      <div className="mb-6">
-        <h4 className="text-black mb-3">Vehicle Type</h4>
-        <div className="space-y-2">
-          {['Scooter', 'Bike', 'Sports'].map((type) => (
-            <div key={type} className="flex items-center">
-              <Checkbox
-                id={`type-${type}`}
-                checked={vehicleTypes.includes(type)}
-                onCheckedChange={(checked: boolean) =>
-                  handleVehicleTypeChange(type, checked as boolean)
-                }
-              />
-              <Label htmlFor={`type-${type}`} className="ml-2 cursor-pointer">
-                {type}
-              </Label>
+      <div className="p-5 space-y-6">
+        {/* ── Price Range ── */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="text-sm font-bold text-gray-800 uppercase tracking-wide">Price Range</h4>
+            <span className="text-sm font-semibold text-blue-600">
+              ₹{filters.priceRange[0]} – ₹{filters.priceRange[1]}
+            </span>
+          </div>
+
+          {/* Single draggable slider (range) */}
+          <div className="px-1">
+            <Slider
+              min={PRICE_MIN}
+              max={PRICE_MAX}
+              step={50}
+              value={filters.priceRange}
+              onValueChange={(value) => updateFilters({ priceRange: value })}
+              className="mb-3"
+            />
+          </div>
+
+          {/* Min / Max labels */}
+          <div className="flex justify-between text-xs text-gray-400 px-1">
+            <span>₹{PRICE_MIN}</span>
+            <span>₹{PRICE_MAX}</span>
+          </div>
+
+          {/* Visual range indicator pills */}
+          <div className="mt-3 flex gap-2">
+            <div className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-center">
+              <p className="text-xs text-gray-400 leading-none mb-0.5">Min</p>
+              <p className="text-sm font-bold text-gray-900">₹{filters.priceRange[0]}</p>
             </div>
-          ))}
+            <div className="flex items-center text-gray-300 text-lg">—</div>
+            <div className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-center">
+              <p className="text-xs text-gray-400 leading-none mb-0.5">Max</p>
+              <p className="text-sm font-bold text-gray-900">₹{filters.priceRange[1]}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-100" />
+
+        {/* ── Vehicle Type ── */}
+        <div>
+          <h4 className="text-sm font-bold text-gray-800 uppercase tracking-wide mb-3">Vehicle Type</h4>
+          <div className="space-y-2.5">
+            {VEHICLE_TYPES.map((type) => (
+              <div key={type} className="flex items-center gap-2.5">
+                <Checkbox
+                  id={`type-${type}`}
+                  checked={filters.vehicleTypes.includes(type)}
+                  onCheckedChange={(checked) => toggleArrayItem('vehicleTypes', type, !!checked)}
+                  className="border-gray-300 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
+                />
+                <Label
+                  htmlFor={`type-${type}`}
+                  className="cursor-pointer text-sm text-gray-700 font-medium select-none"
+                >
+                  {type}
+                </Label>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="border-t border-gray-100" />
+
+        {/* ── Fuel Type ── */}
+        <div>
+          <h4 className="text-sm font-bold text-gray-800 uppercase tracking-wide mb-3">Fuel Type</h4>
+          <div className="space-y-2.5">
+            {FUEL_TYPES.map((type) => (
+              <div key={type} className="flex items-center gap-2.5">
+                <Checkbox
+                  id={`fuel-${type}`}
+                  checked={filters.fuelTypes.includes(type)}
+                  onCheckedChange={(checked) => toggleArrayItem('fuelTypes', type, !!checked)}
+                  className="border-gray-300 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
+                />
+                <Label
+                  htmlFor={`fuel-${type}`}
+                  className="cursor-pointer text-sm text-gray-700 font-medium select-none"
+                >
+                  {type === 'Electric' ? '⚡ Electric' : '⛽ Petrol'}
+                </Label>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="border-t border-gray-100" />
+
+        {/* ── Company ── */}
+        <div>
+          <Collapsible open={isCompanyOpen} onOpenChange={setIsCompanyOpen}>
+            <CollapsibleTrigger className="w-full">
+              <div className="flex items-center justify-between w-full">
+                <h4 className="text-sm font-bold text-gray-800 uppercase tracking-wide">
+                  Brand
+                  {filters.companies.length > 0 && (
+                    <span className="ml-2 text-blue-500 normal-case font-semibold">
+                      ({filters.companies.length})
+                    </span>
+                  )}
+                </h4>
+                <ChevronDown
+                  className={`w-4 h-4 text-gray-500 transition-transform ${isCompanyOpen ? 'rotate-180' : ''}`}
+                />
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-3">
+              <div className="space-y-2.5 max-h-44 overflow-y-auto pr-1">
+                {COMPANY_LIST.map((company) => (
+                  <div key={company} className="flex items-center gap-2.5">
+                    <Checkbox
+                      id={`company-${company}`}
+                      checked={filters.companies.includes(company)}
+                      onCheckedChange={(checked) => toggleArrayItem('companies', company, !!checked)}
+                      className="border-gray-300 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
+                    />
+                    <Label
+                      htmlFor={`company-${company}`}
+                      className="cursor-pointer text-sm text-gray-700 font-medium select-none"
+                    >
+                      {company}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         </div>
       </div>
-
-      {/* Company - Dropdown with Checkboxes */}
-      <div className="mb-6">
-        <Collapsible open={isCompanyOpen} onOpenChange={setIsCompanyOpen}>
-          <CollapsibleTrigger className="w-full">
-            <div className="flex items-center justify-between w-full p-3 border border-gray-300 rounded-md hover:bg-gray-50">
-              <span className="text-black">
-                Company {companies.length > 0 && `(${companies.length})`}
-              </span>
-              <ChevronDown
-                className={`w-4 h-4 transition-transform ${
-                  isCompanyOpen ? 'rotate-180' : ''
-                }`}
-              />
-            </div>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="mt-2">
-            <div className="border border-gray-200 rounded-md p-3 max-h-48 overflow-y-auto space-y-2">
-              {companyList.map((company) => (
-                <div key={company} className="flex items-center">
-                  <Checkbox
-                    id={`company-${company}`}
-                    checked={companies.includes(company)}
-                    onCheckedChange={(checked: boolean) =>
-                      handleCompanyChange(company, checked as boolean)
-                    }
-                  />
-                  <Label
-                    htmlFor={`company-${company}`}
-                    className="ml-2 cursor-pointer"
-                  >
-                    {company}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
-      </div>
-
-      {/* Fuel Type */}
-      <div className="mb-6">
-        <h4 className="text-black mb-3">Fuel Type</h4>
-        <div className="space-y-2">
-          {['Petrol', 'Electric'].map((type) => (
-            <div key={type} className="flex items-center">
-              <Checkbox
-                id={`fuel-${type}`}
-                checked={fuelTypes.includes(type)}
-                onCheckedChange={(checked: boolean) =>
-                  handleFuelTypeChange(type, checked as boolean)
-                }
-              />
-              <Label htmlFor={`fuel-${type}`} className="ml-2 cursor-pointer">
-                {type}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Price Range */}
-      <div className="mb-6">
-        <h4 className="text-black mb-3">Price Range (per day)</h4>
-        <Slider
-          min={0}
-          max={1500}
-          step={50}
-          value={priceRange}
-          onValueChange={handlePriceChange}
-          className="mb-2"
-        />
-        <div className="flex justify-between text-sm text-gray-600">
-          <span>₹{priceRange[0]}</span>
-          <span>₹{priceRange[1]}</span>
-        </div>
-      </div>
-
-      
     </div>
   );
 }

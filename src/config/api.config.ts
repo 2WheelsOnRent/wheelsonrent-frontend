@@ -1,12 +1,14 @@
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5086/api',
-  TIMEOUT: 30000,
+  BASE_URL: import.meta.env.VITE_API_BASEURL || 'http://localhost:5086/api',
   OTP_BYPASS: import.meta.env.VITE_OTP_BYPASS || '123456',
+  GOOGLE_MAPS_KEY: import.meta.env.VITE_GOOGLE_MAPS_KEY || '',
 };
 
 export const API_ENDPOINTS = {
   // Auth
-  LOGIN: '/Auth/login',
+  LOGIN: `Auth/login`,
+  SENDOTP: `Auth/send-otp`,
+  VERIFYOTP: `Auth/verify-otp`,
   
   // Admins
   ADMINS: '/Admins',
@@ -55,10 +57,17 @@ export const API_ENDPOINTS = {
   PICKUP_LOCATIONS_BY_DISTRICT: (districtId: number) => `/PickupLocations/district/${districtId}`,
   PICKUP_LOCATIONS_ACTIVE_BY_DISTRICT: (districtId: number) => `/PickupLocations/district/${districtId}/active`,
 
+  INITIATEPAYMENT: `Payments/initiate`,
+  VERIFYPAYMENT: `Payments/verify`,
   // Website Reviews (NEW)
   WEBSITE_REVIEWS: '/WebsiteReviews',
   WEBSITE_REVIEWS_ACTIVE: '/WebsiteReviews/active',
   WEBSITE_REVIEW_BY_ID: (id: number) => `/WebsiteReviews/${id}`,
 };
-
+export const EASEBUZZ_CONFIG = {
+  MERCHANT_KEY: 'W0JXM1KFH7',
+  MERCHANT_SALT: 'ZHVQXJKEI0',
+  PAYMENT_URL: 'https://testpay.easebuzz.in/payment/initiateLink', // Test URL
+  // PAYMENT_URL: 'https://pay.easebuzz.in/payment/initiateLink', // Production URL
+};
 export default API_CONFIG;

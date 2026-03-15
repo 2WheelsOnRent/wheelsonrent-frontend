@@ -1,64 +1,54 @@
-import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import HomePage from '../pages/HomePage';
 import AuthPage from '../pages/AuthPage';
 import VehicleListingPage from '../pages/VehicleListingPage';
-//import VehicleDetailsPage from '../pages/VehicleDetailsPage';
 import UserDashboard from '../pages/UserDashboard';
 import AdminDashboard from '../pages/AdminDashboard';
+import AdminLogin from '../pages/AdminLogin';
 import { ProtectedRoute } from './ProtectedRoute';
 import Login from '../pages/Login';
-import Profile from '../pages/Profile';
+import Profile from '../pages/ProfilePage';
 import BookNow from '../pages/BookNow';
 import Contact from '../pages/Contact';
 import TermsAndConditions from '../pages/TermsAndConditions';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
+import PaymentSuccessPage from '../pages/PaymentSuccessPage';
+import PaymentFailurePage from '../pages/PaymentFailurePage';
+import UserLayout from '../components/UserLayout';
+import React from 'react';
 
 const router = createBrowserRouter([
+
   {
-    path: '/',
-    element: <HomePage />,
+    element: <UserLayout />,
+    children: [
+      { path: '/', element: <HomePage /> },
+      { path: '/auth', element: <AuthPage /> },
+      { path: '/contact', element: <Contact /> },
+      { path: '/login', element: <Login /> },
+      { path: '/vehicles', element: <VehicleListingPage /> },
+      { path: '/terms', element: <TermsAndConditions /> },
+      { path: '/privacy-policy', element: <PrivacyPolicy /> },
+      { path: '/book/:id', element: <BookNow /> },
+      { path: '/booking-success', element: <PaymentSuccessPage /> },
+      { path: '/payment-failure', element: <PaymentFailurePage /> },
+      {
+        path: '/profile',
+        element: <Profile />,
+      },
+      {
+        path: '/dashboard',
+        element: (
+          <ProtectedRoute allowedRoles={['user']}>
+            <UserDashboard />
+          </ProtectedRoute>
+        ),
+      },
+    ],
   },
-  {
-    path: '/auth',
-    element: <AuthPage />,
-  },
-  {
-    path: '/contact',
-    element: <Contact />,
-  },
-  {
-    path: '/login',
-    element: <Login />,
-  },
-  {
-    path: '/profile',
-    element: <Profile />,
-  },
-  {
-    path: '/vehicles',
-    element: <VehicleListingPage />,
-  },
-  {
-    path: '/terms',
-    element: <TermsAndConditions />,
-  },
-  {
-    path: '/privacy-policy',
-    element: <PrivacyPolicy />,
-  },
-  {
-    path: '/book/:id',
-    element: <BookNow />,
-  },
-  {
-    path: '/dashboard',
-    element: (
-      <ProtectedRoute allowedRoles={['user']}>
-        <UserDashboard />
-      </ProtectedRoute>
-    ),
-  },
+
+  // ── Admin routes (NO WhatsApp button) ──
+  { path: '/admin-login', element: <AdminLogin /> },
   {
     path: '/admin',
     element: (
@@ -67,20 +57,7 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  {
-    path: '*',
-    element: (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
-          <p className="text-xl text-gray-600">Page not found</p>
-          <a href="/" className="text-blue-600 hover:underline mt-4 inline-block">
-            Go back home
-          </a>
-        </div>
-      </div>
-    ),
-  },
+
 ]);
 
 export const AppRoutes: React.FC = () => {

@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASEURL || 'http://localhost:5000/api';
 
 export interface VehiclePackages {
   fourHours: number;
@@ -27,7 +27,7 @@ export interface VehicleImage {
 export interface Vehicle {
   id: number;
   name: string;
-  make: string; // company
+  make: string; 
   model: string;
   pricePerHour: number;
   pricePerDay: number;
@@ -46,14 +46,12 @@ export interface Vehicle {
 }
 
 class VehicleAPI {
-  // Get featured vehicles for carousel
   async getFeaturedVehicles(): Promise<Vehicle[]> {
     const response = await fetch(`${API_BASE_URL}/vehicles/featured`);
     if (!response.ok) throw new Error('Failed to fetch featured vehicles');
     return response.json();
   }
 
-  // Get all available vehicles
   async getAvailableVehicles(districtId?: number): Promise<Vehicle[]> {
     const url = districtId 
       ? `${API_BASE_URL}/vehicles/available?districtId=${districtId}`
@@ -63,14 +61,12 @@ class VehicleAPI {
     return response.json();
   }
 
-  // Get single vehicle with images
   async getVehicleById(id: number): Promise<Vehicle> {
     const response = await fetch(`${API_BASE_URL}/vehicles/${id}`);
     if (!response.ok) throw new Error('Failed to fetch vehicle');
     return response.json();
   }
 
-  // Filter vehicles
   async filterVehicles(filters: {
     vehicleType?: string;
     fuelType?: string;

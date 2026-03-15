@@ -1,6 +1,4 @@
-/**
- * Calculate total price for booking using hourly rate
- */
+
 export const calculateTotalPrice = (
   hourlyRate: number,
   startDate: string,
@@ -14,9 +12,6 @@ export const calculateTotalPrice = (
   return hourlyRate * Math.max(hours, 1);
 };
 
-/**
- * Calculate duration in hours
- */
 export const calculateDuration = (
   startDate: string,
   startTime: string,
@@ -28,16 +23,10 @@ export const calculateDuration = (
   return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60));
 };
 
-/**
- * Format currency in Indian Rupees
- */
 export const formatCurrency = (amount: number): string => {
   return `₹${amount.toLocaleString('en-IN')}`;
 };
 
-/**
- * Format date
- */
 export const formatDate = (date: string): string => {
   return new Date(date).toLocaleDateString('en-IN', {
     year: 'numeric',
@@ -46,9 +35,6 @@ export const formatDate = (date: string): string => {
   });
 };
 
-/**
- * Format time
- */
 export const formatTime = (time: string): string => {
   return new Date(`2000-01-01T${time}`).toLocaleTimeString('en-IN', {
     hour: '2-digit',

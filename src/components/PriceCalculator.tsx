@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Tag, AlertCircle } from 'lucide-react';
+import { Tag, AlertCircle, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { toast } from 'sonner';
@@ -8,7 +8,7 @@ interface PriceCalculatorProps {
   basePrice: number; // hourly rate
   hours: number; // total hours
   vehicleName: string;
-  onProceedToPayment?: () => void;
+  onProceedToPayment?: (finalAmount: number) => void;
   isLoading?: boolean;
   isLoggedIn?: boolean;
   minBookingHours?: number;
@@ -42,12 +42,19 @@ export default function PriceCalculator({
     }
   };
 
+  const handleRemovePromo = () => {
+  setPromoCode('');
+  setDiscount(0);
+  setPromoApplied(false);
+  toast.success('Promo code removed');
+};
+
   const subtotal = basePrice * hours;
   const discountAmount = subtotal * discount;
   const gst = (subtotal - discountAmount) * 0.18; // 18% GST
   const total = subtotal - discountAmount + gst;
 
-  const canProceed = isLoggedIn && hours > 0 && hours >= minBookingHours;
+  const canProceed = hours > 0 && hours >= minBookingHours;
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6 sticky top-24">
@@ -100,34 +107,49 @@ export default function PriceCalculator({
       </div>
 
       {/* Promo Code */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Promo Code</label>
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <Input
-              type="text"
-              placeholder="Enter code"
-              value={promoCode}
-              onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-              className="pl-10"
-              disabled={promoApplied}
-            />
-          </div>
-          <Button
-            onClick={handleApplyPromo}
-            variant="outline"
-            className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
-            disabled={promoApplied || !promoCode}
-          >
-            {promoApplied ? 'Applied' : 'Apply'}
-          </Button>
-        </div>
-        {promoApplied && (
-          <p className="text-sm text-green-600 mt-2">✓ Promo code applied successfully!</p>
-        )}
-        <p className="text-xs text-gray-500 mt-2">Try: FIRST10 or SAVE20</p>
-      </div>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Promo Code</label>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder="Enter code"
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                    className="pl-10"
+                    disabled={promoApplied}
+                  />
+                </div>
+                {!promoApplied ? (
+                  <Button
+                    onClick={handleApplyPromo}
+                    variant="outline"
+                    className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
+                    disabled={!promoCode}
+                  >
+                    Apply
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleRemovePromo}
+                    variant="outline"
+                    className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
+              {promoApplied && (
+                <p className="text-sm text-green-600 mt-2 flex items-center">
+                  <CheckCircle className="w-4 h-4 mr-1" />
+                  Promo code applied successfully! (Save {discount * 100}%)
+                </p>
+              )}
+              {!promoApplied && (
+                <p className="text-xs text-gray-500 mt-2">Try FIRST10 or SAVE20</p>
+              )}
+            </div>
 
       {/* Validation Warning */}
       {hours > 0 && hours < minBookingHours && (
@@ -153,7 +175,7 @@ export default function PriceCalculator({
       {/* Proceed Button */}
       {onProceedToPayment && (
         <Button 
-          onClick={onProceedToPayment}
+          onClick={() => onProceedToPayment?.(total)}
           disabled={!canProceed || isLoading}
           className="w-full bg-blue-500 hover:bg-blue-600 text-white py-6 disabled:opacity-50 disabled:cursor-not-allowed"
         >
@@ -166,7 +188,7 @@ export default function PriceCalculator({
         <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start">
           <AlertCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
           <p className="text-sm text-blue-800">
-            Payment will be processed securely through Razorpay after booking confirmation.
+            Payment will be processed securely through EaseBuzz after booking confirmation.
           </p>
         </div>
       )}

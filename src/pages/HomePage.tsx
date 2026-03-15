@@ -1,13 +1,3 @@
-
-//import React, { useState } from 'react';
-//import { Clock, Shield, Headphones } from 'lucide-react';
-//import { useNavigate } from 'react-router-dom';
-//import { useGetVehiclesQuery } from '../store/api/vehicleApi';
-//import { useGetDistrictsQuery } from '../store/api/districtApi';
-//import { useGetActiveWebsiteReviewsQuery } from '../store/api/websiteReviewApi';
-// import { LoadingSpinner } from '../components/LoadingSpinner';
-// import { ErrorMessage } from '../components/ErrorMessage';
-//import { enhanceVehicleData } from '../utils/vehicleUtils';
 import VehicleCarousel from '../components/VehicleCarousel';
 import Header from '../components/Header';
 import Footer from '../components/Footer';

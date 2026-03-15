@@ -25,6 +25,37 @@ export interface LoginResponse {
   };
 }
 
+export interface SendOtpRequest {
+  phoneNumber: string;
+}
+
+export interface SendOtpResponse {
+  success: boolean;
+  message: string;
+  otp?: string;
+}
+
+export interface VerifyOtpRequest {
+  phoneNumber: string;
+  otp: string;
+  name?: string;
+  email?: string;
+}
+
+export interface VerifyOtpResponse {
+  success: boolean;
+  message: string;
+  token?: string;
+  user?: {
+    id: number;
+    userNumber: string;
+    districtId?: number;
+    name?: string;
+    email?: string;
+  };
+  isNewUser: boolean;
+}
+
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
@@ -46,7 +77,21 @@ export const authApi = createApi({
         body: credentials,
       }),
     }),
+    sendOtp: builder.mutation<SendOtpResponse, SendOtpRequest>({
+      query: (data) => ({
+        url: 'Auth/send-otp',
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    verifyOtp: builder.mutation<VerifyOtpResponse, VerifyOtpRequest>({
+      query: (data) => ({
+        url: 'Auth/verify-otp',
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation } = authApi;
+export const { useLoginMutation, useSendOtpMutation, useVerifyOtpMutation } = authApi;
