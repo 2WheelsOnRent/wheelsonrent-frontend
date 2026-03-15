@@ -3,7 +3,6 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 
 import authReducer from './slices/authSlice';
 
-// All API slices
 import { vehicleApi } from './api/vehicleApi';
 import { vehicleImageApi } from './api/vehicleImageApi';
 import { userApi } from './api/userApi';
@@ -20,7 +19,6 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
 
-    // RTK Query reducers
     [vehicleApi.reducerPath]: vehicleApi.reducer,
     [vehicleImageApi.reducerPath]: vehicleImageApi.reducer,
     [userApi.reducerPath]: userApi.reducer,

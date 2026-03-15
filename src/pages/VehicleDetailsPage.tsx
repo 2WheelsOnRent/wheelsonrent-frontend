@@ -9,8 +9,6 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { calculateTotalPrice, calculateDuration } from '../utils/vehicleUtils';
 import { toast } from 'sonner';
-// assuming you already have toast imported or using a toast library
-// import { toast } from 'sonner';   ← add this if you're using sonner / react-hot-toast
 
 const VehicleDetailsPage: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -460,7 +458,7 @@ const VehicleDetailsPage: React.FC = () => {
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start">
                   <AlertCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p className="text-sm text-blue-800">
-                    Payment will be processed securely through Razorpay after booking confirmation.
+                    Payment will be processed securely through EaseBuzz after booking confirmation.
                   </p>
                 </div>
 

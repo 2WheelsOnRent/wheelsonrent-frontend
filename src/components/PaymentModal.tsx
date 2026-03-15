@@ -46,7 +46,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const verifyPayment = async (txnid: string, easepayid: string) => {
   try {
     const res = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/Payments/verify`,
+      `${import.meta.env.VITE_API_BASEURL}/Payments/verify`,
       {
         method: "POST",
         headers: {
@@ -78,7 +78,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
   try {
     const res = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/Payments/initiate`,
+      `${import.meta.env.VITE_API_BASEURL}/Payments/initiate`,
       {
         method: "POST",
         headers: {

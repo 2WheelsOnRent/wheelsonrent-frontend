@@ -31,7 +31,6 @@ export const vehicleImageApi = createApi({
     }),
     getVehicleImagesByVehicleId: builder.query<VehicleImageDto[], number>({
       query: (vehicleId) => `/VehicleImages/vehicle/${vehicleId}`,
-      //providesTags: (result, error, vehicleId) => [{ type: 'VehicleImage', id: vehicleId }],
     }),
     createVehicleImage: builder.mutation<VehicleImageDto, Omit<VehicleImageDto, 'id'>>({
       query: (image) => ({

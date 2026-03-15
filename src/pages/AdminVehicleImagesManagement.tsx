@@ -22,7 +22,6 @@ const AdminVehicleImagesManagement: React.FC = () => {
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  // ✅ FIX 3: Image upload state instead of URL
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
@@ -68,7 +67,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
     if (image) {
       setEditingImage(image);
       setFormData({ isPrimary: image.isPrimary, displayOrder: image.displayOrder });
-      setPreviewUrl(image.imageUrl); // show existing image as preview
+      setPreviewUrl(image.imageUrl); 
       setSelectedFile(null);
     } else {
       setEditingImage(null);
@@ -101,7 +100,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
 
     try {
       if (selectedFile) {
-        // ✅ Upload new image via multipart form — calls backend upload endpoint
+        
         setIsUploading(true);
         const formDataPayload = new FormData();
         formDataPayload.append('file', selectedFile);
@@ -113,7 +112,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
             method: 'POST',
             headers: {
               Authorization: `Bearer ${token}`,
-              // Do NOT set Content-Type — browser sets multipart/form-data boundary automatically
+              
             },
             body: formDataPayload,
           }
@@ -126,7 +125,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
 
         toast.success('Image uploaded successfully!');
       } else if (editingImage) {
-        // Metadata-only update (no new file chosen)
+        
         await updateImage({
           id: editingImage.id,
           image: {
@@ -362,7 +361,6 @@ const AdminVehicleImagesManagement: React.FC = () => {
                 </p>
               </div>
 
-              {/* ✅ FIX 3: Image File Upload (replaces URL input) */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {editingImage ? 'Replace Image (optional)' : 'Vehicle Image'}

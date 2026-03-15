@@ -52,7 +52,7 @@ export default function Header() {
               className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
             >
               <h1 className="text-2xl tracking-tight text-black font-bold">
-                2wheels<span className="text-blue-500">onrent</span>
+                Scooty<span className="text-blue-500">onrent</span>
               </h1>
             </a>
           </div>

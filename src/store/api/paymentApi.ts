@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { API_CONFIG } from '../../config/api.config';
+import { API_CONFIG } from '../../../src/config/api.config';
 import type { RootState } from '../store';
 
 export interface InitiatePaymentRequest {
@@ -15,7 +15,7 @@ export interface InitiatePaymentResponse {
   success: boolean;
   message: string;
   paymentUrl: string;
-  transactionId: string;
+  accessKey: string; 
 }
 
 export const paymentApi = createApi({
@@ -24,9 +24,7 @@ export const paymentApi = createApi({
     baseUrl: API_CONFIG.BASE_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
+      if (token) headers.set('Authorization', `Bearer ${token}`);
       headers.set('Content-Type', 'application/json');
       return headers;
     },
@@ -35,7 +33,7 @@ export const paymentApi = createApi({
   endpoints: (builder) => ({
     initiatePayment: builder.mutation<InitiatePaymentResponse, InitiatePaymentRequest>({
       query: (data) => ({
-        url: '/Payments/initiate',
+        url: 'Payments/initiate',
         method: 'POST',
         body: data,
       }),

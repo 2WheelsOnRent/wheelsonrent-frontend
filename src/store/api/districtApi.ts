@@ -36,7 +36,7 @@ export const districtApi = createApi({
     }),
     getDistrictById: builder.query<DistrictDto, number>({
       query: (id) => API_ENDPOINTS.DISTRICT_BY_ID(id),
-      //providesTags: (result, error, id) => [{ type: 'District', id }],
+      
     }),
     getStates: builder.query<StateDto[], { page?: number; size?: number }>({
       query: ({ page = 1, size = 100 }) => `${API_ENDPOINTS.STATES}?page=${page}&size=${size}`,

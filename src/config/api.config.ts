@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5086/api',
+  BASE_URL: import.meta.env.VITE_API_BASEURL || 'http://localhost:5086/api',
   OTP_BYPASS: import.meta.env.VITE_OTP_BYPASS || '123456',
   GOOGLE_MAPS_KEY: import.meta.env.VITE_GOOGLE_MAPS_KEY || '',
 };

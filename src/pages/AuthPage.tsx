@@ -170,7 +170,7 @@ const AuthPage: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-2">
-            2wheels<span className="text-blue-600">onrent</span>
+            Scooty<span className="text-blue-600">onrent</span>
           </h1>
           <p className="text-gray-600">
             {step === 'phone' && 'Enter your phone number to continue'}

@@ -13,7 +13,7 @@ export interface BookingDto {
   startTime: string;
   endTime: string;
   totalAmount: number;
-  status: 0 | 1 | 2 | 3; // 0=Pending, 1=Confirmed, 2=Completed, 3=Cancelled
+  status: 0 | 1 | 2 | 3; 
 }
 
 export interface CreateBookingRequest {
@@ -48,7 +48,7 @@ export const bookingApi = createApi({
     }),
     getBookingById: builder.query<BookingDto, number>({
       query: (id) => API_ENDPOINTS.BOOKING_BY_ID(id),
-      //providesTags: (result, error, id) => [{ type: 'Booking', id }],
+      
     }),
     getBookingsByUserId: builder.query<BookingDto[], number>({
       query: (userId) => API_ENDPOINTS.BOOKINGS_BY_USER(userId),
@@ -68,7 +68,7 @@ export const bookingApi = createApi({
         method: 'PUT',
         body: booking,
       }),
-      //invalidatesTags: (result, error, { id }) => [{ type: 'Booking', id }, 'Booking'],
+      
     }),
     deleteBooking: builder.mutation<void, number>({
       query: (id) => ({

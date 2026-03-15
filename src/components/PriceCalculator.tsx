@@ -188,7 +188,7 @@ export default function PriceCalculator({
         <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start">
           <AlertCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
           <p className="text-sm text-blue-800">
-            Payment will be processed securely through Razorpay after booking confirmation.
+            Payment will be processed securely through EaseBuzz after booking confirmation.
           </p>
         </div>
       )}

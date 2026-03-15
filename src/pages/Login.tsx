@@ -141,7 +141,7 @@ export default function Login() {
         }
 
         // Default: go to dashboard
-        setTimeout(() => navigate('/dashboard', { replace: true }), 300);
+        setTimeout(() => navigate('/profile', { replace: true }), 300);
       } else {
         toast.error('Verification failed', { description: response.message });
       }
@@ -178,14 +178,6 @@ export default function Login() {
                   : `OTP sent to +91 ${phoneNumber}`}
               </p>
             </div>
-
-            {/* Demo Info Banner */}
-            <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-sm font-semibold text-blue-900 mb-1">Demo Mode</p>
-              <p className="text-sm text-blue-800">Use any 10-digit phone number</p>
-              <p className="text-xs text-blue-700 mt-1">OTP will be displayed after sending</p>
-            </div>
-
             {/* Phone Step */}
             {step === 'phone' && (
               <div className="space-y-6">

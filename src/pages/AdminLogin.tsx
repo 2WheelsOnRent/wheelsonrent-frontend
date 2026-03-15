@@ -1,4 +1,3 @@
-// src/pages/AdminLogin.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Mail, Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
@@ -19,8 +18,6 @@ const AdminLogin: React.FC = () => {
 
   const [login, { isLoading }] = useLoginMutation();
 
-  // ✅ FIX: Only run when isAuthenticated/user changes, NOT on every render.
-  // Do NOT put `navigate` in the dependency array.
   useEffect(() => {
     if (isAuthenticated && user) {
       if (user.userType === 'admin' || user.userType === 'superadmin') {
@@ -29,7 +26,7 @@ const AdminLogin: React.FC = () => {
         navigate('/dashboard', { replace: true });
       }
     }
-  }, [isAuthenticated, user]); // ← intentionally omitting `navigate`
+  }, [isAuthenticated, user]); 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,9 +49,9 @@ const AdminLogin: React.FC = () => {
           setCredentials({
             user: {
               id: response.userData.id,
-              name: response.userData.username ?? response.userData.email ?? 'Admin',
+              name: response.userData.username ?? response.userData.email ?? 'admin',
               email: response.userData.email,
-              userType: (response.userType as 'admin' | 'superadmin') ?? 'admin',
+              userType: response.userType?.toLowerCase() as 'admin' | 'superadmin',
               districtId: response.userData.districtId,
               phone: ''
             },
@@ -105,7 +102,7 @@ const AdminLogin: React.FC = () => {
                   type="text"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder="admin@2wheelsonrent.com"
+                  placeholder="admin@ScootyOnRent.com"
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                   required
                 />

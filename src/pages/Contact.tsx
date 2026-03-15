@@ -18,17 +18,28 @@ export default function Contact() {
     message: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast.success('Thank you for your message! We will get back to you soon.');
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: '',
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!formData.name || !formData.phone || !formData.message) {
+    toast.error('Please fill all required fields.');
+    return;
+  }
+  setIsSubmitting(true);
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 500)); 
+    toast.success('Thank you for your message!', {
+      description: 'We will get back to you within 24 hours.',
     });
-  };
+    setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+  } catch {
+    toast.error('Failed to send message. Please try again.');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-white relative">
@@ -175,11 +186,12 @@ export default function Contact() {
                 </div>
 
                 <Button
-                  type="submit"
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white py-6"
-                >
-                  Send Message
-                </Button>
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full bg-blue-500 hover:bg-blue-600 text-white py-6"
+                      >
+                        {isSubmitting ? 'Sending...' : 'Send Message'}
+                      </Button>
               </form>
             </div>
 

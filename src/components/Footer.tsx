@@ -11,7 +11,7 @@ export default function Footer() {
           {/* Company Info */}
           <div>
             <h3 className="text-xl mb-4">
-              2wheels<span className="text-blue-500">onrent</span>
+              Scooty<span className="text-blue-500">onrent</span>
             </h3>
             <p className="text-gray-400">
               Your trusted partner for two-wheeler rentals across India.

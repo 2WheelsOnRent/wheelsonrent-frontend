@@ -2,17 +2,19 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   User, Phone, Mail, Calendar, Clock, MapPin,
-  LogOut, Edit2, Save, X, Loader2, Bike,
-  CheckCircle, XCircle, AlertCircle, RefreshCw
+  Edit2, Save, X, Loader2, Bike, CheckCircle, XCircle,
+  AlertCircle, RefreshCw, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { logout, setCredentials } from '../store/slices/authSlice';
+import { setCredentials } from '../store/slices/authSlice';
 import { useGetBookingsByUserIdQuery } from '../store/api/bookingApi';
 import { useUpdateUserMutation } from '../store/api/userApi';
 import { toast } from 'sonner';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+
+const BOOKINGS_PER_PAGE = 4;
 
 const BOOKING_STATUS_MAP: Record<number, { label: string; color: string; icon: React.ReactNode }> = {
   0: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800 border-yellow-200', icon: <AlertCircle className="w-3.5 h-3.5" /> },
@@ -25,8 +27,7 @@ function StatusBadge({ status }: { status: number }) {
   const s = BOOKING_STATUS_MAP[status] ?? { label: 'Unknown', color: 'bg-gray-100 text-gray-700 border-gray-200', icon: null };
   return (
     <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold border ${s.color}`}>
-      {s.icon}
-      {s.label}
+      {s.icon} {s.label}
     </span>
   );
 }
@@ -50,13 +51,14 @@ function formatTime(timeStr: string) {
 export default function ProfilePage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state) => state.auth);
+  const user = useAppSelector((state) => state.auth.user);
 
   const [isEditingName, setIsEditingName] = useState(false);
-  const [editedName, setEditedName] = useState(user?.name || '');
+  const [editedName, setEditedName] = useState(user?.name ?? '');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [activeFilter, setActiveFilter] = useState<number>(-1);
 
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
-
   const {
     data: bookings,
     isLoading: isLoadingBookings,
@@ -64,19 +66,31 @@ export default function ProfilePage() {
     refetch: refetchBookings,
   } = useGetBookingsByUserIdQuery(user?.id ?? 0, { skip: !user?.id });
 
-  const handleLogout = () => {
-    dispatch(logout());
-    toast.success('Logged out successfully');
-    navigate('/');
-  };
+  // Sort: most recent first
+  const sortedBookings = bookings
+    ? [...bookings].sort((a, b) => (b.id ?? 0) - (a.id ?? 0))
+    : [];
+
+  // Filter by active status tab
+  const filteredBookings = activeFilter === -1
+    ? sortedBookings
+    : sortedBookings.filter((b) => b.status === activeFilter);
+
+  const totalPages = Math.ceil(filteredBookings.length / BOOKINGS_PER_PAGE);
+  const paginatedBookings = filteredBookings.slice(
+    (currentPage - 1) * BOOKINGS_PER_PAGE,
+    currentPage * BOOKINGS_PER_PAGE
+  );
+
+  // const handleLogout = () => {
+  //   dispatch(logout());
+  //   toast.success('Logged out successfully');
+  //   navigate('/');
+  // };
 
   const handleSaveName = async () => {
-    if (!editedName.trim()) {
-      toast.error('Name cannot be empty');
-      return;
-    }
+    if (!editedName.trim()) { toast.error('Name cannot be empty'); return; }
     if (!user?.id) return;
-
     try {
       await updateUser({
         id: user.id,
@@ -84,51 +98,45 @@ export default function ProfilePage() {
           id: user.id,
           userNumber: user.phone,
           name: editedName.trim(),
-          email: user.email,
+          email: user.email ?? '',
           districtId: user.districtId,
         },
       }).unwrap();
-
-      dispatch(
-        setCredentials({
-          token: localStorage.getItem('authToken')!,
-          user: { ...user, name: editedName.trim() },
-        })
-      );
+      const updatedUser = { ...user, name: editedName.trim() };
+      dispatch(setCredentials({
+        token: localStorage.getItem('authToken')!,
+        user: updatedUser,
+      }));
+      localStorage.setItem('user', JSON.stringify(updatedUser));
       toast.success('Name updated successfully');
       setIsEditingName(false);
-    } catch {
-      toast.error('Failed to update name');
+    } catch (err: any) {
+      toast.error('Failed to update name', {
+        description: err?.data?.message ?? 'Please try again',
+      });
     }
   };
 
-  if (!user) {
-    navigate('/login');
-    return null;
-  }
+
+  if (!user) { navigate('/login'); return null; }
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-
       <div className="container mx-auto px-4 py-8 max-w-4xl">
+
         {/* Page Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
-          <Button
-            onClick={handleLogout}
-            variant="outline"
-            className="border-red-400 text-red-500 hover:bg-red-500 hover:text-white transition-all"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
-          </Button>
         </div>
 
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left: Profile Card */}
+
+          {/* ── LEFT COLUMN ── */}
           <div className="lg:col-span-1 space-y-4">
-            {/* Avatar + Basic Info */}
+
+            {/* Profile Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
               <div className="flex flex-col items-center text-center mb-6">
                 <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mb-3">
@@ -140,14 +148,14 @@ export default function ProfilePage() {
                 </span>
               </div>
 
-              {/* Name field */}
               <div className="space-y-3">
+                {/* Name */}
                 <div className="p-3 bg-gray-50 rounded-xl border border-gray-200">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Full Name</span>
                     {!isEditingName && (
                       <button
-                        onClick={() => { setIsEditingName(true); setEditedName(user.name || ''); }}
+                        onClick={() => { setIsEditingName(true); setEditedName(user.name ?? ''); }}
                         className="text-blue-500 hover:text-blue-600 transition-colors"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
@@ -178,10 +186,11 @@ export default function ProfilePage() {
                       </button>
                     </div>
                   ) : (
-                    <p className="text-sm font-medium text-gray-900">{user.name || '—'}</p>
+                    <p className="text-sm font-medium text-gray-900">{user.name}</p>
                   )}
                 </div>
 
+                {/* Phone */}
                 <div className="p-3 bg-gray-50 rounded-xl border border-gray-200">
                   <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">
                     <Phone className="inline w-3 h-3 mr-1" />Mobile
@@ -189,6 +198,7 @@ export default function ProfilePage() {
                   <p className="text-sm font-medium text-gray-900">+91 {user.phone}</p>
                 </div>
 
+                {/* Email */}
                 {user.email && (
                   <div className="p-3 bg-gray-50 rounded-xl border border-gray-200">
                     <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1">
@@ -200,43 +210,62 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">Account Stats</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-sm text-gray-500">Total Bookings</span>
-                  <span className="font-bold text-gray-900">{bookings?.length ?? 0}</span>
-                </div>
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-sm text-gray-500">Confirmed</span>
-                  <span className="font-bold text-green-600">{bookings?.filter(b => b.status === 1).length ?? 0}</span>
-                </div>
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-sm text-gray-500">Completed</span>
-                  <span className="font-bold text-blue-600">{bookings?.filter(b => b.status === 2).length ?? 0}</span>
-                </div>
-              </div>
-            </div>
+
+
           </div>
 
-          {/* Right: Booking History */}
+          {/* ── RIGHT COLUMN: Booking History ── */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-blue-500" />
-                  Booking History
-                </h3>
-                <button
-                  onClick={refetchBookings}
-                  className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition"
-                  title="Refresh bookings"
-                >
-                  <RefreshCw className="w-4 h-4" />
-                </button>
+
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-gray-200">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <Calendar className="w-5 h-5 text-blue-500" />
+                    Booking History
+                    {filteredBookings.length > 0 && (
+                      <span className="text-sm font-normal text-gray-500">
+                        ({filteredBookings.length} {activeFilter === -1 ? 'total' : 'found'})
+                      </span>
+                    )}
+                  </h3>
+                  <button
+                    onClick={() => { refetchBookings(); setCurrentPage(1); }}
+                    className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition"
+                    title="Refresh bookings"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Filter tabs */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  {[
+                    { label: 'All', value: -1, activeColor: 'bg-gray-700 text-white', inactiveColor: 'bg-gray-100 text-gray-600 hover:bg-gray-200', count: sortedBookings.length },
+                    { label: 'Confirmed', value: 1, activeColor: 'bg-green-600 text-white', inactiveColor: 'bg-green-50 text-green-700 hover:bg-green-100', count: sortedBookings.filter(b => b.status === 1).length },
+                    { label: 'Completed', value: 2, activeColor: 'bg-blue-600 text-white', inactiveColor: 'bg-blue-50 text-blue-700 hover:bg-blue-100', count: sortedBookings.filter(b => b.status === 2).length },
+                    { label: 'Pending', value: 0, activeColor: 'bg-yellow-500 text-white', inactiveColor: 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100', count: sortedBookings.filter(b => b.status === 0).length },
+                    { label: 'Cancelled', value: 3, activeColor: 'bg-red-500 text-white', inactiveColor: 'bg-red-50 text-red-700 hover:bg-red-100', count: sortedBookings.filter(b => b.status === 3).length },
+                  ].map(({ label, value, activeColor, inactiveColor, count }) => (
+                    <button
+                      key={value}
+                      onClick={() => { setActiveFilter(value); setCurrentPage(1); }}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${activeFilter === value ? activeColor : inactiveColor
+                        }`}
+                    >
+                      {label}
+                      <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${activeFilter === value ? 'bg-white/25' : 'bg-white border border-gray-200 text-gray-600'
+                        }`}>
+                        {count}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
+
+              {/* Loading */}
               {isLoadingBookings && (
                 <div className="flex items-center justify-center py-16">
                   <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
@@ -244,87 +273,135 @@ export default function ProfilePage() {
                 </div>
               )}
 
+              {/* Error */}
               {isBookingsError && (
                 <div className="flex flex-col items-center justify-center py-16 text-center px-6">
                   <AlertCircle className="w-12 h-12 text-red-400 mb-3" />
                   <p className="text-gray-600 mb-4">Failed to load bookings</p>
-                  <Button onClick={refetchBookings} variant="outline" className="border-blue-500 text-blue-500 hover:bg-blue-50">
-                    <RefreshCw className="w-4 h-4 mr-2" />Try Again
+                  <Button
+                    onClick={() => { refetchBookings(); setCurrentPage(1); }}
+                    variant="outline"
+                    className="border-blue-500 text-blue-500 hover:bg-blue-50"
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" /> Try Again
                   </Button>
                 </div>
               )}
 
-              {!isLoadingBookings && !isBookingsError && (!bookings || bookings.length === 0) && (
+              {/* Empty state */}
+              {!isLoadingBookings && !isBookingsError && filteredBookings.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-16 text-center px-6">
                   <Bike className="w-16 h-16 text-gray-300 mb-4" />
-                  <h4 className="text-lg font-semibold text-gray-600 mb-2">No bookings yet</h4>
-                  <p className="text-sm text-gray-400 mb-6">Book your first ride and it will appear here.</p>
-                  <Button
-                    onClick={() => navigate('/vehicles')}
-                    className="bg-blue-500 hover:bg-blue-600 text-white"
-                  >
-                    Browse Vehicles
-                  </Button>
+                  {sortedBookings.length === 0 ? (
+                    <>
+                      <h4 className="text-lg font-semibold text-gray-600 mb-2">No bookings yet</h4>
+                      <p className="text-sm text-gray-400 mb-6">Book your first ride and it will appear here.</p>
+                      <Button onClick={() => navigate('/vehicles')} className="bg-blue-500 hover:bg-blue-600 text-white">
+                        Browse Vehicles
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <h4 className="text-lg font-semibold text-gray-600 mb-2">No bookings found</h4>
+                      <p className="text-sm text-gray-400 mb-4">No bookings match the selected filter.</p>
+                      <button
+                        onClick={() => { setActiveFilter(-1); setCurrentPage(1); }}
+                        className="text-sm text-blue-500 hover:text-blue-600 font-medium"
+                      >
+                        Clear filter
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
 
-              {!isLoadingBookings && !isBookingsError && bookings && bookings.length > 0 && (
-                <div className="divide-y divide-gray-100">
-                  {bookings.map((booking) => (
-                    <div key={booking.id} className="p-5 hover:bg-gray-50 transition-colors">
-                      <div className="flex items-start justify-between gap-4">
-                        {/* Booking Icon + ID */}
-                        <div className="flex items-start gap-3 flex-1 min-w-0">
-                          <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <Bike className="w-5 h-5 text-blue-500" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap mb-1">
-                              <span className="text-xs font-semibold text-gray-400">
-                                Booking #{booking.id}
-                              </span>
-                              <StatusBadge status={booking.status} />
+              {/* Bookings list */}
+              {!isLoadingBookings && !isBookingsError && filteredBookings.length > 0 && (
+                <>
+                  <div className="divide-y divide-gray-100">
+                    {paginatedBookings.map((booking) => (
+                      <div key={booking.id} className="p-5 hover:bg-gray-50 transition-colors">
+                        <div className="flex items-start justify-between gap-4">
+
+                          <div className="flex items-start gap-3 flex-1 min-w-0">
+                            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <Bike className="w-5 h-5 text-blue-500" />
                             </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-sm mt-2">
-                              <div className="flex items-center gap-1.5 text-gray-600">
-                                <Calendar className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
-                                <span>
-                                  {formatDate(booking.bookingStartDate?.toString())} →{' '}
-                                  {formatDate(booking.bookingEndDate?.toString())}
-                                </span>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap mb-1">
+                                <span className="text-xs font-semibold text-gray-400">Booking #{booking.id}</span>
+                                <StatusBadge status={booking.status} />
                               </div>
-                              <div className="flex items-center gap-1.5 text-gray-600">
-                                <Clock className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
-                                <span>
-                                  {formatTime(booking.startTime?.toString())} –{' '}
-                                  {formatTime(booking.endTime?.toString())}
-                                </span>
-                              </div>
-                              {booking.pickupLocationId && (
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-sm mt-2">
                                 <div className="flex items-center gap-1.5 text-gray-600">
-                                  <MapPin className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
-                                  <span>Pickup Location #{booking.pickupLocationId}</span>
+                                  <Calendar className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                                  <span>
+                                    {formatDate(booking.bookingStartDate?.toString())} – {formatDate(booking.bookingEndDate?.toString())}
+                                  </span>
                                 </div>
-                              )}
+                                <div className="flex items-center gap-1.5 text-gray-600">
+                                  <Clock className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                                  <span>
+                                    {formatTime(booking.startTime?.toString())} – {formatTime(booking.endTime?.toString())}
+                                  </span>
+                                </div>
+                                {booking.pickupLocationId && (
+                                  <div className="flex items-center gap-1.5 text-gray-600">
+                                    <MapPin className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                                    <span>Pickup #{booking.pickupLocationId}</span>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        {/* Amount */}
-                        <div className="text-right flex-shrink-0">
-                          <p className="text-lg font-bold text-gray-900">
-                            ₹{Number(booking.totalAmount).toLocaleString('en-IN')}
-                          </p>
+
+                          <div className="text-right flex-shrink-0">
+                            <p className="text-lg font-bold text-gray-900">
+                              ₹{Number(booking.totalAmount).toLocaleString('en-IN')}
+                            </p>
+                          </div>
+
                         </div>
                       </div>
+                    ))}
+                  </div>
+
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50">
+                      <p className="text-sm text-gray-500">
+                        Showing{' '}
+                        <span className="font-semibold text-gray-700">
+                          {(currentPage - 1) * BOOKINGS_PER_PAGE + 1}–{Math.min(currentPage * BOOKINGS_PER_PAGE, filteredBookings.length)}
+                        </span>{' '}
+                        of <span className="font-semibold text-gray-700">{filteredBookings.length}</span> bookings
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setCurrentPage((p) => p - 1)}
+                          disabled={currentPage === 1}
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-600 hover:bg-white hover:border-blue-400 hover:text-blue-600 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          <ChevronLeft className="w-4 h-4" /> Prev
+                        </button>
+                        <button
+                          onClick={() => setCurrentPage((p) => p + 1)}
+                          disabled={currentPage === totalPages}
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-600 hover:bg-white hover:border-blue-400 hover:text-blue-600 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          Next <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
-                  ))}
-                </div>
+                  )}
+                </>
               )}
+
             </div>
           </div>
+
         </div>
       </div>
-
       <Footer />
     </div>
   );
