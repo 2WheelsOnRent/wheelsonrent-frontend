@@ -69,6 +69,34 @@ const PrivacyPolicy: React.FC = () => {
                 </div>
               </div>
             </section>
+            {/* Challan / Traffic Fine Policy */}
+                <section className="mb-8">
+                  <h2 className="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+                    <span className="text-2xl">🚦</span> Traffic Challan & Fine Policy
+                  </h2>
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-5 space-y-3">
+                    <p className="text-gray-700 leading-relaxed">
+                      Any traffic challan or fine issued by the <strong>RTO (Regional Transport Office)</strong> or
+                      <strong> Traffic Police</strong> during the rental period is the sole responsibility of the customer.
+                    </p>
+                    <p className="text-gray-700 leading-relaxed">
+                      If an online challan is received and the customer has not cleared it independently,
+                      <strong> ScootyOnRent will process the challan payment on the customer's behalf</strong> and
+                      charge an additional <strong className="text-red-600">10% processing fee</strong> on the
+                      total challan amount for this service.
+                    </p>
+                    <p className="text-gray-700 leading-relaxed">
+                      Customers are advised to check and clear any pending challans promptly to avoid
+                      the additional processing charge.
+                    </p>
+                    <div className="bg-yellow-100 border border-yellow-300 rounded-lg px-4 py-3 mt-2">
+                      <p className="text-sm text-yellow-800 font-medium">
+                        ⚠️ उदाहरण: यदि चालान ₹500 का है और ScootyOnRent द्वारा जमा कराया जाता है,
+                        तो कुल देय राशि ₹500 + ₹50 (10% processing fee) = <strong>₹550</strong> होगी।
+                      </p>
+                    </div>
+                  </div>
+                </section>
 
             {/* Data Collection */}
             <section>
