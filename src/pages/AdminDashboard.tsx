@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard, Users, Bike, Calendar, LogOut,
   TrendingUp, Plus, Edit, Trash2, Search,
-  CheckCircle, XCircle, ChevronDown, X, Save, Loader2, Image, Star,
+  CheckCircle, XCircle, ChevronDown, X, Save, Loader2,
+  Image, Star, MapPin, RefreshCw, Navigation, Battery,
+  Wifi, Gauge, Clock,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -33,22 +35,10 @@ import {
   useDeleteVehicleImageMutation,
 } from '../store/api/vehicleImageApi';
 import { uploadVehicleImage } from '../lib/supabase';
+import { getLiveData, type MapplsDeviceData } from '../config/mappls';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 
-// ── Vehicle Form Initial State ─────────────────────────────────────────────
-const EMPTY_VEHICLE: Omit<VehicleDto, 'id'> = {
-  name: '', make: '', model: '', districtId: 1,
-  isAvailable: true, featured: false,
-  pricePerHour: 0, pricePerDay: 0, minBookingHours: 4,
-  kmLimit: 100, excessKmCharge: 5, lateReturnCharge: 80,
-  rating: 0, fuelType: 'Petrol', vehicleType: 'Scooter',
-  kmTravelled: 0,
-  packages: { fourHours: 0, oneDay: 0, threeDays: 0, sevenDays: 0, fifteenDays: 0, monthly: 0 },
-  specs: { mileage: '', engineCapacity: '', topSpeed: '', weight: '' },
-};
-
-type ActiveTab = 'overview' | 'vehicles' | 'bookings' | 'users';
-type VehicleModalTab = 'details' | 'images';
+// ── FormField — outside component to prevent focus loss ───────────────────
 const FormField = ({
   label, value, onChange, type = 'text', required = false,
   placeholder = '', children, className = '',
@@ -72,6 +62,256 @@ const FormField = ({
     )}
   </div>
 );
+
+// ── Vehicle Form Initial State ─────────────────────────────────────────────
+const EMPTY_VEHICLE: Omit<VehicleDto, 'id'> = {
+  name: '', make: '', model: '', districtId: 1,
+  isAvailable: true, featured: false,
+  pricePerHour: 0, pricePerDay: 0, minBookingHours: 4,
+  kmLimit: 100, excessKmCharge: 5, lateReturnCharge: 80,
+  rating: 0, fuelType: 'Petrol', vehicleType: 'Scooter',
+  kmTravelled: 0, gpsDeviceId: '',
+  packages: { fourHours: 0, oneDay: 0, threeDays: 0, sevenDays: 0, fifteenDays: 0, monthly: 0 },
+  specs: { mileage: '', engineCapacity: '', topSpeed: '', weight: '' },
+};
+
+type ActiveTab = 'overview' | 'vehicles' | 'bookings' | 'users';
+type VehicleModalTab = 'details' | 'images';
+
+// ── Status config ──────────────────────────────────────────────────────────
+const getDeviceStatusConfig = (statusStr: string) => {
+  const s = statusStr?.toLowerCase();
+  if (s === 'moving') return { color: 'bg-green-100 text-green-700 border-green-200', dot: 'bg-green-500', label: 'Moving' };
+  if (s === 'idle')   return { color: 'bg-yellow-100 text-yellow-700 border-yellow-200', dot: 'bg-yellow-500', label: 'Idle' };
+  if (s === 'stopped') return { color: 'bg-red-100 text-red-700 border-red-200', dot: 'bg-red-500', label: 'Stopped' };
+  return { color: 'bg-gray-100 text-gray-700 border-gray-200', dot: 'bg-gray-400', label: statusStr };
+};
+
+// ── Tracking Modal ─────────────────────────────────────────────────────────
+const TrackingModal: React.FC<{
+  vehicle: VehicleDto;
+  onClose: () => void;
+}> = ({ vehicle, onClose }) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const markerRef = useRef<any>(null);
+
+  const [liveData, setLiveData] = useState<MapplsDeviceData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // ── Fetch live data ──────────────────────────────────────────────────────
+  const fetchData = async () => {
+    if (!vehicle.gpsDeviceId) return;
+    try {
+      setError(null);
+      const data = await getLiveData(vehicle.gpsDeviceId);
+      if (!data) { setError('No data received from device'); return; }
+      setLiveData(data);
+      setLastRefreshed(new Date());
+      updateMapMarker(data);
+    } catch (err) {
+      setError('Failed to fetch live data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Init map ─────────────────────────────────────────────────────────────
+  const initMap = (lat: number, lng: number) => {
+    const mappls = (window as any).mappls;
+    if (!mappls || !mapRef.current) return;
+
+    mapInstanceRef.current = new mappls.Map(mapRef.current, {
+      center: [lat, lng],
+      zoom: 15,
+    });
+
+    markerRef.current = new mappls.Marker({
+      map: mapInstanceRef.current,
+      position: { lat, lng },
+      icon: {
+        url: 'https://apis.mappls.com/map_v3/1.png',
+        width: 30,
+        height: 40,
+      },
+    });
+  };
+
+  // ── Update marker position ────────────────────────────────────────────────
+  const updateMapMarker = (data: MapplsDeviceData) => {
+    const mappls = (window as any).mappls;
+    if (!mappls) return;
+
+    const pos = { lat: data.latitude, lng: data.longitude };
+
+    if (!mapInstanceRef.current) {
+      // Map not yet initialized — init now
+      setTimeout(() => initMap(data.latitude, data.longitude), 300);
+      return;
+    }
+
+    if (markerRef.current) {
+      markerRef.current.setPosition(pos);
+    } else {
+      markerRef.current = new mappls.Marker({
+        map: mapInstanceRef.current,
+        position: pos,
+      });
+    }
+    mapInstanceRef.current.setCenter(pos);
+  };
+
+  // ── Lifecycle ────────────────────────────────────────────────────────────
+  useEffect(() => {
+    fetchData();
+    // Auto-refresh every 30 seconds
+    intervalRef.current = setInterval(fetchData, 30000);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (mapInstanceRef.current) {
+        try { mapInstanceRef.current.destroy?.(); } catch {}
+      }
+    };
+  }, [vehicle.gpsDeviceId]);
+
+  const statusConfig = liveData ? getDeviceStatusConfig(liveData.statusStr) : null;
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10 rounded-t-2xl">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+              <MapPin className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-gray-900">{vehicle.name}</h2>
+              <p className="text-xs text-gray-500">GPS: {vehicle.gpsDeviceId}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {lastRefreshed && (
+              <span className="text-xs text-gray-400 flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                {lastRefreshed.toLocaleTimeString()}
+              </span>
+            )}
+            <button
+              onClick={fetchData}
+              disabled={loading}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50 transition disabled:opacity-50"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-100 rounded-lg transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        <div className="p-6">
+          {loading && !liveData && (
+            <div className="flex flex-col items-center justify-center py-16">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-500 mb-3" />
+              <p className="text-gray-500">Fetching live location...</p>
+            </div>
+          )}
+
+          {error && !liveData && (
+            <div className="text-center py-16">
+              <XCircle className="w-12 h-12 text-red-400 mx-auto mb-3" />
+              <p className="text-red-600 font-medium">{error}</p>
+              <button
+                onClick={fetchData}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
+              >
+                Try Again
+              </button>
+            </div>
+          )}
+
+          {liveData && (
+            <>
+              {/* Status bar */}
+              <div className={`flex items-center justify-between px-4 py-3 rounded-xl border mb-5 ${statusConfig?.color}`}>
+                <div className="flex items-center gap-2">
+                  <span className={`w-2.5 h-2.5 rounded-full ${statusConfig?.dot} animate-pulse`} />
+                  <span className="font-semibold text-sm">{statusConfig?.label}</span>
+                  <span className="text-xs opacity-70">· {liveData.ignitionStatusStr}</span>
+                </div>
+                <span className="text-xs opacity-70">{liveData.gprsTimeStr}</span>
+              </div>
+
+              {/* Map */}
+              <div
+                ref={mapRef}
+                className="w-full h-72 rounded-xl overflow-hidden border border-gray-200 mb-5 bg-gray-100"
+                style={{ minHeight: '288px' }}
+              />
+
+              {/* Address */}
+              <div className="flex items-start gap-2 px-4 py-3 bg-gray-50 rounded-xl mb-5">
+                <MapPin className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+                <p className="text-sm text-gray-700">{liveData.address}</p>
+              </div>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+                <div className="bg-blue-50 rounded-xl p-4 text-center">
+                  <Gauge className="w-5 h-5 text-blue-500 mx-auto mb-1" />
+                  <p className="text-2xl font-bold text-blue-700">{liveData.speedKph.toFixed(0)}</p>
+                  <p className="text-xs text-blue-500 font-medium">km/h</p>
+                </div>
+
+                <div className="bg-green-50 rounded-xl p-4 text-center">
+                  <Navigation className="w-5 h-5 text-green-500 mx-auto mb-1" />
+                  <p className="text-2xl font-bold text-green-700">{liveData.todayKms.toFixed(1)}</p>
+                  <p className="text-xs text-green-500 font-medium">Today's km</p>
+                </div>
+
+                <div className="bg-yellow-50 rounded-xl p-4 text-center">
+                  <Battery className="w-5 h-5 text-yellow-500 mx-auto mb-1" />
+                  <p className="text-2xl font-bold text-yellow-700">{liveData.internalBatteryLevel}%</p>
+                  <p className="text-xs text-yellow-500 font-medium">Battery</p>
+                </div>
+
+                <div className="bg-purple-50 rounded-xl p-4 text-center">
+                  <Wifi className="w-5 h-5 text-purple-500 mx-auto mb-1" />
+                  <p className="text-sm font-bold text-purple-700">{liveData.gprsStateStr}</p>
+                  <p className="text-xs text-purple-500 font-medium">
+                    GPS: {liveData.gpsStateStr}
+                  </p>
+                </div>
+
+              </div>
+
+              {/* Power info */}
+              <div className="mt-4 flex items-center gap-2 text-xs text-gray-500 px-1">
+                <span>⚡ Main Power: {(liveData.mainPower / 1000).toFixed(2)}v</span>
+                <span>·</span>
+                <span>📡 Last GPS: {liveData.gpsTimeStr}</span>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+// AdminDashboard
+// ══════════════════════════════════════════════════════════════════════════════
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -85,6 +325,7 @@ const AdminDashboard: React.FC = () => {
   const [vehicleForm, setVehicleForm] = useState<Omit<VehicleDto, 'id'>>(EMPTY_VEHICLE);
   const [vehicleModalTab, setVehicleModalTab] = useState<VehicleModalTab>('details');
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [trackingVehicle, setTrackingVehicle] = useState<VehicleDto | null>(null);
   const [bookingSort, setBookingSort] = useState<{ column: string; direction: 'asc' | 'desc' }>({
     column: 'id', direction: 'desc',
   });
@@ -95,7 +336,6 @@ const AdminDashboard: React.FC = () => {
   const { data: bookings = [], isLoading: bookingsLoading, refetch: refetchBookings } = useGetBookingsQuery({ page: 1, size: 100 });
   const { data: districts = [] } = useGetDistrictsQuery({ page: 1, size: 100 });
 
-  // Vehicle images — only fetch when editing a vehicle
   const {
     data: vehicleImages = [],
     isLoading: imagesLoading,
@@ -151,6 +391,7 @@ const AdminDashboard: React.FC = () => {
       lateReturnCharge: vehicle.lateReturnCharge, rating: vehicle.rating,
       fuelType: vehicle.fuelType, vehicleType: vehicle.vehicleType,
       kmTravelled: vehicle.kmTravelled,
+      gpsDeviceId: vehicle.gpsDeviceId ?? '',
       packages: vehicle.packages ?? EMPTY_VEHICLE.packages,
       specs: vehicle.specs ?? EMPTY_VEHICLE.specs,
     });
@@ -167,12 +408,12 @@ const AdminDashboard: React.FC = () => {
       if (editingVehicle) {
         await updateVehicle({ id: editingVehicle.id, vehicle: { ...vehicleForm, id: editingVehicle.id } }).unwrap();
         toast.success('Vehicle updated successfully');
-        setVehicleModalTab('images'); // auto-switch to images tab after update
+        setVehicleModalTab('images');
       } else {
         const newVehicle = await createVehicle(vehicleForm as VehicleDto).unwrap();
         toast.success('Vehicle added! Now you can add images.');
-        setEditingVehicle(newVehicle); // set so images tab can use the new id
-        setVehicleModalTab('images'); // auto-switch to images tab after create
+        setEditingVehicle(newVehicle);
+        setVehicleModalTab('images');
         refetchVehicles();
       }
     } catch (err: any) {
@@ -183,29 +424,14 @@ const AdminDashboard: React.FC = () => {
   const handleUploadVehicleImage = async (file?: File) => {
     if (!file || !editingVehicle?.id) return;
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
-      toast.error('Only JPEG, PNG, WebP allowed');
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('File must be under 5MB');
-      return;
-    }
+    if (!allowedTypes.includes(file.type)) { toast.error('Only JPEG, PNG, WebP allowed'); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error('File must be under 5MB'); return; }
     setIsUploadingImage(true);
     try {
-      // Upload to Supabase storage
       const imageUrl = await uploadVehicleImage(file, editingVehicle.id);
       const isPrimary = vehicleImages.length === 0;
       const displayOrder = vehicleImages.length;
-
-      // Save image record to backend
-      await createVehicleImage({
-        vehicleId: editingVehicle.id,
-        imageUrl,
-        isPrimary,
-        displayOrder,
-      }).unwrap();
-
+      await createVehicleImage({ vehicleId: editingVehicle.id, imageUrl, isPrimary, displayOrder }).unwrap();
       toast.success('Image uploaded successfully!');
       refetchImages();
       refetchVehicles();
@@ -222,9 +448,7 @@ const AdminDashboard: React.FC = () => {
       toast.success('Primary image updated');
       refetchImages();
       refetchVehicles();
-    } catch {
-      toast.error('Failed to set primary image');
-    }
+    } catch { toast.error('Failed to set primary image'); }
   };
 
   const handleDeleteVehicleImage = async (image: any) => {
@@ -234,9 +458,7 @@ const AdminDashboard: React.FC = () => {
       toast.success('Image deleted');
       refetchImages();
       refetchVehicles();
-    } catch {
-      toast.error('Failed to delete image');
-    }
+    } catch { toast.error('Failed to delete image'); }
   };
 
   const handleDeleteVehicle = async (id: number) => {
@@ -331,10 +553,10 @@ const AdminDashboard: React.FC = () => {
 
         <nav className="px-4 space-y-2">
           {([
-            { id: 'overview', icon: LayoutDashboard, label: 'Dashboard' },
-            { id: 'vehicles', icon: Bike, label: 'Vehicles' },
-            { id: 'bookings', icon: Calendar, label: 'Bookings' },
-            { id: 'users', icon: Users, label: 'Users' },
+            { id: 'overview',  icon: LayoutDashboard, label: 'Dashboard' },
+            { id: 'vehicles',  icon: Bike,            label: 'Vehicles'  },
+            { id: 'bookings',  icon: Calendar,        label: 'Bookings'  },
+            { id: 'users',     icon: Users,           label: 'Users'     },
           ] as { id: ActiveTab; icon: any; label: string }[]).map(({ id, icon: Icon, label }) => (
             <button
               key={id}
@@ -365,14 +587,12 @@ const AdminDashboard: React.FC = () => {
         {activeTab === 'overview' && (
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-8">Dashboard Overview</h1>
-
-            {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {[
-                { label: 'Total Vehicles', value: stats.totalVehicles, sub: `${stats.availableVehicles} available`, icon: Bike, color: 'text-blue-600' },
-                { label: 'Active Bookings', value: stats.activeBookings, sub: `${stats.pendingBookings} pending`, icon: Calendar, color: 'text-green-600' },
-                { label: 'Total Users', value: stats.totalUsers, sub: 'registered', icon: Users, color: 'text-purple-600' },
-                { label: 'Revenue (Confirmed)', value: `₹${stats.monthlyRevenue.toLocaleString()}`, sub: 'total', icon: TrendingUp, color: 'text-orange-600' },
+                { label: 'Total Vehicles',      value: stats.totalVehicles,   sub: `${stats.availableVehicles} available`, icon: Bike,       color: 'text-blue-600'   },
+                { label: 'Active Bookings',      value: stats.activeBookings,  sub: `${stats.pendingBookings} pending`,    icon: Calendar,   color: 'text-green-600'  },
+                { label: 'Total Users',          value: stats.totalUsers,      sub: 'registered',                          icon: Users,      color: 'text-purple-600' },
+                { label: 'Revenue (Confirmed)',  value: `₹${stats.monthlyRevenue.toLocaleString()}`, sub: 'total',         icon: TrendingUp, color: 'text-orange-600' },
               ].map(({ label, value, sub, icon: Icon, color }) => (
                 <div key={label} className="bg-white rounded-xl shadow-md p-6">
                   <div className="flex items-center justify-between mb-2">
@@ -385,7 +605,6 @@ const AdminDashboard: React.FC = () => {
               ))}
             </div>
 
-            {/* Recent Activity */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-white rounded-xl shadow-md p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Bookings</h2>
@@ -447,7 +666,6 @@ const AdminDashboard: React.FC = () => {
               </button>
             </div>
 
-            {/* Search */}
             <div className="flex gap-4 mb-6">
               <div className="flex-1 relative">
                 <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -484,12 +702,16 @@ const AdminDashboard: React.FC = () => {
                         <td className="px-6 py-4">
                           {vehicle.isAvailable
                             ? <span className="flex items-center text-green-600 text-sm"><CheckCircle className="w-4 h-4 mr-1" />Available</span>
-                            : <span className="flex items-center text-red-600 text-sm"><XCircle className="w-4 h-4 mr-1" />Booked</span>}
+                            : <span className="flex items-center text-red-500 text-sm"><XCircle className="w-4 h-4 mr-1" />Inactive</span>}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-600">{vehicle.kmTravelled.toLocaleString()} km</td>
                         <td className="px-6 py-4">
                           <div className="flex space-x-2">
-                            <button onClick={() => handleOpenEditVehicle(vehicle)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition" title="Edit vehicle">
+                            <button
+                              onClick={() => handleOpenEditVehicle(vehicle)}
+                              className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition"
+                              title="Edit vehicle"
+                            >
                               <Edit className="w-4 h-4" />
                             </button>
                             <button
@@ -499,7 +721,21 @@ const AdminDashboard: React.FC = () => {
                             >
                               <Image className="w-4 h-4" />
                             </button>
-                            <button onClick={() => handleDeleteVehicle(vehicle.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Delete vehicle">
+                            {/* Track button — only shown if GPS device ID is set */}
+                            {vehicle.gpsDeviceId && (
+                              <button
+                                onClick={() => setTrackingVehicle(vehicle)}
+                                className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition"
+                                title="Track vehicle"
+                              >
+                                <MapPin className="w-4 h-4" />
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDeleteVehicle(vehicle.id)}
+                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                              title="Delete vehicle"
+                            >
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
@@ -526,13 +762,13 @@ const AdminDashboard: React.FC = () => {
                   <thead className="bg-gray-50">
                     <tr>
                       {[
-                        { label: 'Booking ID', col: 'id' },
-                        { label: 'Vehicle ID', col: 'vehicleId' },
-                        { label: 'User ID', col: 'userId' },
-                        { label: 'Start Date', col: 'bookingStartDate' },
-                        { label: 'Amount', col: 'totalAmount' },
-                        { label: 'Status', col: null },
-                        { label: 'Actions', col: null },
+                        { label: 'Booking ID',  col: 'id'               },
+                        { label: 'Vehicle ID',  col: 'vehicleId'        },
+                        { label: 'User ID',     col: 'userId'           },
+                        { label: 'Start Date',  col: 'bookingStartDate' },
+                        { label: 'Amount',      col: 'totalAmount'      },
+                        { label: 'Status',      col: null               },
+                        { label: 'Actions',     col: null               },
                       ].map(({ label, col }) => (
                         <th key={label} className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
                           {col ? (
@@ -658,7 +894,7 @@ const AdminDashboard: React.FC = () => {
               </button>
             </div>
 
-            {/* Modal Tabs — Images tab only when editing an existing vehicle */}
+            {/* Tabs — Images only when editing */}
             {editingVehicle && (
               <div className="flex border-b border-gray-200 px-6 bg-white sticky top-[73px] z-10">
                 {(['details', 'images'] as VehicleModalTab[]).map((tab) => (
@@ -671,11 +907,9 @@ const AdminDashboard: React.FC = () => {
                         : 'border-transparent text-gray-500 hover:text-gray-700'
                     }`}
                   >
-                    {tab === 'images' ? (
-                      <><Image className="w-4 h-4" />Images ({vehicleImages.length})</>
-                    ) : (
-                      <><Edit className="w-4 h-4" />Details</>
-                    )}
+                    {tab === 'images'
+                      ? <><Image className="w-4 h-4" />Images ({vehicleImages.length})</>
+                      : <><Edit className="w-4 h-4" />Details</>}
                   </button>
                 ))}
               </div>
@@ -691,8 +925,8 @@ const AdminDashboard: React.FC = () => {
                     <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Basic Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField label="Vehicle Name" value={vehicleForm.name} onChange={(v) => setVehicleForm({ ...vehicleForm, name: v })} required placeholder="e.g. Honda Activa 6G" />
-                      <FormField label="Make / Brand" value={vehicleForm.make} onChange={(v) => setVehicleForm({ ...vehicleForm, make: v })} required placeholder="e.g. Honda" />
-                      <FormField label="Model" value={vehicleForm.model} onChange={(v) => setVehicleForm({ ...vehicleForm, model: v })} required placeholder="e.g. Activa 6G" />
+                      <FormField label="Make / Brand"  value={vehicleForm.make} onChange={(v) => setVehicleForm({ ...vehicleForm, make: v })} required placeholder="e.g. Honda" />
+                      <FormField label="Model"         value={vehicleForm.model} onChange={(v) => setVehicleForm({ ...vehicleForm, model: v })} required placeholder="e.g. Activa 6G" />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                       <FormField label="Vehicle Type">
@@ -716,16 +950,34 @@ const AdminDashboard: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* GPS Device */}
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                      GPS Tracking
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        label="GPS Device ID"
+                        value={vehicleForm.gpsDeviceId ?? ''}
+                        onChange={(v) => setVehicleForm({ ...vehicleForm, gpsDeviceId: v })}
+                        placeholder="e.g. MMI847368"
+                      />
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1.5">
+                      Enter the Mappls InTouch device ID. A 📍 Track button will appear on this vehicle once saved.
+                    </p>
+                  </div>
+
                   {/* Pricing */}
                   <div>
                     <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Pricing</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <FormField label="Price/Hour (₹)" value={vehicleForm.pricePerHour} onChange={(v) => setVehicleForm({ ...vehicleForm, pricePerHour: v })} type="number" required />
-                      <FormField label="Price/Day (₹)" value={vehicleForm.pricePerDay} onChange={(v) => setVehicleForm({ ...vehicleForm, pricePerDay: v })} type="number" />
+                      <FormField label="Price/Hour (₹)"  value={vehicleForm.pricePerHour}    onChange={(v) => setVehicleForm({ ...vehicleForm, pricePerHour: v })}    type="number" required />
+                      <FormField label="Price/Day (₹)"   value={vehicleForm.pricePerDay}     onChange={(v) => setVehicleForm({ ...vehicleForm, pricePerDay: v })}     type="number" />
                       <FormField label="Min Booking Hrs" value={vehicleForm.minBookingHours} onChange={(v) => setVehicleForm({ ...vehicleForm, minBookingHours: v })} type="number" />
-                      <FormField label="KM Limit/Day" value={vehicleForm.kmLimit} onChange={(v) => setVehicleForm({ ...vehicleForm, kmLimit: v })} type="number" />
+                      <FormField label="KM Limit/Day"    value={vehicleForm.kmLimit}         onChange={(v) => setVehicleForm({ ...vehicleForm, kmLimit: v })}         type="number" />
                       <FormField label="Excess KM Charge" value={vehicleForm.excessKmCharge} onChange={(v) => setVehicleForm({ ...vehicleForm, excessKmCharge: v })} type="number" />
-                      <FormField label="Late Return/Hr" value={vehicleForm.lateReturnCharge} onChange={(v) => setVehicleForm({ ...vehicleForm, lateReturnCharge: v })} type="number" />
+                      <FormField label="Late Return/Hr"  value={vehicleForm.lateReturnCharge} onChange={(v) => setVehicleForm({ ...vehicleForm, lateReturnCharge: v })} type="number" />
                     </div>
                   </div>
 
@@ -751,10 +1003,10 @@ const AdminDashboard: React.FC = () => {
                   <div>
                     <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Specifications</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <FormField label="Mileage" value={vehicleForm.specs?.mileage} onChange={(v) => setVehicleForm({ ...vehicleForm, specs: { ...vehicleForm.specs!, mileage: v } })} placeholder="45 km/l" />
-                      <FormField label="Engine" value={vehicleForm.specs?.engineCapacity} onChange={(v) => setVehicleForm({ ...vehicleForm, specs: { ...vehicleForm.specs!, engineCapacity: v } })} placeholder="110cc" />
-                      <FormField label="Top Speed" value={vehicleForm.specs?.topSpeed} onChange={(v) => setVehicleForm({ ...vehicleForm, specs: { ...vehicleForm.specs!, topSpeed: v } })} placeholder="90 km/h" />
-                      <FormField label="Weight" value={vehicleForm.specs?.weight} onChange={(v) => setVehicleForm({ ...vehicleForm, specs: { ...vehicleForm.specs!, weight: v } })} placeholder="107 kg" />
+                      <FormField label="Mileage"   value={vehicleForm.specs?.mileage}         onChange={(v) => setVehicleForm({ ...vehicleForm, specs: { ...vehicleForm.specs!, mileage: v } })}         placeholder="45 km/l" />
+                      <FormField label="Engine"    value={vehicleForm.specs?.engineCapacity}   onChange={(v) => setVehicleForm({ ...vehicleForm, specs: { ...vehicleForm.specs!, engineCapacity: v } })}   placeholder="110cc" />
+                      <FormField label="Top Speed" value={vehicleForm.specs?.topSpeed}         onChange={(v) => setVehicleForm({ ...vehicleForm, specs: { ...vehicleForm.specs!, topSpeed: v } })}         placeholder="90 km/h" />
+                      <FormField label="Weight"    value={vehicleForm.specs?.weight}           onChange={(v) => setVehicleForm({ ...vehicleForm, specs: { ...vehicleForm.specs!, weight: v } })}           placeholder="107 kg" />
                     </div>
                   </div>
 
@@ -784,18 +1036,10 @@ const AdminDashboard: React.FC = () => {
                       <p className="text-xs text-gray-400 mt-0.5">First uploaded image is set as primary automatically</p>
                     </div>
                     <label className={`flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 cursor-pointer transition ${isUploadingImage ? 'opacity-60 cursor-not-allowed' : ''}`}>
-                      {isUploadingImage ? (
-                        <><Loader2 className="w-4 h-4 animate-spin" />Uploading...</>
-                      ) : (
-                        <><Plus className="w-4 h-4" />Upload Image</>
-                      )}
-                      <input
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp"
-                        className="hidden"
-                        disabled={isUploadingImage}
-                        onChange={(e) => handleUploadVehicleImage(e.target.files?.[0])}
-                      />
+                      {isUploadingImage
+                        ? <><Loader2 className="w-4 h-4 animate-spin" />Uploading...</>
+                        : <><Plus className="w-4 h-4" />Upload Image</>}
+                      <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" disabled={isUploadingImage} onChange={(e) => handleUploadVehicleImage(e.target.files?.[0])} />
                     </label>
                   </div>
 
@@ -824,32 +1068,21 @@ const AdminDashboard: React.FC = () => {
                             className="w-full h-36 object-cover"
                             onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x200?text=Image'; }}
                           />
-
-                          {/* Primary badge */}
                           {image.isPrimary && (
                             <div className="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
                               <Star className="w-3 h-3 fill-white" /> Primary
                             </div>
                           )}
-
-                          {/* Hover action overlay */}
                           <div className="absolute inset-0 bg-black/55 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 p-2">
                             {!image.isPrimary && (
-                              <button
-                                onClick={() => handleSetPrimaryImage(image)}
-                                className="flex items-center gap-1 px-2 py-1.5 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition"
-                              >
+                              <button onClick={() => handleSetPrimaryImage(image)} className="flex items-center gap-1 px-2 py-1.5 bg-green-500 text-white text-xs rounded-lg hover:bg-green-600 transition">
                                 <Star className="w-3 h-3" /> Set Primary
                               </button>
                             )}
-                            <button
-                              onClick={() => handleDeleteVehicleImage(image)}
-                              className="flex items-center gap-1 px-2 py-1.5 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition"
-                            >
+                            <button onClick={() => handleDeleteVehicleImage(image)} className="flex items-center gap-1 px-2 py-1.5 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition">
                               <Trash2 className="w-3 h-3" /> Delete
                             </button>
                           </div>
-
                           <div className="px-3 py-1.5 bg-white text-xs text-gray-500 flex justify-between">
                             <span>Order: {image.displayOrder}</span>
                             <span className="text-gray-400">#{image.id}</span>
@@ -866,18 +1099,12 @@ const AdminDashboard: React.FC = () => {
             {/* Modal Footer */}
             <div className="flex justify-end gap-3 p-6 border-t border-gray-200 sticky bottom-0 bg-white">
               {vehicleModalTab === 'images' ? (
-                <button
-                  onClick={() => setShowVehicleModal(false)}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                >
+                <button onClick={() => setShowVehicleModal(false)} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                   Done
                 </button>
               ) : (
                 <>
-                  <button
-                    onClick={() => setShowVehicleModal(false)}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
-                  >
+                  <button onClick={() => setShowVehicleModal(false)} className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
                     Cancel
                   </button>
                   <button
@@ -885,11 +1112,9 @@ const AdminDashboard: React.FC = () => {
                     disabled={creating || updating}
                     className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center disabled:opacity-50"
                   >
-                    {(creating || updating) ? (
-                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving...</>
-                    ) : (
-                      <><Save className="w-4 h-4 mr-2" />{editingVehicle ? 'Update Vehicle' : 'Add Vehicle'}</>
-                    )}
+                    {(creating || updating)
+                      ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving...</>
+                      : <><Save className="w-4 h-4 mr-2" />{editingVehicle ? 'Update Vehicle' : 'Add Vehicle'}</>}
                   </button>
                 </>
               )}
@@ -898,6 +1123,15 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* ════ TRACKING MODAL ════ */}
+      {trackingVehicle && (
+        <TrackingModal
+          vehicle={trackingVehicle}
+          onClose={() => setTrackingVehicle(null)}
+        />
+      )}
+
     </div>
   );
 };
