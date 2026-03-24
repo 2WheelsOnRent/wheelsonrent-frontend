@@ -416,7 +416,7 @@ const PrivacyPolicy: React.FC = () => {
                 <p><strong>Company:</strong> scootyonrent</p>
                 <p><strong>Email:</strong> privacy@scootyonrent.com</p>
                 <p><strong>Support Email:</strong> support@scootyonrent.com</p>
-                <p><strong>Phone:</strong> +91 98765 43210</p>
+                <p><strong>Phone:</strong> +91 9983391137</p>
                 <p><strong>Address:</strong> Surat, Gujarat, India</p>
                 <p><strong>Response Time:</strong> We respond to privacy inquiries within 48 hours</p>
               </div>
