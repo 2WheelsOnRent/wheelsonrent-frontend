@@ -230,12 +230,12 @@ const TrackingModal: React.FC<{
             <div className="text-center py-16">
               <XCircle className="w-12 h-12 text-red-400 mx-auto mb-3" />
               <p className="text-red-600 font-medium">{error}</p>
-              <button
+              {/* <button
                 onClick={fetchData}
                 className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
               >
                 Try Again
-              </button>
+              </button> */}
             </div>
           )}
 

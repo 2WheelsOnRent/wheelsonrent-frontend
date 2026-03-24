@@ -71,12 +71,12 @@ export default function VehicleCarousel() {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-16 flex items-center justify-center">
         <div className="text-center max-w-md">
           <p className="text-red-500 mb-4">Failed to load vehicles. Please try again later.</p>
-          <button
+          {/* <button
             onClick={() => window.location.reload()}
             className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
           >
             Retry
-          </button>
+          </button> */}
         </div>
       </div>
     );

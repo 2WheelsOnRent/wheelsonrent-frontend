@@ -278,13 +278,13 @@ export default function ProfilePage() {
                 <div className="flex flex-col items-center justify-center py-16 text-center px-6">
                   <AlertCircle className="w-12 h-12 text-red-400 mb-3" />
                   <p className="text-gray-600 mb-4">Failed to load bookings</p>
-                  <Button
+                  {/* <Button
                     onClick={() => { refetchBookings(); setCurrentPage(1); }}
                     variant="outline"
                     className="border-blue-500 text-blue-500 hover:bg-blue-50"
                   >
                     <RefreshCw className="w-4 h-4 mr-2" /> Try Again
-                  </Button>
+                  </Button> */}
                 </div>
               )}
 

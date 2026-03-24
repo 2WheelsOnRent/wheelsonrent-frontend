@@ -47,7 +47,6 @@ const router = createBrowserRouter([
     ],
   },
 
-  // ── Admin routes (NO WhatsApp button) ──
   { path: '/admin-login', element: <AdminLogin /> },
   {
     path: '/admin',

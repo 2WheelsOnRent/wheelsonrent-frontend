@@ -369,7 +369,7 @@ const TermsAndConditions: React.FC = () => {
               <div className="space-y-2 text-gray-700">
                 <p><strong>Company:</strong> scootyonrent</p>
                 <p><strong>Email:</strong> support@scootyonrent.com</p>
-                <p><strong>Phone:</strong> +91 98765 43210</p>
+                <p><strong>Phone:</strong> +91 9983391137</p>
                 <p><strong>Address:</strong> Surat, Gujarat, India</p>
                 <p><strong>Customer Support Hours:</strong> 9:00 AM - 8:00 PM (All Days)</p>
               </div>
