@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Phone, Lock, Mail, User, ArrowRight, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { Phone, Lock, Mail, User, ArrowRight, AlertCircle,  Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSendOtpMutation, useVerifyOtpMutation } from '../store/api/authApi';
 
@@ -13,7 +13,7 @@ const AuthPage: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [step, setStep] = useState<'phone' | 'otp' | 'details'>('phone');
-  const [generatedOtp, setGeneratedOtp] = useState('');
+  const [, setGeneratedOtp] = useState('');
 
   const [sendOtp, { isLoading: isSendingOtp }] = useSendOtpMutation();
   const [/*verifyOtp*/, { isLoading: isVerifyingOtp }] = useVerifyOtpMutation();
@@ -249,14 +249,14 @@ const AuthPage: React.FC = () => {
                 </p>
               </div>
 
-              {generatedOtp && (
+              {/* {generatedOtp && (
                 <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                   <p className="text-sm text-green-800 flex items-center">
                     <CheckCircle className="w-4 h-4 mr-2" />
                     Development OTP: <strong className="ml-2">{generatedOtp}</strong>
                   </p>
                 </div>
-              )}
+              )} */}
 
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
