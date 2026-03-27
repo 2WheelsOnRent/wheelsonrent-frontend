@@ -58,7 +58,7 @@ const PrivacyPolicy: React.FC = () => {
                 <h3 className="text-lg font-semibold text-gray-800">Definitions</h3>
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-3 text-sm">
                   <p><strong>Account:</strong> A unique account created for you to access our Service or parts of our Service.</p>
-                  <p><strong>Company:</strong> Refers to scootyonrent, Surat, Gujarat, India.</p>
+                  <p><strong>Company:</strong> Refers to scootyonrent, Udaipur, Rajaathan, India.</p>
                   <p><strong>Cookies:</strong> Small files placed on your device containing browsing history details.</p>
                   <p><strong>Country:</strong> Refers to Gujarat, India.</p>
                   <p><strong>Device:</strong> Any device that can access the Service (computer, phone, tablet).</p>
@@ -417,7 +417,7 @@ const PrivacyPolicy: React.FC = () => {
                 <p><strong>Email:</strong> privacy@scootyonrent.com</p>
                 <p><strong>Support Email:</strong> support@scootyonrent.com</p>
                 <p><strong>Phone:</strong> +91 9983391137</p>
-                <p><strong>Address:</strong> Surat, Gujarat, India</p>
+                <p><strong>Address:</strong> Udaipur, Rajasthan, India</p>
                 <p><strong>Response Time:</strong> We respond to privacy inquiries within 48 hours</p>
               </div>
             </section>

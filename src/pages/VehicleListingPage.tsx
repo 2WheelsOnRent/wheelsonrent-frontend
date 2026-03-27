@@ -8,7 +8,7 @@ import { ErrorMessage } from '../components/ErrorMessage';
 import { useSearchAvailableVehiclesQuery } from '../store/api/vehicleApi';
 import BackgroundSlideshow from '../components/BackgroundSlideshow';
 import { Slider } from '../components/ui/slider';
-import { Calendar, AlertCircle, Filter, X, SlidersHorizontal } from 'lucide-react';
+import { AlertCircle, Filter, X, SlidersHorizontal } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
 const VehicleListingPage: React.FC = () => {
@@ -79,7 +79,7 @@ const VehicleListingPage: React.FC = () => {
           </div>
 
           {/* Search criteria banner */}
-          {startDate && startTime && endDate && endTime && (
+          {/* {startDate && startTime && endDate && endTime && (
             <div className="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-6">
               <div className="flex items-start">
                 <Calendar className="w-6 h-6 text-blue-600 mr-3 mt-0.5 flex-shrink-0" />
@@ -105,7 +105,7 @@ const VehicleListingPage: React.FC = () => {
                 </div>
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Main Layout: Left Filters + Right Grid */}
           <div className="flex gap-8 items-start">
