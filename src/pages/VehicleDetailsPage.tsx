@@ -182,10 +182,10 @@ const VehicleDetailsPage: React.FC = () => {
       <header className="bg-white shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center">
-            <button onClick={() => navigate(-1)} className="text-gray-600 hover:text-blue-600 mr-4 transition">
+            <button onClick={() => navigate(-1)} className="text-gray-600 hover:text-primary-600 mr-4 transition">
               <ChevronLeft className="w-6 h-6" />
             </button>
-            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-indigo-600 bg-clip-text text-transparent">
               scootyonrent
             </Link>
           </div>
@@ -227,29 +227,29 @@ const VehicleDetailsPage: React.FC = () => {
               </div>
 
               <div className="flex items-center text-gray-600 mb-6">
-                <MapPin className="w-5 h-5 mr-2 text-blue-600" />
+                <MapPin className="w-5 h-5 mr-2 text-primary-600" />
                 <span>Available in District {vehicleData.districtId}</span>
               </div>
 
               {/* Specifications */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <Gauge className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+                  <Gauge className="w-6 h-6 mx-auto mb-2 text-primary-600" />
                   <p className="text-sm text-gray-600">Km Travelled</p>
                   <p className="font-semibold text-gray-900">{vehicleData.kmTravelled.toLocaleString()}</p>
                 </div>
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <Clock className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+                  <Clock className="w-6 h-6 mx-auto mb-2 text-primary-600" />
                   <p className="text-sm text-gray-600">Min Booking</p>
                   <p className="font-semibold text-gray-900">{vehicleData.minBookingHours} hours</p>
                 </div>
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <Fuel className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+                  <Fuel className="w-6 h-6 mx-auto mb-2 text-primary-600" />
                   <p className="text-sm text-gray-600">Fuel Type</p>
                   <p className="font-semibold text-gray-900">{vehicleData.fuelType}</p>
                 </div>
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <Shield className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+                  <Shield className="w-6 h-6 mx-auto mb-2 text-primary-600" />
                   <p className="text-sm text-gray-600">Type</p>
                   <p className="font-semibold text-gray-900">{vehicleData.vehicleType}</p>
                 </div>
@@ -257,7 +257,7 @@ const VehicleDetailsPage: React.FC = () => {
 
               {/* Pricing */}
               {vehicleData.packages && (
-                <div className="bg-blue-50 rounded-lg p-4">
+                <div className="bg-primary-50 rounded-lg p-4">
                   <h3 className="font-semibold text-gray-900 mb-3">Package Pricing</h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
                     <div>
@@ -326,7 +326,7 @@ const VehicleDetailsPage: React.FC = () => {
             <div className="bg-white rounded-xl shadow-md p-6 sticky top-24">
               <div className="mb-6">
                 <div className="flex items-baseline mb-2">
-                  <span className="text-4xl font-bold text-blue-600">₹{vehicleData.pricePerHour}</span>
+                  <span className="text-4xl font-bold text-primary-600">₹{vehicleData.pricePerHour}</span>
                   <span className="text-gray-600 ml-2">/hour</span>
                 </div>
                 <p className="text-sm text-gray-500">Minimum {vehicleData.minBookingHours} hours booking required</p>
@@ -354,13 +354,13 @@ const VehicleDetailsPage: React.FC = () => {
                       value={bookingDates.startDate || ''}
                       onChange={(e) => setBookingDates({ ...bookingDates, startDate: e.target.value })}
                       min={new Date().toISOString().split('T')[0]}
-                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                     />
                     <input
                       type="time"
                       value={bookingDates.startTime || ''}
                       onChange={(e) => setBookingDates({ ...bookingDates, startTime: e.target.value })}
-                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                     />
                   </div>
                 </div>
@@ -377,13 +377,13 @@ const VehicleDetailsPage: React.FC = () => {
                       value={bookingDates.endDate || ''}
                       onChange={(e) => setBookingDates({ ...bookingDates, endDate: e.target.value })}
                       min={bookingDates.startDate || new Date().toISOString().split('T')[0]}
-                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                     />
                     <input
                       type="time"
                       value={bookingDates.endTime || ''}
                       onChange={(e) => setBookingDates({ ...bookingDates, endTime: e.target.value })}
-                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                     />
                   </div>
                 </div>
@@ -398,7 +398,7 @@ const VehicleDetailsPage: React.FC = () => {
                     <select
                       value={selectedPickup}
                       onChange={(e) => setSelectedPickup(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                     >
                       <option value="">Select pickup location</option>
                       {locationsData?.map((loc) => (
@@ -420,7 +420,7 @@ const VehicleDetailsPage: React.FC = () => {
                     <select
                       value={selectedDrop}
                       onChange={(e) => setSelectedDrop(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                     >
                       <option value="">Select drop location</option>
                       {locationsData?.map((loc) => (
@@ -434,7 +434,7 @@ const VehicleDetailsPage: React.FC = () => {
 
                 {/* Duration Display */}
                 {calculateTotalHours() > 0 && (
-                  <div className="p-3 bg-blue-50 rounded-lg">
+                  <div className="p-3 bg-primary-50 rounded-lg">
                     <div className="flex justify-between text-sm mb-2">
                       <span className="text-gray-600">Duration</span>
                       <span className="font-medium text-gray-900">{calculateTotalHours()} hours</span>
@@ -445,14 +445,14 @@ const VehicleDetailsPage: React.FC = () => {
                     </div>
                     <div className="border-t border-gray-200 pt-2 mt-2 flex justify-between">
                       <span className="font-semibold text-gray-900">Total Amount</span>
-                      <span className="font-bold text-xl text-blue-600">₹{calculateTotal()}</span>
+                      <span className="font-bold text-xl text-primary-600">₹{calculateTotal()}</span>
                     </div>
                   </div>
                 )}
 
                 {/* Info Alert */}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start">
-                  <AlertCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
+                <div className="bg-primary-50 border border-primary-200 rounded-lg p-3 flex items-start">
+                  <AlertCircle className="w-5 h-5 text-primary-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p className="text-sm text-blue-800">
                     Payment will be processed securely through EaseBuzz after booking confirmation.
                   </p>
@@ -461,7 +461,7 @@ const VehicleDetailsPage: React.FC = () => {
                 <button
                   onClick={handleProceedToPayment}
                   disabled={bookingLoading || !selectedPickup || !selectedDrop || !bookingDates.startDate || !bookingDates.endDate}
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  className="w-full bg-gradient-to-r from-primary-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-primary-700 hover:to-indigo-700 transition transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   {bookingLoading ? 'Processing...' : 'Proceed to Payment'}
                 </button>

@@ -177,7 +177,7 @@ export default function BookNow() {
           <Button
             variant="ghost"
             onClick={() => navigate(-1)}
-            className="mb-4 text-blue-500 hover:text-blue-600"
+            className="mb-4 text-primary-500 hover:text-primary-600"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
@@ -211,7 +211,7 @@ export default function BookNow() {
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">{vehicleData.name}</h3>
                     <p className="text-gray-600 mb-3">{vehicleData.make} {vehicleData.model}</p>
                     <div className="flex gap-4 text-sm">
-                      <span className="text-blue-600 font-bold text-xl">₹{vehicleData.pricePerHour}/hr</span>
+                      <span className="text-primary-600 font-bold text-xl">₹{vehicleData.pricePerHour}/hr</span>
                       <span className="text-gray-500 self-end">Min: {vehicleData.minBookingHours}h</span>
                     </div>
                   </div>
@@ -232,8 +232,8 @@ export default function BookNow() {
 
                 {/* Pre-filled dates notice */}
                 {startDateParam && startTimeParam && endDateParam && endTimeParam && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 flex items-start">
-                    <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
+                  <div className="bg-primary-50 border border-primary-200 rounded-lg p-3 mb-4 flex items-start">
+                    <CheckCircle className="w-5 h-5 text-primary-600 mr-2 mt-0.5 flex-shrink-0" />
                     <p className="text-sm text-blue-800">
                       Booking dates and times have been pre-filled from your search. You can modify them if needed.
                     </p>
@@ -255,7 +255,7 @@ export default function BookNow() {
                           setBookingDates({ ...bookingDates, startDate: e.target.value })
                         }
                         min={new Date().toISOString().split('T')[0]}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                       />
                       <input
                         type="time"
@@ -263,7 +263,7 @@ export default function BookNow() {
                         onChange={(e) =>
                           setBookingDates({ ...bookingDates, startTime: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                       />
                     </div>
                   </div>
@@ -282,7 +282,7 @@ export default function BookNow() {
                           setBookingDates({ ...bookingDates, endDate: e.target.value })
                         }
                         min={bookingDates.startDate || new Date().toISOString().split('T')[0]}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                       />
                       <input
                         type="time"
@@ -290,7 +290,7 @@ export default function BookNow() {
                         onChange={(e) =>
                           setBookingDates({ ...bookingDates, endTime: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                       />
                     </div>
                   </div>
@@ -298,7 +298,7 @@ export default function BookNow() {
 
                 {/* Duration Display */}
                 {totalHours > 0 && (
-                  <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                  <div className="mt-4 p-3 bg-primary-50 rounded-lg">
                     <p className="text-sm text-blue-800">
                       Total Duration: <strong>{totalHours} hours</strong>
                       {vehicleData.minBookingHours && totalHours < vehicleData.minBookingHours && (
@@ -326,7 +326,7 @@ export default function BookNow() {
 
               {/* Login notice shown below PriceCalculator when not logged in */}
               {/* {!user && (
-                <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200 text-center">
+                <div className="mt-4 p-4 bg-primary-50 rounded-lg border border-primary-200 text-center">
                   <p className="text-sm text-gray-700 mb-3">
                     You'll be asked to login before completing payment
                   </p>
@@ -343,7 +343,7 @@ export default function BookNow() {
                       sessionStorage.setItem('bookingIntent', JSON.stringify(intent));
                       navigate(`/auth?redirect=/book/${id}`);
                     }}
-                    className="bg-blue-500 hover:bg-blue-600 text-white"
+                    className="bg-primary-500 hover:bg-primary-600 text-white"
                   >
                     Login to Continue
                   </Button>

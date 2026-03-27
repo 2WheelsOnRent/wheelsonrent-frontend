@@ -118,7 +118,7 @@ export default function MapWithLocations({
   if (isLoading) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-8 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-blue-500 animate-spin mr-3" />
+        <Loader2 className="w-8 h-8 text-primary-500 animate-spin mr-3" />
         <span className="text-gray-600">Loading pickup locations...</span>
       </div>
     );
@@ -191,12 +191,12 @@ export default function MapWithLocations({
 
       {/* Location List */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4">
+        <div className="bg-gradient-to-r from-primary-600 to-indigo-600 text-white p-4">
           <h3 className="text-lg font-semibold flex items-center">
             <MapPin className="w-5 h-5 mr-2" />
             Pickup Locations
           </h3>
-          <p className="text-sm text-blue-100 mt-1">
+          <p className="text-sm text-primary-100 mt-1">
             Click on a location to view directions
           </p>
         </div>
@@ -210,15 +210,15 @@ export default function MapWithLocations({
                   onClick={() => handleLocationClick(location)}
                   className={`w-full text-left p-4 rounded-lg border transition-all ${
                     selectedLocation?.id === location.id
-                      ? 'border-blue-500 bg-blue-50 shadow-md'
-                      : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
+                      ? 'border-primary-500 bg-primary-50 shadow-md'
+                      : 'border-gray-200 hover:border-primary-300 hover:bg-gray-50'
                   }`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-start flex-1">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                         selectedLocation?.id === location.id
-                          ? 'bg-blue-500'
+                          ? 'bg-primary-500'
                           : 'bg-gray-200'
                       }`}>
                         <MapPin className={`w-5 h-5 ${
@@ -243,7 +243,7 @@ export default function MapWithLocations({
                         }}
                         className={`ml-2 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center transition-colors ${
                           selectedLocation?.id === location.id
-                            ? 'bg-blue-500 text-white hover:bg-blue-600'
+                            ? 'bg-primary-500 text-white hover:bg-primary-600'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
@@ -265,7 +265,7 @@ export default function MapWithLocations({
 
         {/* Selected Location Summary */}
         {selectedLocation && (
-          <div className="border-t border-gray-200 bg-blue-50 p-4">
+          <div className="border-t border-gray-200 bg-primary-50 p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Selected Pickup Point:</p>
@@ -274,7 +274,7 @@ export default function MapWithLocations({
               {selectedLocation.latitude && selectedLocation.longitude && (
                 <button
                   onClick={() => openGoogleMapsDirections(selectedLocation)}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center text-sm font-medium"
+                  className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors flex items-center text-sm font-medium"
                 >
                   <Navigation className="w-4 h-4 mr-2" />
                   Get Directions

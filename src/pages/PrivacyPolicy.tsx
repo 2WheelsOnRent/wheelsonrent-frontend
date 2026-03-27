@@ -18,7 +18,7 @@ const PrivacyPolicy: React.FC = () => {
           {/* Back Button */}
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center text-blue-500 hover:text-blue-600 mb-6 transition"
+            className="flex items-center text-primary-500 hover:text-primary-600 mb-6 transition"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back
@@ -159,21 +159,21 @@ const PrivacyPolicy: React.FC = () => {
                 
                 <div className="space-y-4">
                   {/* Cookies Types */}
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
                     <h4 className="font-semibold text-gray-800 mb-2">Types of Cookies We Use:</h4>
                     <div className="space-y-3 text-sm">
                       <div>
-                        <p className="font-semibold text-blue-700">Necessary / Essential Cookies</p>
+                        <p className="font-semibold text-primary-700">Necessary / Essential Cookies</p>
                         <p>Type: Session Cookies</p>
                         <p>Purpose: Essential for providing services and enabling features. Required for authentication and fraud prevention.</p>
                       </div>
                       <div>
-                        <p className="font-semibold text-blue-700">Cookies Policy / Notice Acceptance Cookies</p>
+                        <p className="font-semibold text-primary-700">Cookies Policy / Notice Acceptance Cookies</p>
                         <p>Type: Persistent Cookies</p>
                         <p>Purpose: Identify if users have accepted cookie usage on the website.</p>
                       </div>
                       <div>
-                        <p className="font-semibold text-blue-700">Functionality Cookies</p>
+                        <p className="font-semibold text-primary-700">Functionality Cookies</p>
                         <p>Type: Persistent Cookies</p>
                         <p>Purpose: Remember choices you make (login details, language preference) for a more personalized experience.</p>
                       </div>
@@ -229,7 +229,7 @@ const PrivacyPolicy: React.FC = () => {
                   <p><strong>With your consent:</strong> For any other purpose with your explicit consent.</p>
                   <p><strong>Legal requirements:</strong> When required by law or to respond to valid legal requests.</p>
                 </div>
-                <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                <div className="bg-primary-50 border-l-4 border-primary-400 p-4 rounded">
                   <p className="text-sm">
                     <strong>We do NOT:</strong> Sell, rent, or trade your personal information to third parties for marketing purposes.
                   </p>
@@ -387,14 +387,14 @@ const PrivacyPolicy: React.FC = () => {
                   <li>Sending an email notification for significant changes</li>
                   <li>Displaying a prominent notice on our Service</li>
                 </ul>
-                <p className="text-sm text-blue-600">
+                <p className="text-sm text-primary-600">
                   You are advised to review this Privacy Policy periodically for any changes. Changes are effective when posted on this page.
                 </p>
               </div>
             </section>
 
             {/* Your Rights */}
-            <section className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+            <section className="bg-primary-50 border border-primary-200 rounded-xl p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Your Data Protection Rights</h2>
               <div className="space-y-2 text-gray-700 text-sm">
                 <p><strong>Right to Access:</strong> Request copies of your personal data</p>

@@ -70,7 +70,7 @@
 //     const statusMap = {
 //       0: { text: 'Pending', color: 'bg-yellow-100 text-yellow-800' },
 //       1: { text: 'Confirmed', color: 'bg-green-100 text-green-800' },
-//       2: { text: 'Completed', color: 'bg-blue-100 text-blue-800' },
+//       2: { text: 'Completed', color: 'bg-primary-100 text-blue-800' },
 //       3: { text: 'Cancelled', color: 'bg-red-100 text-red-800' }
 //     };
 //     const { text, color } = statusMap[status as keyof typeof statusMap];
@@ -83,17 +83,17 @@
 //       <header className="bg-white shadow-sm">
 //         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
 //           <div className="flex items-center justify-between">
-//             <a href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+//             <a href="/" className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-indigo-600 bg-clip-text text-transparent">
 //               scootyonrent
 //             </a>
 //             <div className="flex items-center space-x-4">
-//               <button className="relative text-gray-600 hover:text-blue-600 transition">
+//               <button className="relative text-gray-600 hover:text-primary-600 transition">
 //                 <Bell className="w-6 h-6" />
 //                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
 //                   2
 //                 </span>
 //               </button>
-//               <a href="/" className="text-gray-600 hover:text-blue-600 transition">
+//               <a href="/" className="text-gray-600 hover:text-primary-600 transition">
 //                 Browse Vehicles
 //               </a>
 //             </div>
@@ -107,12 +107,12 @@
 //           <aside className="lg:col-span-1">
 //             <div className="bg-white rounded-xl shadow-md overflow-hidden">
 //               {/* User Info */}
-//               <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
+//               <div className="bg-gradient-to-r from-primary-600 to-indigo-600 p-6 text-white">
 //                 <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
-//                   <User className="w-10 h-10 text-blue-600" />
+//                   <User className="w-10 h-10 text-primary-600" />
 //                 </div>
 //                 <h2 className="text-xl font-bold text-center">{user.name}</h2>
-//                 <p className="text-blue-100 text-center text-sm">{user.phone}</p>
+//                 <p className="text-primary-100 text-center text-sm">{user.phone}</p>
 //               </div>
 
 //               {/* Navigation */}
@@ -121,7 +121,7 @@
 //                   onClick={() => setActiveTab('bookings')}
 //                   className={`w-full flex items-center px-4 py-3 rounded-lg transition ${
 //                     activeTab === 'bookings'
-//                       ? 'bg-blue-50 text-blue-600 font-semibold'
+//                       ? 'bg-primary-50 text-primary-600 font-semibold'
 //                       : 'text-gray-700 hover:bg-gray-50'
 //                   }`}
 //                 >
@@ -133,7 +133,7 @@
 //                   onClick={() => setActiveTab('payments')}
 //                   className={`w-full flex items-center px-4 py-3 rounded-lg transition ${
 //                     activeTab === 'payments'
-//                       ? 'bg-blue-50 text-blue-600 font-semibold'
+//                       ? 'bg-primary-50 text-primary-600 font-semibold'
 //                       : 'text-gray-700 hover:bg-gray-50'
 //                   }`}
 //                 >
@@ -145,7 +145,7 @@
 //                   onClick={() => setActiveTab('profile')}
 //                   className={`w-full flex items-center px-4 py-3 rounded-lg transition ${
 //                     activeTab === 'profile'
-//                       ? 'bg-blue-50 text-blue-600 font-semibold'
+//                       ? 'bg-primary-50 text-primary-600 font-semibold'
 //                       : 'text-gray-700 hover:bg-gray-50'
 //                   }`}
 //                 >
@@ -168,7 +168,7 @@
 //               <div>
 //                 <div className="flex items-center justify-between mb-6">
 //                   <h2 className="text-3xl font-bold text-gray-900">My Bookings</h2>
-//                   <a href="/vehicles" className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+//                   <a href="/vehicles" className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition">
 //                     Book New Vehicle
 //                   </a>
 //                 </div>
@@ -181,7 +181,7 @@
 //                         <p className="text-gray-600 text-sm mb-1">Total Bookings</p>
 //                         <p className="text-3xl font-bold text-gray-900">{bookings.length}</p>
 //                       </div>
-//                       <Calendar className="w-12 h-12 text-blue-600" />
+//                       <Calendar className="w-12 h-12 text-primary-600" />
 //                     </div>
 //                   </div>
 //                   <div className="bg-white rounded-xl shadow-md p-6">
@@ -229,28 +229,28 @@
 
 //                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 //                             <div className="flex items-center text-gray-600">
-//                               <Calendar className="w-5 h-5 mr-2 text-blue-600" />
+//                               <Calendar className="w-5 h-5 mr-2 text-primary-600" />
 //                               <div>
 //                                 <p className="text-xs text-gray-500">Date</p>
 //                                 <p className="font-medium">{booking.startDate} to {booking.endDate}</p>
 //                               </div>
 //                             </div>
 //                             <div className="flex items-center text-gray-600">
-//                               <Clock className="w-5 h-5 mr-2 text-blue-600" />
+//                               <Clock className="w-5 h-5 mr-2 text-primary-600" />
 //                               <div>
 //                                 <p className="text-xs text-gray-500">Time</p>
 //                                 <p className="font-medium">{booking.startTime} - {booking.endTime}</p>
 //                               </div>
 //                             </div>
 //                             <div className="flex items-center text-gray-600">
-//                               <MapPin className="w-5 h-5 mr-2 text-blue-600" />
+//                               <MapPin className="w-5 h-5 mr-2 text-primary-600" />
 //                               <div>
 //                                 <p className="text-xs text-gray-500">Pickup</p>
 //                                 <p className="font-medium">{booking.pickupLocation}</p>
 //                               </div>
 //                             </div>
 //                             <div className="flex items-center text-gray-600">
-//                               <MapPin className="w-5 h-5 mr-2 text-blue-600" />
+//                               <MapPin className="w-5 h-5 mr-2 text-primary-600" />
 //                               <div>
 //                                 <p className="text-xs text-gray-500">Drop</p>
 //                                 <p className="font-medium">{booking.dropLocation}</p>
@@ -260,7 +260,7 @@
 
 //                           <div className="flex items-center justify-between pt-4 border-t border-gray-200">
 //                             <div>
-//                               <span className="text-2xl font-bold text-blue-600">₹{booking.totalAmount}</span>
+//                               <span className="text-2xl font-bold text-primary-600">₹{booking.totalAmount}</span>
 //                               <span className="text-sm text-gray-600 ml-2">({booking.paymentStatus})</span>
 //                             </div>
 //                             <div className="flex space-x-2">
@@ -316,7 +316,7 @@
 //                               </span>
 //                             </td>
 //                             <td className="px-6 py-4">
-//                               <button className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center">
+//                               <button className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center">
 //                                 <FileText className="w-4 h-4 mr-1" />
 //                                 Invoice
 //                               </button>
@@ -343,7 +343,7 @@
 //                       <input
 //                         type="text"
 //                         defaultValue={user.name}
-//                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+//                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
 //                       />
 //                     </div>
 //                     <div>
@@ -360,14 +360,14 @@
 //                       <input
 //                         type="email"
 //                         defaultValue={user.email}
-//                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+//                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
 //                       />
 //                     </div>
 //                     <div>
 //                       <label className="block text-sm font-medium text-gray-700 mb-2">District</label>
 //                       <select
 //                         defaultValue={user.districtId}
-//                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+//                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
 //                       >
 //                         <option value="1">Surat</option>
 //                         <option value="2">Ahmedabad</option>
@@ -375,7 +375,7 @@
 //                         <option value="4">Rajkot</option>
 //                       </select>
 //                     </div>
-//                     <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+//                     <button className="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition">
 //                       Update Profile
 //                     </button>
 //                   </div>

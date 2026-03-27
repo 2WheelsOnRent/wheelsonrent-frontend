@@ -209,7 +209,7 @@ export default function Login() {
                 <Button
                   onClick={handleSendOTP}
                   disabled={isSending || phoneNumber.length !== 10}
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white py-6"
+                  className="w-full bg-primary-500 hover:bg-primary-600 text-white py-6"
                 >
                   {isSending ? (
                     <>
@@ -232,7 +232,7 @@ export default function Login() {
                       setStep('phone');
                       setOtp('');
                     }}
-                    className="text-sm text-blue-500 hover:text-blue-600 mb-2 block w-full"
+                    className="text-sm text-primary-500 hover:text-primary-600 mb-2 block w-full"
                   >
                     ← Change number
                   </button>
@@ -262,7 +262,7 @@ export default function Login() {
                 <Button
                   onClick={handleVerifyOTP}
                   disabled={isVerifying || otp.length !== 6}
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white py-6"
+                  className="w-full bg-primary-500 hover:bg-primary-600 text-white py-6"
                 >
                   {isVerifying ? (
                     <>
@@ -282,7 +282,7 @@ export default function Login() {
                     className={`text-sm ${
                       countdown > 0
                         ? 'text-gray-400 cursor-not-allowed'
-                        : 'text-blue-500 hover:text-blue-600'
+                        : 'text-primary-500 hover:text-primary-600'
                     }`}
                   >
                     {countdown > 0 ? `Resend OTP in ${countdown}s` : 'Resend OTP'}

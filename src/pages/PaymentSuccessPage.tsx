@@ -27,7 +27,7 @@ export default function PaymentSuccessPage() {
   if (isLoading) return <LoadingSpinner fullScreen message="Loading booking details..." />;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-primary-50">
       <Header />
       <div className="container mx-auto px-4 py-12 max-w-2xl">
 
@@ -66,7 +66,7 @@ export default function PaymentSuccessPage() {
             {/* Vehicle */}
             {booking && (
               <>
-                <div className="flex items-center gap-4 p-4 bg-blue-50 rounded-xl">
+                <div className="flex items-center gap-4 p-4 bg-primary-50 rounded-xl">
                   {(booking as any).vehiclePrimaryImageUrl && (
                     <img
                       src={(booking as any).vehiclePrimaryImageUrl}
@@ -88,7 +88,7 @@ export default function PaymentSuccessPage() {
                 {/* Dates */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-start gap-3 p-4 border border-gray-100 rounded-xl">
-                    <Calendar className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                    <Calendar className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
                     <div>
                       <p className="text-xs text-gray-400 mb-0.5">Pickup</p>
                       <p className="font-semibold text-gray-900 text-sm">
@@ -159,7 +159,7 @@ export default function PaymentSuccessPage() {
         <div className="grid grid-cols-2 gap-4">
           <Button
             onClick={() => navigate('/profile')}
-            className="bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-xl font-semibold"
+            className="bg-primary-500 hover:bg-primary-600 text-white py-3 rounded-xl font-semibold"
           >
             <Calendar className="w-4 h-4 mr-2" />
             My Bookings

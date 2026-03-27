@@ -19,7 +19,7 @@ const BOOKINGS_PER_PAGE = 4;
 const BOOKING_STATUS_MAP: Record<number, { label: string; color: string; icon: React.ReactNode }> = {
   0: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800 border-yellow-200', icon: <AlertCircle className="w-3.5 h-3.5" /> },
   1: { label: 'Confirmed', color: 'bg-green-100 text-green-800 border-green-200', icon: <CheckCircle className="w-3.5 h-3.5" /> },
-  2: { label: 'Completed', color: 'bg-blue-100 text-blue-800 border-blue-200', icon: <CheckCircle className="w-3.5 h-3.5" /> },
+  2: { label: 'Completed', color: 'bg-primary-100 text-blue-800 border-primary-200', icon: <CheckCircle className="w-3.5 h-3.5" /> },
   3: { label: 'Cancelled', color: 'bg-red-100 text-red-800 border-red-200', icon: <XCircle className="w-3.5 h-3.5" /> },
 };
 
@@ -139,7 +139,7 @@ export default function ProfilePage() {
             {/* Profile Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
               <div className="flex flex-col items-center text-center mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mb-3">
+                <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-full flex items-center justify-center mb-3">
                   <User className="w-10 h-10 text-white" />
                 </div>
                 <h2 className="text-xl font-bold text-gray-900">{user.name || 'User'}</h2>
@@ -156,7 +156,7 @@ export default function ProfilePage() {
                     {!isEditingName && (
                       <button
                         onClick={() => { setIsEditingName(true); setEditedName(user.name ?? ''); }}
-                        className="text-blue-500 hover:text-blue-600 transition-colors"
+                        className="text-primary-500 hover:text-primary-600 transition-colors"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
@@ -168,7 +168,7 @@ export default function ProfilePage() {
                         type="text"
                         value={editedName}
                         onChange={(e) => setEditedName(e.target.value)}
-                        className="flex-1 text-sm px-2 py-1.5 border border-blue-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        className="flex-1 text-sm px-2 py-1.5 border border-primary-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-500"
                         autoFocus
                       />
                       <button
@@ -222,7 +222,7 @@ export default function ProfilePage() {
               <div className="px-6 py-4 border-b border-gray-200">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-blue-500" />
+                    <Calendar className="w-5 h-5 text-primary-500" />
                     Booking History
                     {filteredBookings.length > 0 && (
                       <span className="text-sm font-normal text-gray-500">
@@ -232,7 +232,7 @@ export default function ProfilePage() {
                   </h3>
                   <button
                     onClick={() => { refetchBookings(); setCurrentPage(1); }}
-                    className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition"
+                    className="p-2 text-gray-400 hover:text-primary-500 hover:bg-primary-50 rounded-lg transition"
                     title="Refresh bookings"
                   >
                     <RefreshCw className="w-4 h-4" />
@@ -244,7 +244,7 @@ export default function ProfilePage() {
                   {[
                     { label: 'All', value: -1, activeColor: 'bg-gray-700 text-white', inactiveColor: 'bg-gray-100 text-gray-600 hover:bg-gray-200', count: sortedBookings.length },
                     { label: 'Confirmed', value: 1, activeColor: 'bg-green-600 text-white', inactiveColor: 'bg-green-50 text-green-700 hover:bg-green-100', count: sortedBookings.filter(b => b.status === 1).length },
-                    { label: 'Completed', value: 2, activeColor: 'bg-blue-600 text-white', inactiveColor: 'bg-blue-50 text-blue-700 hover:bg-blue-100', count: sortedBookings.filter(b => b.status === 2).length },
+                    { label: 'Completed', value: 2, activeColor: 'bg-primary-600 text-white', inactiveColor: 'bg-primary-50 text-primary-700 hover:bg-primary-100', count: sortedBookings.filter(b => b.status === 2).length },
                     { label: 'Pending', value: 0, activeColor: 'bg-yellow-500 text-white', inactiveColor: 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100', count: sortedBookings.filter(b => b.status === 0).length },
                     { label: 'Cancelled', value: 3, activeColor: 'bg-red-500 text-white', inactiveColor: 'bg-red-50 text-red-700 hover:bg-red-100', count: sortedBookings.filter(b => b.status === 3).length },
                   ].map(({ label, value, activeColor, inactiveColor, count }) => (
@@ -268,7 +268,7 @@ export default function ProfilePage() {
               {/* Loading */}
               {isLoadingBookings && (
                 <div className="flex items-center justify-center py-16">
-                  <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+                  <Loader2 className="w-8 h-8 text-primary-500 animate-spin" />
                   <span className="ml-3 text-gray-500">Loading bookings...</span>
                 </div>
               )}
@@ -281,7 +281,7 @@ export default function ProfilePage() {
                   {/* <Button
                     onClick={() => { refetchBookings(); setCurrentPage(1); }}
                     variant="outline"
-                    className="border-blue-500 text-blue-500 hover:bg-blue-50"
+                    className="border-primary-500 text-primary-500 hover:bg-primary-50"
                   >
                     <RefreshCw className="w-4 h-4 mr-2" /> Try Again
                   </Button> */}
@@ -296,7 +296,7 @@ export default function ProfilePage() {
                     <>
                       <h4 className="text-lg font-semibold text-gray-600 mb-2">No bookings yet</h4>
                       <p className="text-sm text-gray-400 mb-6">Book your first ride and it will appear here.</p>
-                      <Button onClick={() => navigate('/vehicles')} className="bg-blue-500 hover:bg-blue-600 text-white">
+                      <Button onClick={() => navigate('/vehicles')} className="bg-primary-500 hover:bg-primary-600 text-white">
                         Browse Vehicles
                       </Button>
                     </>
@@ -306,7 +306,7 @@ export default function ProfilePage() {
                       <p className="text-sm text-gray-400 mb-4">No bookings match the selected filter.</p>
                       <button
                         onClick={() => { setActiveFilter(-1); setCurrentPage(1); }}
-                        className="text-sm text-blue-500 hover:text-blue-600 font-medium"
+                        className="text-sm text-primary-500 hover:text-primary-600 font-medium"
                       >
                         Clear filter
                       </button>
@@ -324,8 +324,8 @@ export default function ProfilePage() {
                         <div className="flex items-start justify-between gap-4">
 
                           <div className="flex items-start gap-3 flex-1 min-w-0">
-                            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
-                              <Bike className="w-5 h-5 text-blue-500" />
+                            <div className="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <Bike className="w-5 h-5 text-primary-500" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -380,14 +380,14 @@ export default function ProfilePage() {
                         <button
                           onClick={() => setCurrentPage((p) => p - 1)}
                           disabled={currentPage === 1}
-                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-600 hover:bg-white hover:border-blue-400 hover:text-blue-600 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-600 hover:bg-white hover:border-primary-400 hover:text-primary-600 transition disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                           <ChevronLeft className="w-4 h-4" /> Prev
                         </button>
                         <button
                           onClick={() => setCurrentPage((p) => p + 1)}
                           disabled={currentPage === totalPages}
-                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-600 hover:bg-white hover:border-blue-400 hover:text-blue-600 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-600 hover:bg-white hover:border-primary-400 hover:text-primary-600 transition disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                           Next <ChevronRight className="w-4 h-4" />
                         </button>

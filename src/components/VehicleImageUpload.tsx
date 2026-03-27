@@ -110,7 +110,7 @@
 //   if (isLoading) {
 //     return (
 //       <div className="flex justify-center items-center p-8">
-//         <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+//         <Loader2 className="w-6 h-6 animate-spin text-primary-600" />
 //       </div>
 //     );
 //   }
@@ -119,7 +119,7 @@
 //     <div className="space-y-4">
 //       <div className="flex items-center justify-between">
 //         <h3 className="text-lg font-semibold text-gray-900">Vehicle Images</h3>
-//         <label className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center">
+//         <label className="cursor-pointer bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition flex items-center">
 //           <Upload className="w-4 h-4 mr-2" />
 //           {uploading ? 'Uploading...' : 'Upload Images'}
 //           <input
@@ -140,7 +140,7 @@
 //           .map((image) => (
 //             <div
 //               key={image.id}
-//               className="relative group rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-500 transition"
+//               className="relative group rounded-lg overflow-hidden border-2 border-gray-200 hover:border-primary-500 transition"
 //             >
 //               <img
 //                 src={image.imageUrl}

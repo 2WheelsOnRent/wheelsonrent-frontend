@@ -161,7 +161,7 @@ const AdminReviewsManagement: React.FC = () => {
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition flex items-center font-semibold shadow-md"
+          className="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition flex items-center font-semibold shadow-md"
         >
           <Plus className="w-5 h-5 mr-2" />
           Add New Review
@@ -176,7 +176,7 @@ const AdminReviewsManagement: React.FC = () => {
               <p className="text-gray-600 text-sm mb-1">Total Reviews</p>
               <p className="text-3xl font-bold text-gray-900">{reviews?.length || 0}</p>
             </div>
-            <Star className="w-12 h-12 text-blue-600" />
+            <Star className="w-12 h-12 text-primary-600" />
           </div>
         </div>
         <div className="bg-white rounded-xl shadow-md p-6">
@@ -223,7 +223,7 @@ const AdminReviewsManagement: React.FC = () => {
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{review.displayOrder}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center">
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold mr-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold mr-3">
                         {review.customerName.charAt(0)}
                       </div>
                       <span className="font-medium text-gray-900">{review.customerName}</span>
@@ -266,7 +266,7 @@ const AdminReviewsManagement: React.FC = () => {
                     <div className="flex space-x-2">
                       <button
                         onClick={() => handleOpenModal(review)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                        className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition"
                         title="Edit"
                       >
                         <Edit className="w-4 h-4" />
@@ -328,7 +328,7 @@ const AdminReviewsManagement: React.FC = () => {
                   type="text"
                   value={formData.customerName}
                   onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition ${
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition ${
                     formErrors.customerName ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="e.g., Rahul Shah"
@@ -376,7 +376,7 @@ const AdminReviewsManagement: React.FC = () => {
                   value={formData.reviewText}
                   onChange={(e) => setFormData({ ...formData, reviewText: e.target.value })}
                   rows={4}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none ${
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition resize-none ${
                     formErrors.reviewText ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="Enter the customer's review feedback..."
@@ -401,7 +401,7 @@ const AdminReviewsManagement: React.FC = () => {
                   min="0"
                   value={formData.displayOrder}
                   onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
                 />
                 <p className="text-gray-500 text-sm mt-1">Lower numbers appear first on homepage</p>
               </div>
@@ -413,7 +413,7 @@ const AdminReviewsManagement: React.FC = () => {
                   id="isActive"
                   checked={formData.isActive}
                   onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                 />
                 <label htmlFor="isActive" className="ml-2 text-sm font-medium text-gray-700">
                   Display on homepage (Active)
@@ -425,7 +425,7 @@ const AdminReviewsManagement: React.FC = () => {
                 <button
                   type="submit"
                   disabled={creating || updating}
-                  className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  className="flex-1 bg-primary-600 text-white py-3 rounded-lg hover:bg-primary-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                   {creating || updating ? (
                     <>

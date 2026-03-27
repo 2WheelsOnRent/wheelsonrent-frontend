@@ -22,7 +22,7 @@ export default function ThemeToggleButton() {
 
       {/* Moon icon (right) */}
       <div className="absolute right-1 flex items-center justify-center">
-        <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center shadow-lg">
+        <div className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center shadow-lg">
           <Moon size={20} className="text-white stroke-2" fill="white" />
         </div>
       </div>
@@ -30,7 +30,7 @@ export default function ThemeToggleButton() {
       {/* Clickable button overlay */}
       <button
         onClick={toggleTheme}
-        className="absolute inset-0 w-full h-full rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
+        className="absolute inset-0 w-full h-full rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-400"
         aria-label="Toggle theme"
       />
     </div>

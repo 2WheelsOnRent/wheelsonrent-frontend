@@ -58,8 +58,8 @@ const handleSubmit = async (e: React.FormEvent) => {
 
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-5 h-5 text-blue-500" />
+                  <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Phone className="w-5 h-5 text-primary-500" />
                   </div>
                   <div>
                     <h3 className="text-black mb-1">Phone</h3>
@@ -69,8 +69,8 @@ const handleSubmit = async (e: React.FormEvent) => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-5 h-5 text-blue-500" />
+                  <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-5 h-5 text-primary-500" />
                   </div>
                   <div>
                     <h3 className="text-black mb-1">Email</h3>
@@ -80,8 +80,8 @@ const handleSubmit = async (e: React.FormEvent) => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-5 h-5 text-blue-500" />
+                  <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-5 h-5 text-primary-500" />
                   </div>
                   <div>
                     <h3 className="text-black mb-1">Office Address</h3>
@@ -94,8 +94,8 @@ const handleSubmit = async (e: React.FormEvent) => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-5 h-5 text-blue-500" />
+                  <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Clock className="w-5 h-5 text-primary-500" />
                   </div>
                   <div>
                     <h3 className="text-black mb-1">Business Hours</h3>
@@ -107,12 +107,12 @@ const handleSubmit = async (e: React.FormEvent) => {
             </div>
 
             {/* Quick Links
-            <div className="bg-blue-50 rounded-lg border border-blue-200 p-6">
+            <div className="bg-primary-50 rounded-lg border border-primary-200 p-6">
               <h3 className="text-black mb-4">Quick Support</h3>
               <p className="text-sm text-gray-700 mb-4">
                 For immediate assistance, you can reach us on WhatsApp or call our 24/7 helpline.
               </p>
-              <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white">
+              <Button className="w-full bg-primary-500 hover:bg-primary-600 text-white">
                 Chat on WhatsApp
               </Button>
             </div> */}
@@ -188,7 +188,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full bg-blue-500 hover:bg-blue-600 text-white py-6"
+                        className="w-full bg-primary-500 hover:bg-primary-600 text-white py-6"
                       >
                         {isSubmitting ? 'Sending...' : 'Send Message'}
                       </Button>

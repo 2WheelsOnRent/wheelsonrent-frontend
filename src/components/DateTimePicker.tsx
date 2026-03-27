@@ -111,7 +111,7 @@ export default function DateTimePicker() {
   return (
     <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-gray-200">
       <div className="flex items-center gap-3 mb-6">
-        {/* <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+        {/* <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-xl flex items-center justify-center">
           <Search className="w-6 h-6 text-white" />
         </div> */}
         <div>
@@ -125,7 +125,7 @@ export default function DateTimePicker() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              <Calendar className="inline w-4 h-4 mr-1.5 text-blue-600" />
+              <Calendar className="inline w-4 h-4 mr-1.5 text-primary-600" />
               Pickup Date
             </label>
             <input
@@ -134,10 +134,10 @@ export default function DateTimePicker() {
               onChange={(e) => handlePickupDateChange(e.target.value)}
               onBlur={() => handleBlur('pickupDate')}
               min={new Date().toISOString().split('T')[0]}
-              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all ${
                 errors.pickupDate && touched.pickupDate
                   ? 'border-red-300 bg-red-50'
-                  : 'border-gray-300 hover:border-blue-300'
+                  : 'border-gray-300 hover:border-primary-300'
               }`}
             />
             {errors.pickupDate && touched.pickupDate && (
@@ -150,7 +150,7 @@ export default function DateTimePicker() {
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              <Clock className="inline w-4 h-4 mr-1.5 text-blue-600" />
+              <Clock className="inline w-4 h-4 mr-1.5 text-primary-600" />
               Pickup Time
             </label>
             <input
@@ -161,10 +161,10 @@ export default function DateTimePicker() {
                 setTouched(prev => ({ ...prev, pickupTime: true }));
               }}
               onBlur={() => handleBlur('pickupTime')}
-              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all ${
                 errors.pickupTime && touched.pickupTime
                   ? 'border-red-300 bg-red-50'
-                  : 'border-gray-300 hover:border-blue-300'
+                  : 'border-gray-300 hover:border-primary-300'
               }`}
             />
             {errors.pickupTime && touched.pickupTime && (
@@ -195,7 +195,7 @@ export default function DateTimePicker() {
               }}
               onBlur={() => handleBlur('returnDate')}
               min={pickupDate || new Date().toISOString().split('T')[0]}
-              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all ${
                 errors.returnDate && touched.returnDate
                   ? 'border-red-300 bg-red-50'
                   : 'border-gray-300 hover:border-indigo-300'
@@ -222,7 +222,7 @@ export default function DateTimePicker() {
                 setTouched(prev => ({ ...prev, returnTime: true }));
               }}
               onBlur={() => handleBlur('returnTime')}
-              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all ${
                 errors.returnTime && touched.returnTime
                   ? 'border-red-300 bg-red-50'
                   : 'border-gray-300 hover:border-indigo-300'
@@ -244,7 +244,7 @@ export default function DateTimePicker() {
       <Button
         onClick={handleSearch}
         disabled={hasErrors || !pickupDate || !pickupTime || !returnDate || !returnTime}
-        className="w-full mt-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+        className="w-full mt-6 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
       >
         <Search className="w-5 h-5 mr-2 inline" />
         Search Available Vehicles

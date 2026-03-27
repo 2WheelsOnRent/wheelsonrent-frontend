@@ -18,22 +18,22 @@ const TermsAndConditions: React.FC = () => {
           {/* Back Button */}
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center text-blue-500 hover:text-blue-600 mb-6 transition"
+            className="flex items-center text-primary-500 hover:text-primary-600 mb-6 transition"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back
           </button>
 
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl p-8 mb-8">
+          <div className="bg-gradient-to-r from-primary-600 to-indigo-600 text-white rounded-xl p-8 mb-8">
             <div className="flex items-center mb-4">
               <FileText className="w-10 h-10 mr-4" />
               <h1 className="text-4xl font-bold">Terms & Conditions</h1>
             </div>
-            <p className="text-blue-100">
+            <p className="text-primary-100">
               Last updated: {new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
-            <p className="mt-2 text-blue-100">
+            <p className="mt-2 text-primary-100">
               Please read these terms and conditions carefully before using scootyonrent service.
             </p>
           </div>
@@ -43,7 +43,7 @@ const TermsAndConditions: React.FC = () => {
             {/* 1. Acceptance of Terms */}
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                <Shield className="w-6 h-6 mr-2 text-blue-600" />
+                <Shield className="w-6 h-6 mr-2 text-primary-600" />
                 1. Acceptance of Terms
               </h2>
               <p className="text-gray-700 leading-relaxed">
@@ -54,7 +54,7 @@ const TermsAndConditions: React.FC = () => {
             {/* 2. Booking Process */}
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                <Clock className="w-6 h-6 mr-2 text-blue-600" />
+                <Clock className="w-6 h-6 mr-2 text-primary-600" />
                 2. Booking Process
               </h2>
               <div className="space-y-3 text-gray-700">
@@ -83,7 +83,7 @@ const TermsAndConditions: React.FC = () => {
                   <li>Net Banking</li>
                   <li>Digital Wallets</li>
                 </ul>
-                <p className="text-sm text-blue-600 bg-blue-50 p-3 rounded-lg mt-4">
+                <p className="text-sm text-primary-600 bg-primary-50 p-3 rounded-lg mt-4">
                   <strong>Security Deposit:</strong> A refundable security deposit of ₹2,000 will be collected at the time of vehicle pickup.
                 </p>
               </div>
@@ -92,7 +92,7 @@ const TermsAndConditions: React.FC = () => {
             {/* 4. Required Documents */}
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                <FileText className="w-6 h-6 mr-2 text-blue-600" />
+                <FileText className="w-6 h-6 mr-2 text-primary-600" />
                 4. Required Documents
               </h2>
               <div className="space-y-4 text-gray-700">
@@ -178,7 +178,7 @@ const TermsAndConditions: React.FC = () => {
             {/* 7. Geographical Restrictions */}
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                <MapPin className="w-6 h-6 mr-2 text-blue-600" />
+                <MapPin className="w-6 h-6 mr-2 text-primary-600" />
                 7. Geographical Restrictions
               </h2>
               <div className="space-y-3 text-gray-700">
@@ -216,7 +216,7 @@ const TermsAndConditions: React.FC = () => {
                 <p className="leading-relaxed">
                   Fuel is the responsibility of the customer. The vehicle will be provided with sufficient fuel to reach the nearest fuel station.
                 </p>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
                   <ul className="space-y-2">
                     <li><strong>Pickup:</strong> Vehicle provided with fuel to reach nearest pump</li>
                     <li><strong>Return:</strong> Vehicle must be returned with enough fuel for next customer (minimum to reach pump)</li>
@@ -308,7 +308,7 @@ const TermsAndConditions: React.FC = () => {
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">13. Operating Hours</h2>
               <div className="space-y-3 text-gray-700">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
                   <p className="font-semibold mb-2">Pickup/Drop Centers Operating Hours:</p>
                   <p className="text-lg">9:00 AM - 8:00 PM (All Days)</p>
                 </div>
@@ -364,7 +364,7 @@ const TermsAndConditions: React.FC = () => {
             </section>
 
             {/* Contact Information */}
-            <section className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
+            <section className="bg-gradient-to-r from-primary-50 to-indigo-50 border border-primary-200 rounded-xl p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Contact Us</h2>
               <div className="space-y-2 text-gray-700">
                 <p><strong>Company:</strong> scootyonrent</p>

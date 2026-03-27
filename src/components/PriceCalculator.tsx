@@ -67,10 +67,10 @@ export default function PriceCalculator({
       </div>
 
       {/* Hourly Rate Info */}
-      <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+      <div className="mb-6 p-4 bg-primary-50 rounded-lg">
         <div className="flex items-baseline justify-between">
           <span className="text-sm text-gray-600">Hourly Rate</span>
-          <span className="text-2xl font-bold text-blue-600">₹{basePrice}</span>
+          <span className="text-2xl font-bold text-primary-600">₹{basePrice}</span>
         </div>
         {minBookingHours > 0 && (
           <p className="text-xs text-gray-500 mt-1">
@@ -101,7 +101,7 @@ export default function PriceCalculator({
         <div className="pt-3 border-t border-gray-200">
           <div className="flex justify-between items-center">
             <span className="text-lg text-black font-semibold">Total Amount</span>
-            <span className="text-2xl font-bold text-blue-500">₹{total.toFixed(2)}</span>
+            <span className="text-2xl font-bold text-primary-500">₹{total.toFixed(2)}</span>
           </div>
         </div>
       </div>
@@ -125,7 +125,7 @@ export default function PriceCalculator({
             <Button
               onClick={handleApplyPromo}
               variant="outline"
-              className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
+              className="border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white"
               disabled={!promoCode}
             >
               Apply
@@ -162,7 +162,7 @@ export default function PriceCalculator({
       )}
 
       {/* Additional Info */}
-      <div className="bg-blue-50 rounded-lg p-4 mb-6">
+      <div className="bg-primary-50 rounded-lg p-4 mb-6">
         <h4 className="text-sm font-medium text-black mb-2">Important Information</h4>
         <ul className="text-sm text-gray-600 space-y-1">
           <li>• Valid driving license and ID proof required at pickup</li>
@@ -175,7 +175,7 @@ export default function PriceCalculator({
         <Button
           onClick={() => onProceedToPayment?.(total)}
           disabled={!canProceed || isLoading}
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white py-6 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-primary-500 hover:bg-primary-600 text-white py-6 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? 'Processing...' : 'Proceed to Payment'}
         </Button>
@@ -183,8 +183,8 @@ export default function PriceCalculator({
 
       {/* Info Alert */}
       {isLoggedIn && (
-        <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start">
-          <AlertCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
+        <div className="mt-4 bg-primary-50 border border-primary-200 rounded-lg p-3 flex items-start">
+          <AlertCircle className="w-5 h-5 text-primary-600 mr-2 mt-0.5 flex-shrink-0" />
           <p className="text-sm text-blue-800">
             Payment will be processed securely through EaseBuzz after booking confirmation.
           </p>

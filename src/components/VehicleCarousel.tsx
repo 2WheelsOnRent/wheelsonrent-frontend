@@ -57,9 +57,9 @@ export default function VehicleCarousel() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-16 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary-50 py-16 flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent"></div>
           <p className="mt-4 text-gray-600">Loading featured vehicles...</p>
         </div>
       </div>
@@ -68,12 +68,12 @@ export default function VehicleCarousel() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-16 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary-50 py-16 flex items-center justify-center">
         <div className="text-center max-w-md">
           <p className="text-red-500 mb-4">Failed to load vehicles. Please try again later.</p>
           {/* <button
             onClick={() => window.location.reload()}
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
           >
             Retry
           </button> */}
@@ -84,14 +84,14 @@ export default function VehicleCarousel() {
 
   if (vehicles.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-16 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary-50 py-16 flex items-center justify-center">
         <p className="text-gray-600">No featured vehicles available at the moment.</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-16">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary-50 py-16">
       <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-4xl font-bold text-gray-800 mb-16 text-center">Featured Vehicles</h2>
 
@@ -100,7 +100,7 @@ export default function VehicleCarousel() {
           {/* Left Arrow - Positioned closer */}
           <button
             onClick={goToPrevious}
-            className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full bg-white border-2 border-gray-300 hover:bg-blue-500 hover:text-white hover:border-blue-500 flex items-center justify-center transition-all shadow-lg hover:scale-110"
+            className="absolute left-4 md:left-12 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full bg-white border-2 border-gray-300 hover:bg-primary-500 hover:text-white hover:border-primary-500 flex items-center justify-center transition-all shadow-lg hover:scale-110"
             aria-label="Previous vehicle"
           >
             <ChevronLeft className="w-7 h-7" />
@@ -109,7 +109,7 @@ export default function VehicleCarousel() {
           {/* Right Arrow - Positioned closer */}
           <button
             onClick={goToNext}
-            className="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full bg-white border-2 border-gray-300 hover:bg-blue-500 hover:text-white hover:border-blue-500 flex items-center justify-center transition-all shadow-lg hover:scale-110"
+            className="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full bg-white border-2 border-gray-300 hover:bg-primary-500 hover:text-white hover:border-primary-500 flex items-center justify-center transition-all shadow-lg hover:scale-110"
             aria-label="Next vehicle"
           >
             <ChevronRight className="w-7 h-7" />
@@ -157,7 +157,7 @@ export default function VehicleCarousel() {
               onClick={() => goToSlide(index)}
               className={`transition-all ${
                 index === currentIndex
-                  ? 'bg-blue-500 w-10 h-3 rounded-full'
+                  ? 'bg-primary-500 w-10 h-3 rounded-full'
                   : 'bg-gray-300 hover:bg-gray-400 w-3 h-3 rounded-full'
               }`}
               aria-label={`Go to vehicle ${index + 1}`}

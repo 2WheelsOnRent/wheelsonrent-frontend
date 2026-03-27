@@ -226,7 +226,7 @@ const AuthPage: React.FC = () => {
                           )
                         }
                         placeholder="9876543210"
-                        className="w-full pl-24 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                        className="w-full pl-24 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
                         maxLength={10}
                         required
                       />
@@ -242,7 +242,7 @@ const AuthPage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isSendingOtp || phoneNumber.length !== 10}
-                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
+                    className="w-full bg-gradient-to-r from-primary-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:from-primary-700 hover:to-indigo-700 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
                   >
                     {isSendingOtp ? (
                       <>
@@ -269,7 +269,7 @@ const AuthPage: React.FC = () => {
                         setStep("phone");
                         setOtp("");
                       }}
-                      className="text-sm text-blue-600 hover:text-blue-700 flex items-center mb-4"
+                      className="text-sm text-primary-600 hover:text-primary-700 flex items-center mb-4"
                     >
                       ← Change Phone Number
                     </button>
@@ -294,7 +294,7 @@ const AuthPage: React.FC = () => {
                           setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
                         }
                         placeholder="123456"
-                        className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-center text-2xl tracking-widest"
+                        className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all text-center text-2xl tracking-widest"
                         maxLength={6}
                         required
                         autoFocus
@@ -308,7 +308,7 @@ const AuthPage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isVerifyingOtp || otp.length !== 6}
-                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center mb-4"
+                    className="w-full bg-gradient-to-r from-primary-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:from-primary-700 hover:to-indigo-700 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center mb-4"
                   >
                     {isVerifyingOtp ? (
                       <>
@@ -327,7 +327,7 @@ const AuthPage: React.FC = () => {
                     type="button"
                     onClick={handleResendOtp}
                     disabled={isSendingOtp}
-                    className="w-full text-blue-600 hover:text-blue-700 text-sm font-medium"
+                    className="w-full text-primary-600 hover:text-primary-700 text-sm font-medium"
                   >
                     Resend OTP
                   </button>
@@ -350,7 +350,7 @@ const AuthPage: React.FC = () => {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="John Doe"
-                        className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                        className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
                         required
                       />
                     </div>
@@ -370,7 +370,7 @@ const AuthPage: React.FC = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="john@example.com"
-                        className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                        className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
                       />
                     </div>
                   </div>
@@ -378,7 +378,7 @@ const AuthPage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isVerifyingOtp || !name || name.trim().length < 2}
-                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
+                    className="w-full bg-gradient-to-r from-primary-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:from-primary-700 hover:to-indigo-700 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
                   >
                     {isVerifyingOtp ? (
                       <>

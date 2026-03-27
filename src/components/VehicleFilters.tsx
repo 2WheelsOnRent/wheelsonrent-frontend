@@ -64,10 +64,10 @@ export default function VehicleFilters({ onFilterChange }: VehicleFiltersProps) 
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-5 h-5 text-blue-500" />
+          <SlidersHorizontal className="w-5 h-5 text-primary-500" />
           <span className="font-bold text-gray-900">Filters</span>
           {activeFilterCount > 0 && (
-            <span className="w-5 h-5 bg-blue-500 text-white rounded-full text-xs font-bold flex items-center justify-center">
+            <span className="w-5 h-5 bg-primary-500 text-white rounded-full text-xs font-bold flex items-center justify-center">
               {activeFilterCount}
             </span>
           )}
@@ -75,7 +75,7 @@ export default function VehicleFilters({ onFilterChange }: VehicleFiltersProps) 
         {activeFilterCount > 0 && (
           <button
             onClick={resetFilters}
-            className="flex items-center gap-1 text-sm text-blue-500 hover:text-blue-600 transition-colors font-medium"
+            className="flex items-center gap-1 text-sm text-primary-500 hover:text-primary-600 transition-colors font-medium"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Reset
@@ -88,7 +88,7 @@ export default function VehicleFilters({ onFilterChange }: VehicleFiltersProps) 
         <div>
           <div className="flex items-center justify-between mb-4">
             <h4 className="text-sm font-bold text-gray-800 uppercase tracking-wide">Price Range</h4>
-            <span className="text-sm font-semibold text-blue-600">
+            <span className="text-sm font-semibold text-primary-600">
               ₹{filters.priceRange[0]} – ₹{filters.priceRange[1]}
             </span>
           </div>
@@ -137,7 +137,7 @@ export default function VehicleFilters({ onFilterChange }: VehicleFiltersProps) 
                   id={`type-${type}`}
                   checked={filters.vehicleTypes.includes(type)}
                   onCheckedChange={(checked) => toggleArrayItem('vehicleTypes', type, !!checked)}
-                  className="border-gray-300 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
+                  className="border-gray-300 data-[state=checked]:bg-primary-500 data-[state=checked]:border-primary-500"
                 />
                 <Label
                   htmlFor={`type-${type}`}
@@ -162,7 +162,7 @@ export default function VehicleFilters({ onFilterChange }: VehicleFiltersProps) 
                   id={`fuel-${type}`}
                   checked={filters.fuelTypes.includes(type)}
                   onCheckedChange={(checked) => toggleArrayItem('fuelTypes', type, !!checked)}
-                  className="border-gray-300 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
+                  className="border-gray-300 data-[state=checked]:bg-primary-500 data-[state=checked]:border-primary-500"
                 />
                 <Label
                   htmlFor={`fuel-${type}`}
@@ -185,7 +185,7 @@ export default function VehicleFilters({ onFilterChange }: VehicleFiltersProps) 
                 <h4 className="text-sm font-bold text-gray-800 uppercase tracking-wide">
                   Brand
                   {filters.companies.length > 0 && (
-                    <span className="ml-2 text-blue-500 normal-case font-semibold">
+                    <span className="ml-2 text-primary-500 normal-case font-semibold">
                       ({filters.companies.length})
                     </span>
                   )}
@@ -203,7 +203,7 @@ export default function VehicleFilters({ onFilterChange }: VehicleFiltersProps) 
                       id={`company-${company}`}
                       checked={filters.companies.includes(company)}
                       onCheckedChange={(checked) => toggleArrayItem('companies', company, !!checked)}
-                      className="border-gray-300 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
+                      className="border-gray-300 data-[state=checked]:bg-primary-500 data-[state=checked]:border-primary-500"
                     />
                     <Label
                       htmlFor={`company-${company}`}

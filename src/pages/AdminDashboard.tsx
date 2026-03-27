@@ -57,7 +57,7 @@ const FormField = ({
         value={value}
         onChange={(e) => onChange?.(type === 'number' ? Number(e.target.value) : e.target.value)}
         placeholder={placeholder}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none text-sm"
       />
     )}
   </div>
@@ -186,8 +186,8 @@ const TrackingModal: React.FC<{
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10 rounded-t-2xl">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-              <MapPin className="w-5 h-5 text-blue-600" />
+            <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+              <MapPin className="w-5 h-5 text-primary-600" />
             </div>
             <div>
               <h2 className="text-lg font-bold text-gray-900">{vehicle.name}</h2>
@@ -204,7 +204,7 @@ const TrackingModal: React.FC<{
             <button
               onClick={fetchData}
               disabled={loading}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50 transition disabled:opacity-50"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-primary-600 border border-primary-200 rounded-lg hover:bg-primary-50 transition disabled:opacity-50"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
               Refresh
@@ -221,7 +221,7 @@ const TrackingModal: React.FC<{
         <div className="p-6">
           {loading && !liveData && (
             <div className="flex flex-col items-center justify-center py-16">
-              <Loader2 className="w-8 h-8 animate-spin text-blue-500 mb-3" />
+              <Loader2 className="w-8 h-8 animate-spin text-primary-500 mb-3" />
               <p className="text-gray-500">Fetching live location...</p>
             </div>
           )}
@@ -232,7 +232,7 @@ const TrackingModal: React.FC<{
               <p className="text-red-600 font-medium">{error}</p>
               {/* <button
                 onClick={fetchData}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
+                className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition text-sm"
               >
                 Try Again
               </button> */}
@@ -260,17 +260,17 @@ const TrackingModal: React.FC<{
 
               {/* Address */}
               <div className="flex items-start gap-2 px-4 py-3 bg-gray-50 rounded-xl mb-5">
-                <MapPin className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+                <MapPin className="w-4 h-4 text-primary-500 mt-0.5 shrink-0" />
                 <p className="text-sm text-gray-700">{liveData.address}</p>
               </div>
 
               {/* Stats Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
-                <div className="bg-blue-50 rounded-xl p-4 text-center">
-                  <Gauge className="w-5 h-5 text-blue-500 mx-auto mb-1" />
-                  <p className="text-2xl font-bold text-blue-700">{liveData.speedKph.toFixed(0)}</p>
-                  <p className="text-xs text-blue-500 font-medium">km/h</p>
+                <div className="bg-primary-50 rounded-xl p-4 text-center">
+                  <Gauge className="w-5 h-5 text-primary-500 mx-auto mb-1" />
+                  <p className="text-2xl font-bold text-primary-700">{liveData.speedKph.toFixed(0)}</p>
+                  <p className="text-xs text-primary-500 font-medium">km/h</p>
                 </div>
 
                 <div className="bg-green-50 rounded-xl p-4 text-center">
@@ -519,7 +519,7 @@ const AdminDashboard: React.FC = () => {
     const map: Record<number, { text: string; color: string }> = {
       0: { text: 'Pending',   color: 'bg-yellow-100 text-yellow-800' },
       1: { text: 'Confirmed', color: 'bg-green-100 text-green-800' },
-      2: { text: 'Completed', color: 'bg-blue-100 text-blue-800' },
+      2: { text: 'Completed', color: 'bg-primary-100 text-blue-800' },
       3: { text: 'Cancelled', color: 'bg-red-100 text-red-800' },
     };
     const { text, color } = map[status] ?? { text: 'Unknown', color: 'bg-gray-100 text-gray-800' };
@@ -528,7 +528,7 @@ const AdminDashboard: React.FC = () => {
 
   const SortIcon = ({ column }: { column: string }) => (
     <button onClick={() => handleSortBookings(column)} className="flex items-center ml-1">
-      <ChevronDown className={`w-4 h-4 ${bookingSort.column === column ? 'text-blue-600' : 'text-gray-400'}`} />
+      <ChevronDown className={`w-4 h-4 ${bookingSort.column === column ? 'text-primary-600' : 'text-gray-400'}`} />
     </button>
   );
 
@@ -539,14 +539,14 @@ const AdminDashboard: React.FC = () => {
       {/* ── Sidebar ── */}
       <aside className="w-64 bg-white shadow-lg fixed h-full z-20">
         <div className="p-6">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-1">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-indigo-600 bg-clip-text text-transparent mb-1">
             scootyonrent
           </h2>
           <p className="text-xs text-gray-500">Admin Panel</p>
           {adminUser && (
-            <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+            <div className="mt-3 p-3 bg-primary-50 rounded-lg">
               <p className="text-sm font-medium text-blue-900">{adminUser.name}</p>
-              <p className="text-xs text-blue-600 capitalize">{adminUser.userType}</p>
+              <p className="text-xs text-primary-600 capitalize">{adminUser.userType}</p>
             </div>
           )}
         </div>
@@ -562,7 +562,7 @@ const AdminDashboard: React.FC = () => {
               key={id}
               onClick={() => setActiveTab(id)}
               className={`w-full flex items-center px-4 py-3 rounded-lg transition ${
-                activeTab === id ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-gray-700 hover:bg-gray-50'
+                activeTab === id ? 'bg-primary-50 text-primary-600 font-semibold' : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
               <Icon className="w-5 h-5 mr-3" />{label}
@@ -589,7 +589,7 @@ const AdminDashboard: React.FC = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-8">Dashboard Overview</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {[
-                { label: 'Total Vehicles',      value: stats.totalVehicles,   sub: `${stats.availableVehicles} available`, icon: Bike,       color: 'text-blue-600'   },
+                { label: 'Total Vehicles',      value: stats.totalVehicles,   sub: `${stats.availableVehicles} available`, icon: Bike,       color: 'text-primary-600'   },
                 { label: 'Active Bookings',      value: stats.activeBookings,  sub: `${stats.pendingBookings} pending`,    icon: Calendar,   color: 'text-green-600'  },
                 { label: 'Total Users',          value: stats.totalUsers,      sub: 'registered',                          icon: Users,      color: 'text-purple-600' },
                 { label: 'Revenue (Confirmed)',  value: `₹${stats.monthlyRevenue.toLocaleString()}`, sub: 'total',         icon: TrendingUp, color: 'text-orange-600' },
@@ -617,7 +617,7 @@ const AdminDashboard: React.FC = () => {
                           <p className="text-sm text-gray-600">User #{booking.userId}</p>
                         </div>
                         <div className="text-right">
-                          <p className="font-semibold text-blue-600">₹{booking.totalAmount}</p>
+                          <p className="font-semibold text-primary-600">₹{booking.totalAmount}</p>
                           {getStatusBadge(booking.status)}
                         </div>
                       </div>
@@ -638,7 +638,7 @@ const AdminDashboard: React.FC = () => {
                           <p className="text-sm text-gray-600">{v.make} · {v.vehicleType}</p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold text-blue-600">₹{v.pricePerHour}/hr</span>
+                          <span className="text-sm font-semibold text-primary-600">₹{v.pricePerHour}/hr</span>
                           {v.isAvailable
                             ? <CheckCircle className="w-4 h-4 text-green-500" />
                             : <XCircle className="w-4 h-4 text-red-500" />}
@@ -660,7 +660,7 @@ const AdminDashboard: React.FC = () => {
               <h1 className="text-3xl font-bold text-gray-900">Vehicle Management</h1>
               <button
                 onClick={handleOpenAddVehicle}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center"
+                className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition flex items-center"
               >
                 <Plus className="w-5 h-5 mr-2" />Add Vehicle
               </button>
@@ -674,7 +674,7 @@ const AdminDashboard: React.FC = () => {
                   placeholder="Search vehicles..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                 />
               </div>
             </div>
@@ -698,7 +698,7 @@ const AdminDashboard: React.FC = () => {
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-600">{vehicle.make}</td>
                         <td className="px-6 py-4 text-sm text-gray-600">{vehicle.vehicleType}</td>
-                        <td className="px-6 py-4 text-sm font-semibold text-blue-600">₹{vehicle.pricePerHour}</td>
+                        <td className="px-6 py-4 text-sm font-semibold text-primary-600">₹{vehicle.pricePerHour}</td>
                         <td className="px-6 py-4">
                           {vehicle.isAvailable
                             ? <span className="flex items-center text-green-600 text-sm"><CheckCircle className="w-4 h-4 mr-1" />Available</span>
@@ -716,7 +716,7 @@ const AdminDashboard: React.FC = () => {
                             </button>
                             <button
                               onClick={() => { handleOpenEditVehicle(vehicle); setVehicleModalTab('images'); }}
-                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                              className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition"
                               title="Manage images"
                             >
                               <Image className="w-4 h-4" />
@@ -804,7 +804,7 @@ const AdminDashboard: React.FC = () => {
                               </>
                             )}
                             {booking.status === 1 && (
-                              <button onClick={() => handleUpdateBookingStatus(booking.id!, 2)} className="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200">
+                              <button onClick={() => handleUpdateBookingStatus(booking.id!, 2)} className="px-3 py-1 text-xs bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200">
                                 Mark Complete
                               </button>
                             )}
@@ -834,7 +834,7 @@ const AdminDashboard: React.FC = () => {
                   placeholder="Search by phone number..."
                   value={userSearchQuery}
                   onChange={(e) => setUserSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                 />
               </div>
             </div>
@@ -854,7 +854,7 @@ const AdminDashboard: React.FC = () => {
                         <td className="px-6 py-4 font-medium text-gray-900">#{user.id}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">
                           <div className="flex items-center">
-                            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 text-blue-600 font-semibold text-sm">
+                            <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center mr-3 text-primary-600 font-semibold text-sm">
                               {user.userNumber.slice(-2)}
                             </div>
                             {user.userNumber}
@@ -903,7 +903,7 @@ const AdminDashboard: React.FC = () => {
                     onClick={() => setVehicleModalTab(tab)}
                     className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold capitalize border-b-2 transition mr-2 ${
                       vehicleModalTab === tab
-                        ? 'border-blue-600 text-blue-600'
+                        ? 'border-primary-600 text-primary-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700'
                     }`}
                   >
@@ -930,20 +930,20 @@ const AdminDashboard: React.FC = () => {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                       <FormField label="Vehicle Type">
-                        <select value={vehicleForm.vehicleType} onChange={(e) => setVehicleForm({ ...vehicleForm, vehicleType: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                        <select value={vehicleForm.vehicleType} onChange={(e) => setVehicleForm({ ...vehicleForm, vehicleType: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none text-sm">
                           <option value="Scooter">Scooter</option>
                           <option value="Bike">Bike</option>
                           <option value="Sports">Sports</option>
                         </select>
                       </FormField>
                       <FormField label="Fuel Type">
-                        <select value={vehicleForm.fuelType} onChange={(e) => setVehicleForm({ ...vehicleForm, fuelType: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                        <select value={vehicleForm.fuelType} onChange={(e) => setVehicleForm({ ...vehicleForm, fuelType: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none text-sm">
                           <option value="Petrol">Petrol</option>
                           <option value="Electric">Electric</option>
                         </select>
                       </FormField>
                       <FormField label="District">
-                        <select value={vehicleForm.districtId} onChange={(e) => setVehicleForm({ ...vehicleForm, districtId: Number(e.target.value) })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                        <select value={vehicleForm.districtId} onChange={(e) => setVehicleForm({ ...vehicleForm, districtId: Number(e.target.value) })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none text-sm">
                           {districts.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
                         </select>
                       </FormField>
@@ -1015,11 +1015,11 @@ const AdminDashboard: React.FC = () => {
                     <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Settings</h3>
                     <div className="flex gap-6">
                       <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" checked={vehicleForm.isAvailable} onChange={(e) => setVehicleForm({ ...vehicleForm, isAvailable: e.target.checked })} className="w-4 h-4 text-blue-600 rounded" />
+                        <input type="checkbox" checked={vehicleForm.isAvailable} onChange={(e) => setVehicleForm({ ...vehicleForm, isAvailable: e.target.checked })} className="w-4 h-4 text-primary-600 rounded" />
                         <span className="text-sm text-gray-700">Available for booking</span>
                       </label>
                       <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" checked={vehicleForm.featured} onChange={(e) => setVehicleForm({ ...vehicleForm, featured: e.target.checked })} className="w-4 h-4 text-blue-600 rounded" />
+                        <input type="checkbox" checked={vehicleForm.featured} onChange={(e) => setVehicleForm({ ...vehicleForm, featured: e.target.checked })} className="w-4 h-4 text-primary-600 rounded" />
                         <span className="text-sm text-gray-700">Featured on homepage</span>
                       </label>
                     </div>
@@ -1035,7 +1035,7 @@ const AdminDashboard: React.FC = () => {
                       <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Vehicle Images</h3>
                       <p className="text-xs text-gray-400 mt-0.5">First uploaded image is set as primary automatically</p>
                     </div>
-                    <label className={`flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 cursor-pointer transition ${isUploadingImage ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                    <label className={`flex items-center gap-2 px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-lg hover:bg-primary-700 cursor-pointer transition ${isUploadingImage ? 'opacity-60 cursor-not-allowed' : ''}`}>
                       {isUploadingImage
                         ? <><Loader2 className="w-4 h-4 animate-spin" />Uploading...</>
                         : <><Plus className="w-4 h-4" />Upload Image</>}
@@ -1045,7 +1045,7 @@ const AdminDashboard: React.FC = () => {
 
                   {imagesLoading && (
                     <div className="flex items-center justify-center py-12">
-                      <Loader2 className="w-6 h-6 animate-spin text-blue-500 mr-2" />
+                      <Loader2 className="w-6 h-6 animate-spin text-primary-500 mr-2" />
                       <span className="text-gray-500 text-sm">Loading images...</span>
                     </div>
                   )}
@@ -1061,7 +1061,7 @@ const AdminDashboard: React.FC = () => {
                   {!imagesLoading && vehicleImages.length > 0 && (
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                       {vehicleImages.map((image) => (
-                        <div key={image.id} className="relative group rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 transition">
+                        <div key={image.id} className="relative group rounded-xl overflow-hidden border-2 border-gray-200 hover:border-primary-400 transition">
                           <img
                             src={image.imageUrl}
                             alt="Vehicle"
@@ -1099,7 +1099,7 @@ const AdminDashboard: React.FC = () => {
             {/* Modal Footer */}
             <div className="flex justify-end gap-3 p-6 border-t border-gray-200 sticky bottom-0 bg-white">
               {vehicleModalTab === 'images' ? (
-                <button onClick={() => setShowVehicleModal(false)} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                <button onClick={() => setShowVehicleModal(false)} className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition">
                   Done
                 </button>
               ) : (
@@ -1110,7 +1110,7 @@ const AdminDashboard: React.FC = () => {
                   <button
                     onClick={handleSaveVehicle}
                     disabled={creating || updating}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center disabled:opacity-50"
+                    className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition flex items-center disabled:opacity-50"
                   >
                     {(creating || updating)
                       ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving...</>

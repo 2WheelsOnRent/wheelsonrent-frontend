@@ -11,7 +11,7 @@ export default function Footer() {
           {/* Company Info */}
           <div>
             <h3 className="text-xl mb-4">
-              Scooty<span className="text-blue-500">onrent</span>
+              Scooty<span className="text-primary-500">onrent</span>
             </h3>
             <p className="text-gray-400">
               Your trusted partner for two-wheeler rentals across India.
@@ -23,17 +23,17 @@ export default function Footer() {
             <h4 className="mb-4">Quick Links</h4>
             <ul className="space-y-2 text-gray-400">
               <li>
-                <Link to="/privacy-policy" className="hover:text-blue-500 transition-colors">
+                <Link to="/privacy-policy" className="hover:text-primary-500 transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/terms" className="hover:text-blue-500 transition-colors">
+                <Link to="/terms" className="hover:text-primary-500 transition-colors">
                   Terms & Conditions
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="hover:text-blue-500 transition-colors">
+                <Link to="/contact" className="hover:text-primary-500 transition-colors">
                   Contact Us
                 </Link>
               </li>
@@ -45,15 +45,15 @@ export default function Footer() {
             <h4 className="mb-4">Our Locations</h4>
             <ul className="space-y-2 text-gray-400 mb-6">
               <li className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-blue-500" />
+                <MapPin className="w-4 h-4 text-primary-500" />
                 Udaipur
               </li>
               <li className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-blue-500" />
+                <MapPin className="w-4 h-4 text-primary-500" />
                 Jaipur (Launching Soon)
               </li>
               <li className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-blue-500" />
+                <MapPin className="w-4 h-4 text-primary-500" />
                 Jodhpur (Launching Soon)
               </li>
             </ul>
@@ -61,19 +61,19 @@ export default function Footer() {
             <div className="flex gap-4">
               <a
                 href="#"
-                className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-500 transition-colors"
+                className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary-500 transition-colors"
               >
                 <Facebook className="w-5 h-5" />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-500 transition-colors"
+                className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary-500 transition-colors"
               >
                 <Instagram className="w-5 h-5" />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-500 transition-colors"
+                className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary-500 transition-colors"
               >
                 <Twitter className="w-5 h-5" />
               </a>

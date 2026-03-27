@@ -192,7 +192,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
             onChange={(e) =>
               setSelectedVehicleId(e.target.value ? parseInt(e.target.value) : null)
             }
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
           >
             <option value="">Choose a vehicle</option>
             {vehicles?.map((vehicle) => (
@@ -220,7 +220,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
                   <p className="text-gray-600 text-sm mb-1">Total Images</p>
                   <p className="text-3xl font-bold text-gray-900">{images?.length ?? 0}</p>
                 </div>
-                <Image className="w-12 h-12 text-blue-600" />
+                <Image className="w-12 h-12 text-primary-600" />
               </div>
             </div>
             <div className="bg-white rounded-xl shadow-md p-6">
@@ -250,7 +250,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
           <div className="flex justify-end">
             <button
               onClick={() => handleOpenModal()}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition flex items-center font-semibold shadow-md"
+              className="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition flex items-center font-semibold shadow-md"
             >
               <Plus className="w-5 h-5 mr-2" />
               Add New Image
@@ -274,7 +274,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {sortedImages.map((image) => (
                     <div key={image.id} className="relative group">
-                      <div className="relative rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-500 transition">
+                      <div className="relative rounded-lg overflow-hidden border-2 border-gray-200 hover:border-primary-500 transition">
                         <img
                           src={image.imageUrl}
                           alt={`Vehicle image ${image.displayOrder}`}
@@ -306,7 +306,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
                         )}
                         <button
                           onClick={() => handleOpenModal(image)}
-                          className="flex-1 bg-blue-50 text-blue-700 px-3 py-2 rounded-lg hover:bg-blue-100 transition text-sm font-medium flex items-center justify-center"
+                          className="flex-1 bg-primary-50 text-primary-700 px-3 py-2 rounded-lg hover:bg-primary-100 transition text-sm font-medium flex items-center justify-center"
                         >
                           <Edit className="w-4 h-4 mr-1" />
                           Edit
@@ -354,7 +354,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
               )}
 
               {/* Vehicle Info */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
                 <p className="text-sm text-blue-800">
                   <strong>Vehicle:</strong> {selectedVehicle?.name} —{' '}
                   {selectedVehicle?.make} {selectedVehicle?.model}
@@ -369,7 +369,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
 
                 {/* Upload Drop Zone */}
                 <div
-                  className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition cursor-pointer"
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary-500 transition cursor-pointer"
                   onClick={() => document.getElementById('imageUpload')?.click()}
                 >
                   {previewUrl ? (
@@ -435,7 +435,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
                       displayOrder: parseInt(e.target.value) || 0,
                     })
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
                 />
                 <p className="text-gray-500 text-sm mt-1">
                   Lower numbers appear first in image gallery
@@ -451,7 +451,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, isPrimary: e.target.checked })
                   }
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                 />
                 <label
                   htmlFor="isPrimary"
@@ -466,7 +466,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isUploading || (!editingImage && !selectedFile)}
-                  className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  className="flex-1 bg-primary-600 text-white py-3 rounded-lg hover:bg-primary-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                   {isUploading ? (
                     <>

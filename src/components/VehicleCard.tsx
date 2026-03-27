@@ -96,7 +96,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         {/* Pricing */}
         <div className="flex items-baseline justify-between mb-4">
           <div>
-            <span className="text-2xl font-bold text-blue-600">
+            <span className="text-2xl font-bold text-primary-600">
               ₹{vehicle.pricePerHour || 0}
             </span>
             <span className="text-sm text-gray-600">/hour</span>
@@ -107,7 +107,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         <Button
           onClick={handleBookNow}
           disabled={!isAvailable}
-          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           {isAvailable ? 'Book Now' : 'Unavailable'}
         </Button>

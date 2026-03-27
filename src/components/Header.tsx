@@ -52,7 +52,7 @@ export default function Header() {
               className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
             >
               <h1 className="text-2xl tracking-tight text-black font-bold">
-                Scooty<span className="text-blue-500">onrent</span>
+                Scooty<span className="text-primary-500">onrent</span>
               </h1>
             </a>
           </div>
@@ -62,20 +62,20 @@ export default function Header() {
             <Link
               to="/"
               onClick={handleHomeClick}
-              className="text-black hover:text-blue-500 transition-colors font-medium"
+              className="text-black hover:text-primary-500 transition-colors font-medium"
             >
               Home
             </Link>
             <a
               href="/vehicles"
               onClick={handleVehiclesClick}
-              className="text-black hover:text-blue-500 transition-colors font-medium cursor-pointer"
+              className="text-black hover:text-primary-500 transition-colors font-medium cursor-pointer"
             >
               Vehicles
             </a>
             <Link
               to="/contact"
-              className="text-black hover:text-blue-500 transition-colors font-medium"
+              className="text-black hover:text-primary-500 transition-colors font-medium"
             >
               Contact Us
             </Link>
@@ -88,7 +88,7 @@ export default function Header() {
                 <Button
                   onClick={() => navigate('/profile')}
                   variant="outline"
-                  className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-all"
+                  className="border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white transition-all"
                 >
                   <User className="w-4 h-4 mr-2" />
                   Profile
@@ -105,7 +105,7 @@ export default function Header() {
             ) : (
               <Button
                 onClick={() => navigate('/login')}
-                className="bg-blue-500 hover:bg-blue-600 text-white transition-all"
+                className="bg-primary-500 hover:bg-primary-600 text-white transition-all"
               >
                 Login
               </Button>

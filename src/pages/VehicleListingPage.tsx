@@ -71,7 +71,7 @@ const VehicleListingPage: React.FC = () => {
             <Button
               onClick={() => setShowMobileFilters(!showMobileFilters)}
               variant="outline"
-              className="lg:hidden flex items-center gap-2 border-blue-500 text-blue-500"
+              className="lg:hidden flex items-center gap-2 border-primary-500 text-primary-500"
             >
               <SlidersHorizontal className="w-4 h-4" />
               {showMobileFilters ? 'Hide Filters' : 'Show Filters'}
@@ -80,9 +80,9 @@ const VehicleListingPage: React.FC = () => {
 
           {/* Search criteria banner */}
           {/* {startDate && startTime && endDate && endTime && (
-            <div className="mb-6 bg-blue-50 border border-blue-200 rounded-xl p-6">
+            <div className="mb-6 bg-primary-50 border border-primary-200 rounded-xl p-6">
               <div className="flex items-start">
-                <Calendar className="w-6 h-6 text-blue-600 mr-3 mt-0.5 flex-shrink-0" />
+                <Calendar className="w-6 h-6 text-primary-600 mr-3 mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
                   <p className="text-sm font-semibold text-blue-900 mb-3">Your Search Criteria</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-blue-800">
@@ -99,7 +99,7 @@ const VehicleListingPage: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  <p className="text-xs text-blue-700 mt-2">
+                  <p className="text-xs text-primary-700 mt-2">
                     These dates will be pre-filled when you click Book Now
                   </p>
                 </div>
@@ -118,10 +118,10 @@ const VehicleListingPage: React.FC = () => {
                 {/* Sidebar Header */}
                 <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                   <div className="flex items-center gap-2">
-                    <Filter className="w-4 h-4 text-blue-500" />
+                    <Filter className="w-4 h-4 text-primary-500" />
                     <span className="font-bold text-gray-900">Filters</span>
                     {hasActiveFilters && (
-                      <span className="w-5 h-5 bg-blue-500 text-white rounded-full text-xs font-bold flex items-center justify-center">
+                      <span className="w-5 h-5 bg-primary-500 text-white rounded-full text-xs font-bold flex items-center justify-center">
                         {[selectedType, selectedFuel, priceRange[0] > 0 || priceRange[1] < 500].filter(Boolean).length}
                       </span>
                     )}
@@ -145,7 +145,7 @@ const VehicleListingPage: React.FC = () => {
                       <h4 className="text-sm font-bold text-gray-800 uppercase tracking-wide">
                         Price / Hour
                       </h4>
-                      <span className="text-sm font-bold text-blue-600">
+                      <span className="text-sm font-bold text-primary-600">
                         ₹{priceRange[0]} – ₹{priceRange[1]}
                       </span>
                     </div>
@@ -192,7 +192,7 @@ const VehicleListingPage: React.FC = () => {
                     <select
                       value={selectedType}
                       onChange={(e) => setSelectedType(e.target.value)}
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm text-gray-700"
+                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none text-sm text-gray-700"
                     >
                       <option value="">All Types</option>
                       <option value="Scooter">🛵 Scooter</option>
@@ -211,7 +211,7 @@ const VehicleListingPage: React.FC = () => {
                     <select
                       value={selectedFuel}
                       onChange={(e) => setSelectedFuel(e.target.value)}
-                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm text-gray-700"
+                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none text-sm text-gray-700"
                     >
                       <option value="">All Fuel Types</option>
                       <option value="Petrol">⛽ Petrol</option>
@@ -232,7 +232,7 @@ const VehicleListingPage: React.FC = () => {
                   <span className="font-semibold text-gray-900">{filteredVehicles.length}</span>{' '}
                   available vehicle{filteredVehicles.length !== 1 ? 's' : ''}
                   {hasActiveFilters && (
-                    <span className="text-blue-500 ml-1">(filtered)</span>
+                    <span className="text-primary-500 ml-1">(filtered)</span>
                   )}
                 </p>
               )}

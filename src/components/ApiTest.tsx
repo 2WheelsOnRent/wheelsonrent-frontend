@@ -50,7 +50,7 @@ export const ApiTest: React.FC = () => {
       <button
         onClick={testApiConnection}
         disabled={testStatus === 'loading'}
-        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center mb-4"
+        className="w-full bg-primary-600 text-white py-2 rounded-lg hover:bg-primary-700 transition disabled:opacity-50 flex items-center justify-center mb-4"
       >
         {testStatus === 'loading' ? (
           <>

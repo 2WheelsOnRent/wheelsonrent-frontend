@@ -29,7 +29,7 @@ const PaymentFailurePage: React.FC = () => {
         <div className="space-y-3">
           <button
             onClick={() => navigate(-1)}
-            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition flex items-center justify-center"
+            className="w-full bg-gradient-to-r from-primary-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-primary-700 hover:to-indigo-700 transition flex items-center justify-center"
           >
             Try Again
             <ArrowRight className="w-5 h-5 ml-2" />

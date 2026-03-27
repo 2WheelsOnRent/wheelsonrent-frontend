@@ -59,7 +59,7 @@ const HomePage: React.FC = () => {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 via-indigo-50 to-purple-50">
         
         {/* Hero Section */}
         <section
