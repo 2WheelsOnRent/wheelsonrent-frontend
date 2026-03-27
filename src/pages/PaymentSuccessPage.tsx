@@ -151,7 +151,7 @@ export default function PaymentSuccessPage() {
           <ul className="list-disc list-inside space-y-1 text-amber-700">
             <li>Valid driving license (original)</li>
             <li>Government-issued ID (Aadhaar / PAN)</li>
-            <li>Security deposit ₹2,000 (refundable)</li>
+            <li>Security deposit ₹2,000 at pickup (refundable)</li>
           </ul>
         </div>
 

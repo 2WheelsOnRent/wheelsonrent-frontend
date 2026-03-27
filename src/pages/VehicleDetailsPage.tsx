@@ -199,19 +199,18 @@ const VehicleDetailsPage: React.FC = () => {
             {/* Images */}
             <div className="bg-white rounded-xl shadow-md overflow-hidden">
               <div className="relative h-96">
-                <img 
-                  src={vehicleImages[currentImageIndex]?.imageUrl || primaryImage} 
-                  alt={vehicleData.name} 
-                  className="w-full h-full object-cover" 
+                <img
+                  src={vehicleImages[currentImageIndex]?.imageUrl || primaryImage}
+                  alt={vehicleData.name}
+                  className="w-full h-full object-cover"
                 />
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
                   {(vehicleImages.length > 0 ? vehicleImages : [{ imageUrl: primaryImage }]).map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
-                      className={`w-3 h-3 rounded-full transition ${
-                        currentImageIndex === index ? 'bg-white' : 'bg-white/50'
-                      }`}
+                      className={`w-3 h-3 rounded-full transition ${currentImageIndex === index ? 'bg-white' : 'bg-white/50'
+                        }`}
                     />
                   ))}
                 </div>
@@ -317,10 +316,7 @@ const VehicleDetailsPage: React.FC = () => {
               <h3 className="text-black mb-3">Important Information</h3>
               <ul className="space-y-2 text-sm text-gray-700">
                 <li>✓ Valid driving license and ID proof required at pickup</li>
-                <li>✓ Security deposit of ₹2000 will be collected (refundable)</li>
-                <li>✓ Vehicle will be provided with full fuel tank</li>
-                <li>✓ Excess KM: ₹{vehicleData.excessKmCharge}/km</li>
-                <li>✓ Late Return: ₹{vehicleData.lateReturnCharge}/hour</li>
+                <li>✓ Security deposit of ₹2000 will be collected at pickup (refundable)</li>
               </ul>
             </div>
           </div>

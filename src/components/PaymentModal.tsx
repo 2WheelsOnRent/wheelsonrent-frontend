@@ -44,78 +44,78 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   }, [isOpen]);
 
   const verifyPayment = async (txnid: string, easepayid: string) => {
-  try {
-    const res = await fetch(
-      `${import.meta.env.VITE_API_BASEURL}/Payments/verify`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-        body: JSON.stringify({ txnid, easepayid, bookingId }),
-      }
-    );
-
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-    const data = await res.json();
-
-    if (data.success) onSuccess();
-    else throw new Error(data.message);
-  } catch (err: any) {
-    onFailure(err.message);
-  } finally {
-    setIsProcessing(false);
-  }
-};
-
-
- const initiatePayment = async () => {
-  if (!sdkReady) return;
-
-  setIsProcessing(true);
-
-  try {
-    const res = await fetch(
-      `${import.meta.env.VITE_API_BASEURL}/Payments/initiate`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-        body: JSON.stringify({ bookingId, amount }),
-      }
-    );
-
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}`);
-    }
-
-    const data = await res.json();
-
-    const checkout = new window.EasebuzzCheckout(
-      import.meta.env.VITE_EASEBUZZ_KEY,
-      import.meta.env.VITE_EASEBUZZ_ENV || "test"
-    );
-
-    checkout.initiatePayment({
-      access_key: data.accessKey,
-      onResponse: (r: any) => {
-        if (r.status === "success") {
-          verifyPayment(r.txnid, r.easepayid);
-        } else {
-          setIsProcessing(false);
-          onFailure("Payment failed");
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASEURL}/Payments/verify`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+          body: JSON.stringify({ txnid, easepayid, bookingId }),
         }
-      },
-    });
-  } catch (err: any) {
-    setIsProcessing(false);
-    onFailure(err.message);
-  }
-};
+      );
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = await res.json();
+
+      if (data.success) onSuccess();
+      else throw new Error(data.message);
+    } catch (err: any) {
+      onFailure(err.message);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+
+  const initiatePayment = async () => {
+    if (!sdkReady) return;
+
+    setIsProcessing(true);
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASEURL}/Payments/initiate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+          body: JSON.stringify({ bookingId, amount }),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      const checkout = new window.EasebuzzCheckout(
+        import.meta.env.VITE_EASEBUZZ_KEY,
+        import.meta.env.VITE_EASEBUZZ_ENV || "test"
+      );
+
+      checkout.initiatePayment({
+        access_key: data.accessKey,
+        onResponse: (r: any) => {
+          if (r.status === "success") {
+            verifyPayment(r.txnid, r.easepayid);
+          } else {
+            setIsProcessing(false);
+            onFailure("Payment failed");
+          }
+        },
+      });
+    } catch (err: any) {
+      setIsProcessing(false);
+      onFailure(err.message);
+    }
+  };
 
 
   if (!isOpen) return null;
@@ -135,7 +135,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         <Button
           onClick={initiatePayment}
           disabled={isProcessing || !sdkReady}
-          className="w-full"
+          className="w-full border border-black"
         >
           {isProcessing ? (
             <>

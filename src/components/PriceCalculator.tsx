@@ -43,11 +43,11 @@ export default function PriceCalculator({
   };
 
   const handleRemovePromo = () => {
-  setPromoCode('');
-  setDiscount(0);
-  setPromoApplied(false);
-  toast.success('Promo code removed');
-};
+    setPromoCode('');
+    setDiscount(0);
+    setPromoApplied(false);
+    toast.success('Promo code removed');
+  };
 
   const subtotal = basePrice * hours;
   const discountAmount = subtotal * discount;
@@ -107,49 +107,49 @@ export default function PriceCalculator({
       </div>
 
       {/* Promo Code */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Promo Code</label>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <Input
-                    type="text"
-                    placeholder="Enter code"
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                    className="pl-10"
-                    disabled={promoApplied}
-                  />
-                </div>
-                {!promoApplied ? (
-                  <Button
-                    onClick={handleApplyPromo}
-                    variant="outline"
-                    className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
-                    disabled={!promoCode}
-                  >
-                    Apply
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={handleRemovePromo}
-                    variant="outline"
-                    className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-                  >
-                    Remove
-                  </Button>
-                )}
-              </div>
-              {promoApplied && (
-                <p className="text-sm text-green-600 mt-2 flex items-center">
-                  <CheckCircle className="w-4 h-4 mr-1" />
-                  Promo code applied successfully! (Save {discount * 100}%)
-                </p>
-              )}
-              {!promoApplied && (
-                <p className="text-xs text-gray-500 mt-2">Try FIRST10 or SAVE20</p>
-              )}
-            </div>
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-2">Promo Code</label>
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Enter code"
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+              className="pl-10"
+              disabled={promoApplied}
+            />
+          </div>
+          {!promoApplied ? (
+            <Button
+              onClick={handleApplyPromo}
+              variant="outline"
+              className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
+              disabled={!promoCode}
+            >
+              Apply
+            </Button>
+          ) : (
+            <Button
+              onClick={handleRemovePromo}
+              variant="outline"
+              className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+            >
+              Remove
+            </Button>
+          )}
+        </div>
+        {promoApplied && (
+          <p className="text-sm text-green-600 mt-2 flex items-center">
+            <CheckCircle className="w-4 h-4 mr-1" />
+            Promo code applied successfully! (Save {discount * 100}%)
+          </p>
+        )}
+        {!promoApplied && (
+          <p className="text-xs text-gray-500 mt-2">Try FIRST10 or SAVE20</p>
+        )}
+      </div>
 
       {/* Validation Warning */}
       {hours > 0 && hours < minBookingHours && (
@@ -166,15 +166,13 @@ export default function PriceCalculator({
         <h4 className="text-sm font-medium text-black mb-2">Important Information</h4>
         <ul className="text-sm text-gray-600 space-y-1">
           <li>• Valid driving license and ID proof required at pickup</li>
-          <li>• Security Deposit: ₹2000 (refundable)</li>
-          <li>• Excess KM: ₹5-8/km (based on vehicle)</li>
-          <li>• Late Return: ₹80-150/hour</li>
+          <li>• Security Deposit: ₹2000 collected at pickup (refundable)</li>
         </ul>
       </div>
 
       {/* Proceed Button */}
       {onProceedToPayment && (
-        <Button 
+        <Button
           onClick={() => onProceedToPayment?.(total)}
           disabled={!canProceed || isLoading}
           className="w-full bg-blue-500 hover:bg-blue-600 text-white py-6 disabled:opacity-50 disabled:cursor-not-allowed"
