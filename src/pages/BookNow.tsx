@@ -325,7 +325,7 @@ export default function BookNow() {
               />
 
               {/* Login notice shown below PriceCalculator when not logged in */}
-              {!user && (
+              {/* {!user && (
                 <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200 text-center">
                   <p className="text-sm text-gray-700 mb-3">
                     You'll be asked to login before completing payment
@@ -348,7 +348,7 @@ export default function BookNow() {
                     Login to Continue
                   </Button>
                 </div>
-              )}
+              )} */}
             </div>
           </div>
         </div>

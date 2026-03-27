@@ -1,71 +1,80 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Lock, Mail, Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
-import { useLoginMutation } from '../store/api/authApi';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { setCredentials } from '../store/slices/authSlice';
-import { toast } from 'sonner';
+import React, { useState } from "react";
+import { Lock, Mail, Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
+import { useLoginMutation } from "../store/api/authApi";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setCredentials } from "../store/slices/authSlice";
+import { toast } from "sonner";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
-  const [identifier, setIdentifier] = useState('');
-  const [password, setPassword] = useState('');
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-
+  const [error, setError] = useState("");
   const [login, { isLoading }] = useLoginMutation();
 
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      if (user.userType === 'admin' || user.userType === 'superadmin') {
-        navigate('/admin', { replace: true });
-      } else {
-        navigate('/dashboard', { replace: true });
-      }
+  // If already logged in as admin/superadmin → go to admin panel
+  // If already logged in as user → do NOT auto-enter admin — stay on page
+  if (isAuthenticated && user) {
+    if (user.userType === "admin" || user.userType === "superadmin") {
+      return <Navigate to="/admin" replace />;
     }
-  }, [isAuthenticated, user]); 
+    // user.userType === "user": fall through — let them attempt admin login
+    // (they'll fail at role check in handleSubmit)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (!identifier.trim() || !password.trim()) {
-      setError('Please enter both email and password.');
+      setError("Please enter both email and password.");
       return;
     }
 
     try {
       const response = await login({
-        type: 'admin',
+        type: "admin",
         identifier: identifier.trim(),
         password: password.trim(),
       }).unwrap();
 
       if (response.success && response.token && response.userData) {
+        const userData = response.userData as any;
+        const userType = response.userType?.toLowerCase() as "admin" | "superadmin";
+
+        // Double-check role on frontend too
+        if (userType !== "admin" && userType !== "superadmin") {
+          setError("Access denied. This login is for admins only.");
+          return;
+        }
+
         dispatch(
           setCredentials({
             user: {
-              id: response.userData.id,
-              name: response.userData.username ?? response.userData.email ?? 'admin',
-              email: response.userData.email,
-              userType: response.userType?.toLowerCase() as 'admin' | 'superadmin',
-              districtId: response.userData.districtId,
-              phone: ''
+              id: userData.id,
+              name: userData.username ?? userData.email ?? "Admin",
+              email: userData.email,
+              phone: userData.number ?? "",
+              userType: userType,
+              districtId: userData.districtId,
             },
             token: response.token,
-            refreshToken: response.refreshToken,
+            refreshToken: response.refreshToken ?? undefined,
           })
         );
-        toast.success('Login successful!');
-        // navigate is handled by the useEffect above after Redux state updates
+
+        toast.success("Login successful!");
+        navigate("/admin", { replace: true });
       } else {
-        setError(response.message ?? 'Login failed. Please check your credentials.');
+        setError(response.message ?? "Login failed. Please check your credentials.");
       }
     } catch (err: any) {
-      setError(err?.data?.message ?? 'Login failed. Please try again.');
+      setError(err?.data?.message ?? "Login failed. Please try again.");
     }
   };
 
@@ -91,7 +100,7 @@ const AdminLogin: React.FC = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email / Username */}
+            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Email Address
@@ -102,7 +111,7 @@ const AdminLogin: React.FC = () => {
                   type="text"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder="admin@ScootyOnRent.com"
+                  placeholder="admin@scootyonrent.com"
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                   required
                 />
@@ -117,7 +126,7 @@ const AdminLogin: React.FC = () => {
               <div className="relative">
                 <Lock className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
@@ -129,7 +138,11 @@ const AdminLogin: React.FC = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
             </div>
@@ -146,7 +159,7 @@ const AdminLogin: React.FC = () => {
                   Signing in...
                 </>
               ) : (
-                'Sign In'
+                "Sign In"
               )}
             </button>
           </form>
