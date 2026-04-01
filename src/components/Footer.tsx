@@ -16,6 +16,9 @@ export default function Footer() {
             <p className="text-gray-400">
               Your trusted partner for two-wheeler rentals across India.
             </p>
+            <p className="text-gray-400 mt-3 text-sm">
+              Plot No. 28, Singh Nagar, Kuchaman City Charanwas, Kuchaman City, Nagaur, Rajasthan, 341508
+            </p>
           </div>
 
           {/* Quick Links */}
