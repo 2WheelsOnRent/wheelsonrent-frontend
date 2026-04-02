@@ -56,6 +56,37 @@ export interface VerifyOtpResponse {
   isNewUser: boolean;
 }
 
+export interface SendEmailOtpRequest {
+  email: string;
+}
+
+export interface SendEmailOtpResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface VerifyEmailOtpRequest {
+  email: string;
+  otp: string;
+}
+
+export interface VerifyEmailOtpResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface UpdateProfileRequest {
+  userId: number;
+  name: string;
+  email: string;
+  token: string; // passed explicitly — user not yet in Redux store
+}
+
+export interface UpdateProfileResponse {
+  success: boolean;
+  message: string;
+}
+
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
@@ -91,7 +122,38 @@ export const authApi = createApi({
         body: data,
       }),
     }),
+    sendEmailOtp: builder.mutation<SendEmailOtpResponse, SendEmailOtpRequest>({
+      query: (data) => ({
+        url: 'Auth/send-email-otp',
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    verifyEmailOtp: builder.mutation<VerifyEmailOtpResponse, VerifyEmailOtpRequest>({
+      query: (data) => ({
+        url: 'Auth/verify-email-otp',
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    updateProfile: builder.mutation<UpdateProfileResponse, UpdateProfileRequest>({
+      query: ({ token, ...body }) => ({
+        url: 'Auth/update-profile',
+        method: 'POST',
+        body,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation, useSendOtpMutation, useVerifyOtpMutation } = authApi;
+export const {
+  useLoginMutation,
+  useSendOtpMutation,
+  useVerifyOtpMutation,
+  useSendEmailOtpMutation,
+  useVerifyEmailOtpMutation,
+  useUpdateProfileMutation,
+} = authApi;
