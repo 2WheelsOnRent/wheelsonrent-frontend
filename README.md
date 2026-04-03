@@ -1,73 +1,150 @@
-# React + TypeScript + Vite
+# WheelsOnRent Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript + Vite frontend for the ScootyOnRent vehicle rental platform.
 
-Currently, two official plugins are available:
+## Project Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project supports **two separate applications** from a single codebase:
 
-## React Compiler
+| App | Domain | Description |
+|-----|--------|-------------|
+| **Main** | `scootyonrent.com` | Customer-facing rental website |
+| **Admin** | `admin.scootyonrent.com` | Admin dashboard for management |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The apps are separated at **build time** using the `VITE_APP_TYPE` environment variable.
 
-## Expanding the ESLint configuration
+## Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js 18+ 
+- npm or yarn
+- Backend API running at `https://app.scootyonrent.com` (or localhost for dev)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Installation
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Run Main App (Customer Website)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev:main
 ```
+Opens at `http://localhost:5173` with customer routes.
+
+### Run Admin App (Admin Dashboard)
+
+```bash
+npm run dev:admin
+```
+Opens at `http://localhost:5173` with admin routes.
+
+### Run Default (Main App)
+
+```bash
+npm run dev
+```
+
+## Production Build
+
+### Build Main App
+
+```bash
+npm run build:main
+```
+Output: `dist/` folder configured for main website deployment.
+
+### Build Admin App
+
+```bash
+npm run build:admin
+```
+Output: `dist/` folder configured for admin dashboard deployment.
+
+### Preview Production Build
+
+```bash
+npm run preview
+```
+
+## Environment Variables
+
+This project uses **mode-based environment files** instead of `.env.production`:
+
+| File | Used By | Purpose |
+|------|---------|---------|
+| `.env` | All modes | Default/shared variables |
+| `.env.main` | `npm run dev:main` / `build:main` | Main app config |
+| `.env.admin` | `npm run dev:admin` / `build:admin` | Admin app config |
+
+> **Note**: We don't use `.env.production` because builds are mode-specific (`--mode main` or `--mode admin`).
+
+### .env.main
+```env
+VITE_APP_TYPE=main
+VITE_API_BASE_URL=https://app.scootyonrent.com/api
+```
+
+### .env.admin
+```env
+VITE_APP_TYPE=admin
+VITE_API_BASE_URL=https://app.scootyonrent.com/api
+```
+
+## How App Separation Works
+
+1. **Build-time detection**: `VITE_APP_TYPE` determines which routes to include
+2. **Route files**:
+   - `src/routes/mainRoutes.tsx` - Customer routes (home, vehicles, bookings)
+   - `src/routes/adminRoutes.tsx` - Admin routes (dashboard, management)
+3. **Layouts**:
+   - `MainLayout` - Customer website layout with navbar/footer
+   - `AdminLayout` - Admin dashboard layout with sidebar
+
+## Deployment (Vercel)
+
+### Main App (scootyonrent.com)
+```json
+{
+  "buildCommand": "npm run build:main",
+  "outputDirectory": "dist"
+}
+```
+
+### Admin App (admin.scootyonrent.com)
+```json
+{
+  "buildCommand": "npm run build:admin",
+  "outputDirectory": "dist"
+}
+```
+
+## Authentication
+
+- Uses **HttpOnly cookies** for secure token storage
+- Cookies are cross-subdomain (`.scootyonrent.com`)
+- Admin app requires `admin` or `superadmin` role
+
+## Scripts Reference
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start dev server (default mode) |
+| `npm run dev:main` | Start dev server for main app |
+| `npm run dev:admin` | Start dev server for admin app |
+| `npm run build` | Production build (default mode) |
+| `npm run build:main` | Production build for main app |
+| `npm run build:admin` | Production build for admin app |
+| `npm run lint` | Run ESLint |
+| `npm run preview` | Preview production build |
+
+## Tech Stack
+
+- **React 18** with TypeScript
+- **Vite** for bundling
+- **RTK Query** for API calls
+- **React Router v6** for routing
+- **Tailwind CSS** for styling
+- **shadcn/ui** components
