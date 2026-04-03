@@ -62,6 +62,18 @@ export const API_ENDPOINTS = {
   WEBSITE_REVIEWS: '/WebsiteReviews',
   WEBSITE_REVIEWS_ACTIVE: '/WebsiteReviews/active',
   WEBSITE_REVIEW_BY_ID: (id: number) => `/WebsiteReviews/${id}`,
+
+  // Promo Codes (NEW)
+  PROMO_CODES: '/PromoCodes',
+  PROMO_CODE_BY_ID: (id: number) => `/PromoCodes/${id}`,
+  PROMO_CODES_ACTIVE: '/PromoCodes/active',
+  PROMO_CODE_VALIDATE: '/PromoCodes/validate',
+
+  // Admin Password Management (NEW)
+  ADMIN_FORGOT_PASSWORD: 'Auth/admin/forgot-password',
+  ADMIN_VERIFY_OTP: 'Auth/admin/verify-otp',
+  ADMIN_RESET_PASSWORD: 'Auth/admin/reset-password',
+  ADMIN_CHANGE_PASSWORD: 'Auth/admin/change-password',
 };
 export const EASEBUZZ_CONFIG = {
   MERCHANT_KEY: 'W0JXM1KFH7',
