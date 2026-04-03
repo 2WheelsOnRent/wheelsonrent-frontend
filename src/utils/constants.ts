@@ -1,4 +1,4 @@
-export const API_BASE_URL = import.meta.env.VITE_API_BASEURL || 'https://localhost:7001/api';
+export const API_BASE_URL = import.meta.env.VITE_API_BASEURL || 'https://app.scootyonrent.com/api';
 
 export const BOOKING_STATUS = {
   PENDING: 0,

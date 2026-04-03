@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Loader2, AlertCircle, ShieldCheck } from 'lucide-react';
+import { Lock, Loader2, AlertCircle, ShieldCheck, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { markPasswordChanged } from '../store/slices/adminAuthSlice';
 import { logout } from '../store/slices/authSlice';
@@ -19,6 +19,11 @@ const AdminChangePassword: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Password visibility toggles
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Resolve admin ID from Redux or localStorage fallback
   const getAdminId = (): number | null => {
@@ -102,7 +107,7 @@ const AdminChangePassword: React.FC = () => {
         // Mark password changed in Redux + localStorage
         dispatch(markPasswordChanged());
         toast.success('Password changed successfully!');
-        navigate('/admin', { replace: true });
+        navigate('/dashboard', { replace: true });
       } else if (response.status === 401) {
         setError('Current password is incorrect');
       } else if (response.status === 403) {
@@ -126,7 +131,7 @@ const AdminChangePassword: React.FC = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('adminUser');
     localStorage.removeItem('adminHasChangedPassword');
-    navigate('/admin-login', { replace: true });
+    navigate('/login', { replace: true });
   };
 
   return (
@@ -134,12 +139,24 @@ const AdminChangePassword: React.FC = () => {
       <div className="w-full max-w-md">
 
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="mb-8">
+          {/* Icon */}
           <div className="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <ShieldCheck className="w-8 h-8 text-yellow-600" />
           </div>
+
+          {/* Back button - left aligned */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center text-gray-500 hover:text-primary-600 transition group mb-2"
+          >
+            <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+            <span className="font-medium">Back to login</span>
+          </button>
+
+          {/* Title - left aligned */}
           <h1 className="text-3xl font-bold text-gray-900">Change Password Required</h1>
-          <p className="text-gray-500 mt-2 text-sm">
+          <p className="text-gray-500 text-sm mt-2">
             For your security, please set a new password before continuing.
           </p>
         </div>
@@ -169,14 +186,21 @@ const AdminChangePassword: React.FC = () => {
               <div className="relative">
                 <Lock className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
-                  type="password"
+                  type={showCurrentPassword ? 'text' : 'password'}
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   placeholder="Your current / temporary password"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
                   required
                   autoComplete="current-password"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+                >
+                  {showCurrentPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
             </div>
 
@@ -187,14 +211,21 @@ const AdminChangePassword: React.FC = () => {
               <div className="relative">
                 <Lock className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
-                  type="password"
+                  type={showNewPassword ? 'text' : 'password'}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="At least 8 characters"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
                   required
                   autoComplete="new-password"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+                >
+                  {showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
             </div>
 
@@ -205,14 +236,21 @@ const AdminChangePassword: React.FC = () => {
               <div className="relative">
                 <Lock className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Repeat new password"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
                   required
                   autoComplete="new-password"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
               {newPassword && confirmPassword && newPassword !== confirmPassword && (
                 <p className="text-xs text-red-500 mt-1">Passwords do not match</p>
@@ -238,13 +276,6 @@ const AdminChangePassword: React.FC = () => {
             </button>
           </form>
         </div>
-
-        <button
-          onClick={handleLogout}
-          className="mt-6 w-full text-sm text-gray-400 hover:text-red-500 transition py-2"
-        >
-          Sign out and go back
-        </button>
       </div>
     </div>
   );

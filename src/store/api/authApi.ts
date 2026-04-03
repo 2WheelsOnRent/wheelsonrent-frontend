@@ -147,6 +147,18 @@ export const authApi = createApi({
         },
       }),
     }),
+    logout: builder.mutation<{ success: boolean; message: string }, void>({
+      query: () => ({
+        url: 'Auth/logout',
+        method: 'POST',
+      }),
+    }),
+    refreshToken: builder.mutation<LoginResponse, void>({
+      query: () => ({
+        url: 'Auth/refresh',
+        method: 'POST',
+      }),
+    }),
   }),
 });
 
@@ -157,4 +169,6 @@ export const {
   useSendEmailOtpMutation,
   useVerifyEmailOtpMutation,
   useUpdateProfileMutation,
+  useLogoutMutation,
+  useRefreshTokenMutation,
 } = authApi;

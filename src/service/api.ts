@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASEURL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASEURL || 'https://app.scootyonrent.com/api';
 
 export interface VehiclePackages {
   fourHours: number;
@@ -27,7 +27,7 @@ export interface VehicleImage {
 export interface Vehicle {
   id: number;
   name: string;
-  make: string; 
+  make: string;
   model: string;
   pricePerHour: number;
   pricePerDay: number;
@@ -53,7 +53,7 @@ class VehicleAPI {
   }
 
   async getAvailableVehicles(districtId?: number): Promise<Vehicle[]> {
-    const url = districtId 
+    const url = districtId
       ? `${API_BASE_URL}/vehicles/available?districtId=${districtId}`
       : `${API_BASE_URL}/vehicles/available`;
     const response = await fetch(url, { credentials: 'include' });
@@ -78,7 +78,7 @@ class VehicleAPI {
     if (filters.fuelType) params.append('fuelType', filters.fuelType);
     if (filters.maxPricePerDay) params.append('maxPricePerDay', filters.maxPricePerDay.toString());
     if (filters.districtId) params.append('districtId', filters.districtId.toString());
-    
+
     const response = await fetch(`${API_BASE_URL}/vehicles/filter?${params}`, { credentials: 'include' });
     if (!response.ok) throw new Error('Failed to filter vehicles');
     return response.json();

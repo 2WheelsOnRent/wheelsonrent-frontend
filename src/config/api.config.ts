@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_BASEURL || 'http://localhost:5086/api',
+  BASE_URL: import.meta.env.VITE_API_BASEURL || 'https://app.scootyonrent.com/api',
   GOOGLE_MAPS_KEY: import.meta.env.VITE_GOOGLE_MAPS_KEY || '',
 };
 
@@ -8,6 +8,8 @@ export const API_ENDPOINTS = {
   LOGIN: `Auth/login`,
   SENDOTP: `Auth/send-otp`,
   VERIFYOTP: `Auth/verify-otp`,
+  LOGOUT: `Auth/logout`,
+  REFRESH: `Auth/refresh`,
 
   // Admin Management (under /admin/ prefix)
   ADMINS: '/admin/Admins',

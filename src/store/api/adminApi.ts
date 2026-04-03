@@ -177,6 +177,12 @@ export const adminApi = createApi({
       }),
       invalidatesTags: ['Admin'],
     }),
+    adminLogout: builder.mutation<{ success: boolean; message: string }, void>({
+      query: () => ({
+        url: 'Auth/logout',
+        method: 'POST',
+      }),
+    }),
   }),
 });
 
@@ -191,6 +197,7 @@ export const {
   useCreateAdminMutation,
   useUpdateAdminMutation,
   useDeleteAdminMutation,
+  useAdminLogoutMutation,
 } = adminApi;
 
 // Backward-compat alias so existing imports of adminAuthApi still work
