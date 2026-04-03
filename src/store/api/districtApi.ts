@@ -19,6 +19,7 @@ export const districtApi = createApi({
   reducerPath: 'districtApi',
   baseQuery: fetchBaseQuery({
     baseUrl: API_CONFIG.BASE_URL,
+    credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) {
@@ -36,7 +37,7 @@ export const districtApi = createApi({
     }),
     getDistrictById: builder.query<DistrictDto, number>({
       query: (id) => API_ENDPOINTS.DISTRICT_BY_ID(id),
-      
+
     }),
     getStates: builder.query<StateDto[], { page?: number; size?: number }>({
       query: ({ page = 1, size = 100 }) => `${API_ENDPOINTS.STATES}?page=${page}&size=${size}`,

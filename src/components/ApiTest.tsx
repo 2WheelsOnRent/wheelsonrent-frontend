@@ -13,7 +13,7 @@ export const ApiTest: React.FC = () => {
 
     try {
       // Test a simple GET request to check backend connectivity
-      const response = await fetch(`${API_CONFIG.BASE_URL}/States?page=1&size=10`);
+      const response = await fetch(`${API_CONFIG.BASE_URL}/States?page=1&size=10`, { credentials: 'include' });
       
       if (response.ok) {
         setTestStatus('success');

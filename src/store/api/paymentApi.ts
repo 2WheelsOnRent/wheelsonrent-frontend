@@ -15,13 +15,14 @@ export interface InitiatePaymentResponse {
   success: boolean;
   message: string;
   paymentUrl: string;
-  accessKey: string; 
+  accessKey: string;
 }
 
 export const paymentApi = createApi({
   reducerPath: 'paymentApi',
   baseQuery: fetchBaseQuery({
     baseUrl: API_CONFIG.BASE_URL,
+    credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) headers.set('Authorization', `Bearer ${token}`);

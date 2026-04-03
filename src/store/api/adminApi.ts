@@ -87,6 +87,7 @@ export const adminApi = createApi({
   reducerPath: 'adminAuthApi', // keep same reducerPath so store key doesn't change
   baseQuery: fetchBaseQuery({
     baseUrl: API_CONFIG.BASE_URL,
+    credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) headers.set('Authorization', `Bearer ${token}`);

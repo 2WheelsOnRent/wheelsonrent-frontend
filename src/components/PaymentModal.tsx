@@ -49,6 +49,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         `${import.meta.env.VITE_API_BASEURL}/Payments/verify`,
         {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
@@ -81,6 +82,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         `${import.meta.env.VITE_API_BASEURL}/Payments/initiate`,
         {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,

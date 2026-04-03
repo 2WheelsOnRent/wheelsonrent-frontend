@@ -30,6 +30,7 @@ export async function getLiveData(deviceId: string): Promise<MapplsDeviceData | 
   try {
     const res = await fetch(`${API_BASE}/mappls/livedata`, {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ deviceId }),
     });
