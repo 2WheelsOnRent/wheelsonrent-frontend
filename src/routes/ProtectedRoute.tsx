@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAppSelector } from '../store/hooks';
+import { isAdminApp } from '../utils/appType';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -16,34 +17,32 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { hasChangedPassword } = useAppSelector((state) => state.adminAuth);
   const location = useLocation();
 
-  // Not authenticated → redirect to appropriate login
+  // Not authenticated → redirect to login
   if (!isAuthenticated || !user) {
-    const loginPath = location.pathname.startsWith('/admin') ? '/admin-login' : '/auth';
-    return <Navigate to={loginPath} replace />;
+    return <Navigate to="/login" replace />;
   }
 
-  // Role check
+  // Role check - if user doesn't have required role
   if (allowedRoles && !allowedRoles.includes(user.userType as any)) {
     if (user.userType === 'admin' || user.userType === 'superadmin') {
-      return <Navigate to="/admin" replace />;
+      return <Navigate to="/dashboard" replace />;
     }
     if (user.userType === 'user') {
-      return <Navigate to="/admin-login" replace />;
+      return <Navigate to="/login" replace />;
     }
   }
 
-  // Admin/SuperAdmin first-login password change guard
-  const isAdminRoute = location.pathname.startsWith('/admin');
-  const isChangePasswordPage = location.pathname === '/admin-change-password';
-  const isAdminUser = user.userType === 'admin' || user.userType === 'superadmin';
+  // Admin first-login password change guard (only for admin, not superadmin)
+  const isChangePasswordPage = location.pathname === '/change-password';
+  const isAdmin = user.userType === 'admin';
 
   if (
-    isAdminUser &&
-    isAdminRoute &&
+    isAdminApp &&
+    isAdmin &&
     !isChangePasswordPage &&
     !hasChangedPassword
   ) {
-    return <Navigate to="/admin-change-password" replace />;
+    return <Navigate to="/change-password" replace />;
   }
 
   return <>{children}</>;

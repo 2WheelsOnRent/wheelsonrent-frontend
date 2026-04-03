@@ -23,13 +23,13 @@ type Tab =
   | 'promo-codes';
 
 const TAB_CONFIG: { id: Tab; label: string; icon: React.ElementType }[] = [
-  { id: 'overview',      label: 'Overview',       icon: LayoutDashboard },
-  { id: 'admins',        label: 'Admins',          icon: UserCog },
-  { id: 'users',         label: 'Users',           icon: Users },
-  { id: 'bookings',      label: 'Bookings',        icon: LayoutDashboard },
-  { id: 'vehicles',      label: 'Vehicles',        icon: LayoutDashboard },
-  { id: 'pickup-points', label: 'Pickup Points',   icon: MapPin },
-  { id: 'promo-codes',   label: 'Promo Codes',     icon: Tag },
+  { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+  { id: 'admins', label: 'Admins', icon: UserCog },
+  { id: 'users', label: 'Users', icon: Users },
+  { id: 'bookings', label: 'Bookings', icon: LayoutDashboard },
+  { id: 'vehicles', label: 'Vehicles', icon: LayoutDashboard },
+  { id: 'pickup-points', label: 'Pickup Points', icon: MapPin },
+  { id: 'promo-codes', label: 'Promo Codes', icon: Tag },
 ];
 
 const SuperAdminDashboard: React.FC = () => {
@@ -48,19 +48,19 @@ const SuperAdminDashboard: React.FC = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('adminUser');
     localStorage.removeItem('adminHasChangedPassword');
-    navigate('/admin-login', { replace: true });
+    navigate('/login', { replace: true });
   };
 
   const renderTab = () => {
     switch (activeTab) {
-      case 'overview':      return <SuperAdminOverview />;
-      case 'admins':        return <AdminManagementTab />;
-      case 'users':         return <UsersTab  />;
-      case 'bookings':      return <BookingsTab  />;
-      case 'vehicles':      return <VehiclesTab  />;
+      case 'overview': return <SuperAdminOverview />;
+      case 'admins': return <AdminManagementTab />;
+      case 'users': return <UsersTab />;
+      case 'bookings': return <BookingsTab />;
+      case 'vehicles': return <VehiclesTab />;
       case 'pickup-points': return <div className="p-6 text-gray-500">Pickup Points — Phase 5</div>;
-      case 'promo-codes':   return <div className="p-6 text-gray-500">Promo Codes — Phase 6</div>;
-      default:              return null;
+      case 'promo-codes': return <div className="p-6 text-gray-500">Promo Codes — Phase 6</div>;
+      default: return null;
     }
   };
 
@@ -170,10 +170,10 @@ const SuperAdminOverview: React.FC = () => (
   <div className="p-6 space-y-6">
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
       {[
-        { label: 'Total Admins',   value: '—', color: 'bg-purple-50 text-purple-700' },
-        { label: 'Total Users',    value: '—', color: 'bg-blue-50 text-blue-700' },
+        { label: 'Total Admins', value: '—', color: 'bg-purple-50 text-purple-700' },
+        { label: 'Total Users', value: '—', color: 'bg-blue-50 text-blue-700' },
         { label: 'Total Bookings', value: '—', color: 'bg-green-50 text-green-700' },
-        { label: 'Active Promos',  value: '—', color: 'bg-orange-50 text-orange-700' },
+        { label: 'Active Promos', value: '—', color: 'bg-orange-50 text-orange-700' },
       ].map(({ label, value, color }) => (
         <div key={label} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <p className="text-sm text-gray-500">{label}</p>

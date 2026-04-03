@@ -4,7 +4,7 @@ import type { RootState } from '../store';
 
 export interface WebsiteReviewDto {
   id: number;
-  customerName: string;       
+  customerName: string;
   rating: number;
   reviewText: string;
   isActive: boolean;
@@ -15,6 +15,7 @@ export const websiteReviewApi = createApi({
   reducerPath: 'websiteReviewApi',
   baseQuery: fetchBaseQuery({
     baseUrl: API_CONFIG.BASE_URL,
+    credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) headers.set('Authorization', `Bearer ${token}`);

@@ -79,6 +79,7 @@ export const vehicleApi = createApi({
   reducerPath: 'vehicleApi',
   baseQuery: fetchBaseQuery({
     baseUrl: API_CONFIG.BASE_URL,
+    credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) {
@@ -113,7 +114,7 @@ export const vehicleApi = createApi({
         if (params.endDate) queryParams.append('endDate', params.endDate);
         if (params.endTime) queryParams.append('endTime', params.endTime);
         if (params.districtId) queryParams.append('districtId', params.districtId.toString());
-        
+
         return `/Vehicles/search?${queryParams.toString()}`;
       },
       providesTags: ['Vehicle'],
@@ -127,7 +128,7 @@ export const vehicleApi = createApi({
         if (params.minPrice) queryParams.append('minPrice', params.minPrice.toString());
         if (params.maxPrice) queryParams.append('maxPrice', params.maxPrice.toString());
         if (params.districtId) queryParams.append('districtId', params.districtId.toString());
-        
+
         return `/Vehicles/filter?${queryParams.toString()}`;
       },
       providesTags: ['Vehicle'],

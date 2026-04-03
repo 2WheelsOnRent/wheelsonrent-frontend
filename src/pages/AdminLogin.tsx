@@ -21,7 +21,7 @@ const AdminLogin: React.FC = () => {
   // If already logged in as user → do NOT auto-enter admin — stay on page
   if (isAuthenticated && user) {
     if (user.userType === "admin" || user.userType === "superadmin") {
-      return <Navigate to="/admin" replace />;
+      return <Navigate to="/dashboard" replace />;
     }
     // user.userType === "user": fall through — let them attempt admin login
     // (they'll fail at role check in handleSubmit)
@@ -69,7 +69,7 @@ const AdminLogin: React.FC = () => {
         );
 
         toast.success("Login successful!");
-        navigate("/admin", { replace: true });
+        navigate("/dashboard", { replace: true });
       } else {
         setError(response.message ?? "Login failed. Please check your credentials.");
       }
@@ -146,15 +146,15 @@ const AdminLogin: React.FC = () => {
                 </button>
               </div>
             </div>
-                  <div className="text-right -mt-2">
-                    <button
-                      type="button"
-                      onClick={() => navigate('/admin-forgot-password')}
-                      className="text-sm text-primary-600 hover:text-primary-700 transition"
-                    >
-                      Forgot password?
-                    </button>
-                  </div>
+            <div className="text-right -mt-2">
+              <button
+                type="button"
+                onClick={() => navigate('/forgot-password')}
+                className="text-sm text-primary-600 hover:text-primary-700 transition"
+              >
+                Forgot password?
+              </button>
+            </div>
             {/* Submit */}
             <button
               type="submit"

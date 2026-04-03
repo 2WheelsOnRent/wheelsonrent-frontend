@@ -107,7 +107,7 @@ const AdminForgotPassword: React.FC = () => {
 
       if (result.success !== false) {
         toast.success('Password reset successfully! Please sign in with your new password.');
-        navigate('/admin-login');
+        navigate('/login');
       } else {
         setError(result.message || 'Failed to reset password');
       }
@@ -157,21 +157,19 @@ const AdminForgotPassword: React.FC = () => {
           {STEPS.map((s, i) => (
             <React.Fragment key={s}>
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                  currentStepIndex > i
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${currentStepIndex > i
                     ? 'bg-primary-200 text-primary-700'
                     : currentStepIndex === i
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-gray-200 text-gray-500'
-                }`}
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-gray-200 text-gray-500'
+                  }`}
               >
                 {currentStepIndex > i ? <CheckCircle className="w-4 h-4" /> : i + 1}
               </div>
               {i < STEPS.length - 1 && (
                 <div
-                  className={`h-0.5 w-8 transition-all ${
-                    currentStepIndex > i ? 'bg-primary-400' : 'bg-gray-200'
-                  }`}
+                  className={`h-0.5 w-8 transition-all ${currentStepIndex > i ? 'bg-primary-400' : 'bg-gray-200'
+                    }`}
                 />
               )}
             </React.Fragment>
@@ -336,7 +334,7 @@ const AdminForgotPassword: React.FC = () => {
 
         {/* Back to Login */}
         <button
-          onClick={() => navigate('/admin-login')}
+          onClick={() => navigate('/login')}
           className="mt-6 w-full flex items-center justify-center text-sm text-gray-500 hover:text-gray-700 transition py-2"
         >
           <ArrowLeft className="w-4 h-4 mr-1" />

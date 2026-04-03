@@ -11,20 +11,20 @@ export interface User {
 
 interface AuthState {
   user: User | null;
-  token: string | null;
+  token: string | null;  // Keep for backward compat, but cookies are primary
   refreshToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
 
-const storedToken = localStorage.getItem('authToken');
+// User info still stored in localStorage for UI persistence
 const storedUser = localStorage.getItem('user');
 
 const initialState: AuthState = {
   user: storedUser ? JSON.parse(storedUser) : null,
-  token: storedToken ?? null,
-  refreshToken: localStorage.getItem('refreshToken') ?? null,
-  isAuthenticated: !!storedToken,
+  token: null, // Tokens now in HttpOnly cookies
+  refreshToken: null,
+  isAuthenticated: !!storedUser, // Based on user presence
   isLoading: false,
 };
 
@@ -34,17 +34,25 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (
       state,
-      action: PayloadAction<{ user: User; token: string; refreshToken?: string }>
+      action: PayloadAction<{ user: User; token?: string; refreshToken?: string }>
     ) => {
       state.user = action.payload.user;
-      state.token = action.payload.token;
+      state.token = action.payload.token ?? null; // Optional - cookies are primary
       state.refreshToken = action.payload.refreshToken ?? null;
       state.isAuthenticated = true;
       state.isLoading = false;
-      localStorage.setItem('authToken', action.payload.token);
+
+      // Store user info for UI persistence (tokens in HttpOnly cookies)
       localStorage.setItem('user', JSON.stringify(action.payload.user));
-      if (action.payload.refreshToken) {
-        localStorage.setItem('refreshToken', action.payload.refreshToken);
+      localStorage.setItem('userId', action.payload.user.id.toString());
+      if (action.payload.user.name) {
+        localStorage.setItem('userName', action.payload.user.name);
+      }
+      if (action.payload.user.phone) {
+        localStorage.setItem('userPhone', action.payload.user.phone);
+      }
+      if (action.payload.user.email) {
+        localStorage.setItem('userEmail', action.payload.user.email);
       }
     },
     logout: (state) => {
@@ -53,15 +61,17 @@ const authSlice = createSlice({
       state.refreshToken = null;
       state.isAuthenticated = false;
       state.isLoading = false;
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('token');
+
+      // Clear localStorage (cookies cleared by server on /api/Auth/logout)
       localStorage.removeItem('user');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userId');
       localStorage.removeItem('userPhone');
       localStorage.removeItem('userName');
       localStorage.removeItem('userEmail');
+      localStorage.removeItem('authToken'); // Legacy cleanup
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('isLoggedIn');
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;

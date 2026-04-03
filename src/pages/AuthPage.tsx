@@ -40,7 +40,8 @@ const AuthPage: React.FC = () => {
   const [updateProfile] = useUpdateProfileMutation();
 
   if (isAuthenticated && user) {
-    if (user.userType === 'admin' || user.userType === 'superadmin') return <Navigate to="/auth" replace />;
+    // Admins visiting main site → redirect to homepage
+    if (user.userType === 'admin' || user.userType === 'superadmin') return <Navigate to="/" replace />;
     if (user.userType === 'user') return <Navigate to="/profile" replace />;
   }
 
@@ -251,7 +252,7 @@ const AuthPage: React.FC = () => {
 
   const handleResendOtp = async () => {
     setOtp('');
-    await handleSendOtp({ preventDefault: () => {} } as any);
+    await handleSendOtp({ preventDefault: () => { } } as any);
   };
 
   return (

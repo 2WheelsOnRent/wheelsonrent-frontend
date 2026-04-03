@@ -91,6 +91,7 @@ export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
     baseUrl: API_CONFIG.BASE_URL,
+    credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) {
@@ -146,6 +147,18 @@ export const authApi = createApi({
         },
       }),
     }),
+    logout: builder.mutation<{ success: boolean; message: string }, void>({
+      query: () => ({
+        url: 'Auth/logout',
+        method: 'POST',
+      }),
+    }),
+    refreshToken: builder.mutation<LoginResponse, void>({
+      query: () => ({
+        url: 'Auth/refresh',
+        method: 'POST',
+      }),
+    }),
   }),
 });
 
@@ -156,4 +169,6 @@ export const {
   useSendEmailOtpMutation,
   useVerifyEmailOtpMutation,
   useUpdateProfileMutation,
+  useLogoutMutation,
+  useRefreshTokenMutation,
 } = authApi;

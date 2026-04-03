@@ -14,6 +14,7 @@ export const vehicleImageApi = createApi({
   reducerPath: 'vehicleImageApi',
   baseQuery: fetchBaseQuery({
     baseUrl: API_CONFIG.BASE_URL,
+    credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) {

@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_BASEURL || 'http://localhost:5086/api',
+  BASE_URL: import.meta.env.VITE_API_BASEURL || 'https://app.scootyonrent.com/api',
   GOOGLE_MAPS_KEY: import.meta.env.VITE_GOOGLE_MAPS_KEY || '',
 };
 
@@ -8,14 +8,16 @@ export const API_ENDPOINTS = {
   LOGIN: `Auth/login`,
   SENDOTP: `Auth/send-otp`,
   VERIFYOTP: `Auth/verify-otp`,
+  LOGOUT: `Auth/logout`,
+  REFRESH: `Auth/refresh`,
 
-  // Admins
-  ADMINS: '/Admins',
-  ADMIN_BY_ID: (id: number) => `/Admins/${id}`,
+  // Admin Management (under /admin/ prefix)
+  ADMINS: '/admin/Admins',
+  ADMIN_BY_ID: (id: number) => `/admin/Admins/${id}`,
 
-  // Users
-  USERS: '/Users',
-  USER_BY_ID: (id: number) => `/Users/${id}`,
+  // User Management (admin only, under /admin/ prefix)
+  USERS: '/admin/Users',
+  USER_BY_ID: (id: number) => `/admin/Users/${id}`,
 
   // Vehicles
   VEHICLES: '/Vehicles',
@@ -47,9 +49,9 @@ export const API_ENDPOINTS = {
   PAYMENTS: '/Payments',
   PAYMENTS_BY_USER: (userId: number) => `/Payments/user/${userId}`,
 
-  // Alerts
-  ALERTS_BY_ADMIN: (adminId: number) => `/Alerts/admin/${adminId}`,
-  MARK_ALERT_READ: (id: number) => `/Alerts/${id}/read`,
+  // Alerts (admin only, under /admin/ prefix)
+  ALERTS_BY_ADMIN: (adminId: number) => `/admin/Alerts/admin/${adminId}`,
+  MARK_ALERT_READ: (id: number) => `/admin/Alerts/${id}/read`,
 
   // Pickup Locations (NEW)
   PICKUP_LOCATIONS: '/PickupLocations',

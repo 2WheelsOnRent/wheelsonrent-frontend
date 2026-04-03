@@ -87,6 +87,7 @@ export const adminApi = createApi({
   reducerPath: 'adminAuthApi', // keep same reducerPath so store key doesn't change
   baseQuery: fetchBaseQuery({
     baseUrl: API_CONFIG.BASE_URL,
+    credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) headers.set('Authorization', `Bearer ${token}`);
@@ -176,6 +177,12 @@ export const adminApi = createApi({
       }),
       invalidatesTags: ['Admin'],
     }),
+    adminLogout: builder.mutation<{ success: boolean; message: string }, void>({
+      query: () => ({
+        url: 'Auth/logout',
+        method: 'POST',
+      }),
+    }),
   }),
 });
 
@@ -190,6 +197,7 @@ export const {
   useCreateAdminMutation,
   useUpdateAdminMutation,
   useDeleteAdminMutation,
+  useAdminLogoutMutation,
 } = adminApi;
 
 // Backward-compat alias so existing imports of adminAuthApi still work

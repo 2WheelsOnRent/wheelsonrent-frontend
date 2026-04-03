@@ -13,7 +13,7 @@ export interface BookingDto {
   startTime: string;
   endTime: string;
   totalAmount: number;
-  status: 0 | 1 | 2 | 3; 
+  status: 0 | 1 | 2 | 3;
 }
 
 export interface CreateBookingRequest {
@@ -31,6 +31,7 @@ export const bookingApi = createApi({
   reducerPath: 'bookingApi',
   baseQuery: fetchBaseQuery({
     baseUrl: API_CONFIG.BASE_URL,
+    credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) {
@@ -48,7 +49,7 @@ export const bookingApi = createApi({
     }),
     getBookingById: builder.query<BookingDto, number>({
       query: (id) => API_ENDPOINTS.BOOKING_BY_ID(id),
-      
+
     }),
     getBookingsByUserId: builder.query<BookingDto[], number>({
       query: (userId) => API_ENDPOINTS.BOOKINGS_BY_USER(userId),
@@ -68,7 +69,7 @@ export const bookingApi = createApi({
         method: 'PUT',
         body: booking,
       }),
-      
+
     }),
     deleteBooking: builder.mutation<void, number>({
       query: (id) => ({
