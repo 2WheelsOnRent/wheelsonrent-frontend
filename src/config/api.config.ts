@@ -53,6 +53,9 @@ export const API_ENDPOINTS = {
   ALERTS_BY_ADMIN: (adminId: number) => `/admin/Alerts/admin/${adminId}`,
   MARK_ALERT_READ: (id: number) => `/admin/Alerts/${id}/read`,
 
+  // Offline Bookings
+OFFLINE_BOOKINGS: 'OfflineBookings',
+
   // Pickup Locations (NEW)
   PICKUP_LOCATIONS: '/PickupLocations',
   PICKUP_LOCATIONS_BY_DISTRICT: (districtId: number) => `/PickupLocations/district/${districtId}`,
