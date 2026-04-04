@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { API_CONFIG } from '../../config/api.config';
-import type { RootState } from '../store';
+import APICONFIG from '../../config/api.config';
 
 export interface PickupLocationDto {
   id: number;
@@ -16,66 +15,55 @@ export interface PickupLocationDto {
 export const pickupLocationApi = createApi({
   reducerPath: 'pickupLocationApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: API_CONFIG.BASE_URL,
+    baseUrl: APICONFIG.BASE_URL,
     credentials: 'include',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token;
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      headers.set('Content-Type', 'application/json');
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem('token') || localStorage.getItem('adminToken');
+      if (token) headers.set('Authorization', `Bearer ${token}`);
       return headers;
     },
   }),
   tagTypes: ['PickupLocation'],
   endpoints: (builder) => ({
-    getPickupLocations: builder.query<PickupLocationDto[], { page?: number; size?: number }>({
-      query: ({ page = 1, size = 100 }) => `/PickupLocations?page=${page}&size=${size}`,
-      providesTags: ['PickupLocation'],
-    }),
-    getPickupLocationById: builder.query<PickupLocationDto, number>({
-      query: (id) => `/PickupLocations/${id}`,
-      providesTags: (_result, _error, id) => [{ type: 'PickupLocation', id }],
-    }),
+    // User-facing
     getPickupLocationsByDistrict: builder.query<PickupLocationDto[], number>({
-      query: (districtId) => `/PickupLocations/district/${districtId}`,
+      query: (districtId) => `PickupLocations/district/${districtId}`,
       providesTags: ['PickupLocation'],
     }),
     getActivePickupLocationsByDistrict: builder.query<PickupLocationDto[], number>({
-      query: (districtId) => `/PickupLocations/district/${districtId}/active`,
+      query: (districtId) => `PickupLocations/district/${districtId}/active`,
       providesTags: ['PickupLocation'],
     }),
-    createPickupLocation: builder.mutation<PickupLocationDto, Omit<PickupLocationDto, 'id'>>({
-      query: (location) => ({
-        url: '/PickupLocations',
-        method: 'POST',
-        body: location,
-      }),
+    // Admin-facing
+    getAllPickupLocations: builder.query<PickupLocationDto[], { page?: number; size?: number }>({
+      query: ({ page = 1, size = 100 } = {}) =>
+        `PickupLocations?page=${page}&size=${size}`,
+      providesTags: ['PickupLocation'],
+    }),
+    getPickupLocationById: builder.query<PickupLocationDto, number>({
+      query: (id) => `PickupLocations/${id}`,
+      providesTags: ['PickupLocation'],
+    }),
+    createPickupLocation: builder.mutation<PickupLocationDto, Partial<PickupLocationDto>>({
+      query: (body) => ({ url: 'PickupLocations', method: 'POST', body }),
       invalidatesTags: ['PickupLocation'],
     }),
-    updatePickupLocation: builder.mutation<void, { id: number; location: PickupLocationDto }>({
-      query: ({ id, location }) => ({
-        url: `/PickupLocations/${id}`,
-        method: 'PUT',
-        body: location,
-      }),
+    updatePickupLocation: builder.mutation<void, { id: number; body: Partial<PickupLocationDto> }>({
+      query: ({ id, body }) => ({ url: `PickupLocations/${id}`, method: 'PUT', body }),
       invalidatesTags: ['PickupLocation'],
     }),
     deletePickupLocation: builder.mutation<void, number>({
-      query: (id) => ({
-        url: `/PickupLocations/${id}`,
-        method: 'DELETE',
-      }),
+      query: (id) => ({ url: `PickupLocations/${id}`, method: 'DELETE' }),
       invalidatesTags: ['PickupLocation'],
     }),
   }),
 });
 
 export const {
-  useGetPickupLocationsQuery,
-  useGetPickupLocationByIdQuery,
   useGetPickupLocationsByDistrictQuery,
   useGetActivePickupLocationsByDistrictQuery,
+  useGetAllPickupLocationsQuery,
+  useGetPickupLocationByIdQuery,
   useCreatePickupLocationMutation,
   useUpdatePickupLocationMutation,
   useDeletePickupLocationMutation,

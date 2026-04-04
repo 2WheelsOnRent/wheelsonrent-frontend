@@ -13,7 +13,7 @@ import VehiclesPage from '../pages/admin/VehiclesPage';
 import BookingsPage from '../pages/admin/BookingsPage';
 import UsersPage from '../pages/admin/UsersPage';
 import NotFoundPage from '../pages/NotFoundPage';
-
+import OfflineBookingPage from '../pages/admin/OfflineBookingPage';
 export const adminRoutes: RouteObject[] = [
     // Auth pages (no layout - standalone)
     { path: '/', element: <AdminLogin /> },
@@ -42,6 +42,7 @@ export const adminRoutes: RouteObject[] = [
             { path: '/vehicles', element: <VehiclesPage /> },
             { path: '/bookings', element: <BookingsPage /> },
             { path: '/users', element: <UsersPage /> },
+            { path: '/offline-booking', element: <OfflineBookingPage /> },
             {
                 path: '/superadmin',
                 element: (
