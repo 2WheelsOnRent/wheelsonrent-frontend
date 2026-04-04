@@ -5,7 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:main": "cross-env VITE_APP_TYPE=main vite",
+    "dev:admin": "cross-env VITE_APP_TYPE=admin vite",
     "build": "npx tsc -b && vite build",
+    "build:main": "cross-env VITE_APP_TYPE=main npx tsc -b && vite build",
+    "build:admin": "cross-env VITE_APP_TYPE=admin npx tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -69,6 +73,7 @@
     "@vitejs/plugin-react": "^5.0.3",
     "autoprefixer": "^10.4.21",
     "baseline-browser-mapping": "^2.10.8",
+    "cross-env": "^10.1.0",
     "eslint": "^9.36.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
