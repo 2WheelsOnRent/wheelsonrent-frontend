@@ -3,6 +3,7 @@ import { Lock, Mail, Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
 import { useLoginMutation } from "../store/api/authApi";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setCredentials } from "../store/slices/authSlice";
+import { markPasswordChanged, resetPasswordChangeFlag } from "../store/slices/adminAuthSlice";
 import { toast } from "sonner";
 import { Navigate, useNavigate } from "react-router-dom";
 
@@ -51,6 +52,13 @@ const AdminLogin: React.FC = () => {
         if (userType !== "admin" && userType !== "superadmin") {
           setError("Access denied. This login is for admins only.");
           return;
+        }
+
+        // Store hasChangedPassword from backend response (localStorage + Redux)
+        if (userData.hasChangedPassword) {
+          dispatch(markPasswordChanged());
+        } else {
+          dispatch(resetPasswordChangeFlag());
         }
 
         dispatch(
