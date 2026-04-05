@@ -69,10 +69,10 @@ OFFLINE_BOOKINGS: 'OfflineBookings',
   WEBSITE_REVIEW_BY_ID: (id: number) => `/WebsiteReviews/${id}`,
 
   // Promo Codes (NEW)
-  PROMO_CODES: '/PromoCodes',
-  PROMO_CODE_BY_ID: (id: number) => `/PromoCodes/${id}`,
-  PROMO_CODES_ACTIVE: '/PromoCodes/active',
-  PROMO_CODE_VALIDATE: '/PromoCodes/validate',
+  PROMOCODES: 'PromoCodes',
+  PROMOCODEBYID: (id: number) => `PromoCodes/${id}`,
+  VALIDATEPROMOCODE: 'PromoCodes/validate',
+  RECORDPROMOUSAGE: 'PromoCodes/record-usage',
 
   // Admin Password Management (NEW)
   ADMIN_FORGOT_PASSWORD: 'Auth/admin/forgot-password',
