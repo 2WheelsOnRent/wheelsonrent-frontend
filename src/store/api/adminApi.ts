@@ -1,6 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { API_CONFIG } from '../../config/api.config';
-import type { RootState } from '../store';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithReauth } from './baseQueryWithReauth';
 
 // ── Auth DTOs ──────────────────────────────────────────────────────────────
 
@@ -81,21 +80,26 @@ export interface AdminDto {
   hasChangedPassword: boolean;
 }
 
+export interface AdminProfileDto {
+  id: number;
+  username: string;
+  email: string;
+  districtId: number | null;
+  districtName: string | null;
+  role: number;
+  roleName: string;
+  number: string;
+  isActive: boolean;
+  profilePicUrl: string | null;
+  createdAt: string;
+}
+
 // ── API ────────────────────────────────────────────────────────────────────
 
 export const adminApi = createApi({
   reducerPath: 'adminAuthApi', // keep same reducerPath so store key doesn't change
-  baseQuery: fetchBaseQuery({
-    baseUrl: API_CONFIG.BASE_URL,
-    credentials: 'include',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token;
-      if (token) headers.set('Authorization', `Bearer ${token}`);
-      headers.set('Content-Type', 'application/json');
-      return headers;
-    },
-  }),
-  tagTypes: ['Admin'],
+  baseQuery: baseQueryWithReauth,
+  tagTypes: ['Admin', 'AdminProfile'],
   endpoints: (builder) => ({
     // ── Login ──────────────────────────────────────────────────────────
     adminLogin: builder.mutation<AdminLoginResponse, AdminLoginRequest>({
@@ -183,6 +187,37 @@ export const adminApi = createApi({
         method: 'POST',
       }),
     }),
+
+    // ── Profile Endpoints ──────────────────────────────────────────────────
+    getAdminProfile: builder.query<AdminProfileDto, void>({
+      query: () => '/admin/admins/me',
+      providesTags: ['AdminProfile'],
+    }),
+    updateAdminProfile: builder.mutation<AdminProfileDto, { username: string; number: string }>({
+      query: (body) => ({
+        url: '/admin/admins/me',
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['AdminProfile'],
+    }),
+    changeMyPassword: builder.mutation<{ success: boolean; message?: string }, { currentPassword: string; newPassword: string }>({
+      query: (body) => ({
+        url: '/admin/admins/me/change-password',
+        method: 'POST',
+        body,
+      }),
+    }),
+    uploadProfilePic: builder.mutation<{ success: boolean; profilePicUrl?: string; error?: string }, FormData>({
+      query: (formData) => ({
+        url: '/admin/admins/me/profile-pic',
+        method: 'POST',
+        body: formData,
+        // Don't set Content-Type, browser will set it with boundary for FormData
+        formData: true,
+      }),
+      invalidatesTags: ['AdminProfile'],
+    }),
   }),
 });
 
@@ -198,6 +233,11 @@ export const {
   useUpdateAdminMutation,
   useDeleteAdminMutation,
   useAdminLogoutMutation,
+  // Profile hooks
+  useGetAdminProfileQuery,
+  useUpdateAdminProfileMutation,
+  useChangeMyPasswordMutation,
+  useUploadProfilePicMutation,
 } = adminApi;
 
 // Backward-compat alias so existing imports of adminAuthApi still work
