@@ -6,7 +6,6 @@ import {
     Bike,
     Calendar,
     LogOut,
-    Settings,
 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { logout } from '../store/slices/authSlice';
@@ -24,7 +23,6 @@ const navItems: NavItem[] = [
     { id: 'vehicles', path: '/vehicles', icon: Bike, label: 'Vehicles' },
     { id: 'bookings', path: '/bookings', icon: Calendar, label: 'Bookings' },
     { id: 'users', path: '/users', icon: Users, label: 'Users' },
-    { id: 'settings', path: '/settings', icon: Settings, label: 'Settings', roles: ['superadmin'] },
 ];
 
 /**
