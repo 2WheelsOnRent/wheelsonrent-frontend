@@ -7,9 +7,11 @@
     "dev": "vite",
     "dev:main": "cross-env VITE_APP_TYPE=main vite",
     "dev:admin": "cross-env VITE_APP_TYPE=admin vite",
+    "dev:staff": "cross-env VITE_APP_TYPE=staff vite --port 5174",
     "build": "npx tsc -b && vite build",
     "build:main": "cross-env VITE_APP_TYPE=main npx tsc -b && vite build",
     "build:admin": "cross-env VITE_APP_TYPE=admin npx tsc -b && vite build",
+    "build:staff": "cross-env VITE_APP_TYPE=staff npx tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

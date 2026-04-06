@@ -94,12 +94,46 @@ export interface AdminProfileDto {
   createdAt: string;
 }
 
+// ── Staff DTOs ─────────────────────────────────────────────────────────────
+
+export interface StaffDto {
+  id: number;
+  username: string;
+  email: string;
+  number: string;
+  districtId: number;
+  districtName?: string;
+  isActive: boolean;
+  canOfflineBook: boolean;
+  hasChangedPassword: boolean;
+  profilePicUrl?: string;
+  createdAt: string;
+  createdByAdminId: number;
+}
+
+export interface CreateStaffDto {
+  username: string;
+  email: string;
+  number: string;
+  districtId: number;
+  canOfflineBook?: boolean;
+}
+
+export interface UpdateStaffDto {
+  username?: string;
+  email?: string;
+  number?: string;
+  districtId?: number;
+  isActive?: boolean;
+  canOfflineBook?: boolean;
+}
+
 // ── API ────────────────────────────────────────────────────────────────────
 
 export const adminApi = createApi({
   reducerPath: 'adminAuthApi', // keep same reducerPath so store key doesn't change
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['Admin', 'AdminProfile'],
+  tagTypes: ['Admin', 'AdminProfile', 'Staff'],
   endpoints: (builder) => ({
     // ── Login ──────────────────────────────────────────────────────────
     adminLogin: builder.mutation<AdminLoginResponse, AdminLoginRequest>({
@@ -181,6 +215,43 @@ export const adminApi = createApi({
       }),
       invalidatesTags: ['Admin'],
     }),
+
+    // ── Staff CRUD (Admin + SuperAdmin) ────────────────────────────────
+    getStaff: builder.query<StaffDto[], { page?: number; size?: number }>({
+      query: ({ page = 1, size = 100 } = {}) => `/admin/staff?page=${page}&size=${size}`,
+      providesTags: (result) =>
+        result
+          ? [...result.map(({ id }) => ({ type: 'Staff' as const, id })), 'Staff']
+          : ['Staff'],
+    }),
+    getStaffById: builder.query<StaffDto, number>({
+      query: (id) => `/admin/staff/${id}`,
+      providesTags: (_result, _error, id) => [{ type: 'Staff', id }],
+    }),
+    createStaff: builder.mutation<StaffDto, CreateStaffDto>({
+      query: (staff) => ({
+        url: '/admin/staff',
+        method: 'POST',
+        body: staff,
+      }),
+      invalidatesTags: ['Staff'],
+    }),
+    updateStaff: builder.mutation<void, { id: number; staff: UpdateStaffDto }>({
+      query: ({ id, staff }) => ({
+        url: `/admin/staff/${id}`,
+        method: 'PUT',
+        body: staff,
+      }),
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Staff', id }, 'Staff'],
+    }),
+    deleteStaff: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/admin/staff/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Staff'],
+    }),
+
     adminLogout: builder.mutation<{ success: boolean; message: string }, void>({
       query: () => ({
         url: 'Auth/logout',
@@ -233,6 +304,12 @@ export const {
   useUpdateAdminMutation,
   useDeleteAdminMutation,
   useAdminLogoutMutation,
+  // Staff hooks
+  useGetStaffQuery,
+  useGetStaffByIdQuery,
+  useCreateStaffMutation,
+  useUpdateStaffMutation,
+  useDeleteStaffMutation,
   // Profile hooks
   useGetAdminProfileQuery,
   useUpdateAdminProfileMutation,
