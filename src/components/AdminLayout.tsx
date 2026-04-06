@@ -8,6 +8,9 @@ import {
     LogOut,
     User,
     UserCog,
+    ShieldCheck,
+    Tag,
+    Settings,
 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { logout } from '../store/slices/authSlice';
@@ -27,6 +30,9 @@ const navItems: NavItem[] = [
     { id: 'bookings', path: '/bookings', icon: Calendar, label: 'Bookings' },
     { id: 'users', path: '/users', icon: Users, label: 'Users' },
     { id: 'staff', path: '/staff', icon: UserCog, label: 'Staff' },
+    { id: 'promo-codes', path: '/promo-codes', icon: Tag, label: 'Promo Codes' },
+    { id: 'superadmin', path: '/superadmin', icon: ShieldCheck, label: 'Admins', roles: ['superadmin'] },
+    { id: 'settings', path: '/settings', icon: Settings, label: 'Settings', roles: ['superadmin'] },
 ];
 
 /**

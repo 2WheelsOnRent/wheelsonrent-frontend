@@ -15,15 +15,17 @@ import UsersPage from '../pages/admin/UsersPage';
 import ProfilePage from '../pages/admin/ProfilePage';
 import StaffManagementPage from '../pages/admin/StaffManagementPage';
 import NotFoundPage from '../pages/NotFoundPage';
-export const adminRoutes: RouteObject[] = [
-    // Auth pages (no layout - standalone)
-    { path: '/', element: <AdminLogin /> },
-    { path: '/login', element: <AdminLogin /> },
-    { path: '/forgot-password', element: <AdminForgotPassword /> },
+import OfflineBookingPage from '../pages/admin/OfflineBookingPage';
+import SuperAdminPage from '../pages/admin/SuperAdminPage';
+import PromoCodesPage from '../pages/admin/PromoCodesPage';
 
-    // Change password (standalone - no sidebar, but protected)
+export const adminRoutes: RouteObject[] = [
+    // Auth pages — no layout
+    { path: '', element: <AdminLogin /> },
+    { path: 'login', element: <AdminLogin /> },
+    { path: 'forgot-password', element: <AdminForgotPassword /> },
     {
-        path: '/change-password',
+        path: 'change-password',
         element: (
             <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
                 <AdminChangePassword />
@@ -39,17 +41,19 @@ export const adminRoutes: RouteObject[] = [
             </ProtectedRoute>
         ),
         children: [
-            { path: '/dashboard', element: <AdminDashboard /> },
-            { path: '/vehicles', element: <VehiclesPage /> },
-            { path: '/bookings', element: <BookingsPage /> },
-            { path: '/users', element: <UsersPage /> },
-            { path: '/staff', element: <StaffManagementPage /> },
-            { path: '/profile', element: <ProfilePage /> },
+            { path: 'dashboard', element: <AdminDashboard /> },
+            { path: 'vehicles', element: <VehiclesPage /> },
+            { path: 'bookings', element: <BookingsPage /> },
+            { path: 'users', element: <UsersPage /> },
+            { path: 'staff', element: <StaffManagementPage /> },
+            { path: 'profile', element: <ProfilePage /> },
+            { path: 'offline-booking', element: <OfflineBookingPage /> },
+            { path: 'promo-codes', element: <PromoCodesPage /> },
             {
-                path: '/superadmin',
+                path: 'superadmin',
                 element: (
                     <ProtectedRoute allowedRoles={['superadmin']}>
-                        <AdminDashboard />
+                        <SuperAdminPage />
                     </ProtectedRoute>
                 ),
             },
