@@ -162,9 +162,9 @@ const AddAdminModal: React.FC<Props> = ({ onClose, onSuccess }) => {
                 ))}
               </div>
             )}
-            <p className="text-xs text-gray-400 mt-1">
+            {/* <p className="text-xs text-gray-400 mt-1">
               Currently one district per admin. Multi-district support coming soon.
-            </p>
+            </p> */}
           </div>
 
           {/* Role */}

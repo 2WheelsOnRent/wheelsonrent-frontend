@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import APICONFIG from '../../config/api.config';
+import { API_CONFIG } from '../../config/api.config';
+import type { RootState } from '../store';
 
 export interface PromoCodeDto {
   id: number;
@@ -15,6 +16,7 @@ export interface PromoCodeDto {
   isActive: boolean;
   validFrom: string;
   validUntil?: string;
+  districtId?: number | null; // null = global (superadmin), number = district-specific
   createdAt: string;
   updatedAt: string;
 }
@@ -23,6 +25,7 @@ export interface ValidatePromoCodeDto {
   code: string;
   userId: number;
   orderAmount: number;
+  districtId: number;
 }
 
 export interface PromoValidationResultDto {
@@ -33,14 +36,20 @@ export interface PromoValidationResultDto {
   promoCodeId?: number;
 }
 
+export interface RecordPromoUsageDto {
+  userId: number;
+  promoCodeId: number;
+  bookingId?: number;
+}
+
 export const promoCodeApi = createApi({
   reducerPath: 'promoCodeApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: APICONFIG.BASE_URL,
-    credentials: 'include',
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('token') || localStorage.getItem('adminToken');
+    baseUrl: API_CONFIG.BASE_URL,
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).auth.token;
       if (token) headers.set('Authorization', `Bearer ${token}`);
+      headers.set('Content-Type', 'application/json');
       return headers;
     },
   }),
@@ -53,22 +62,44 @@ export const promoCodeApi = createApi({
     }),
     getPromoCodeById: builder.query<PromoCodeDto, number>({
       query: (id) => `PromoCodes/${id}`,
-      providesTags: ['PromoCode'],
+      providesTags: (_result, _err, id) => [{ type: 'PromoCode', id }],
     }),
-    createPromoCode: builder.mutation<PromoCodeDto, Partial<PromoCodeDto>>({
-      query: (body) => ({ url: 'PromoCodes', method: 'POST', body }),
+    createPromoCode: builder.mutation<PromoCodeDto, Omit<PromoCodeDto, 'id' | 'usedCount' | 'createdAt' | 'updatedAt'>>({
+      query: (dto) => ({
+        url: 'PromoCodes',
+        method: 'POST',
+        body: dto,
+      }),
       invalidatesTags: ['PromoCode'],
     }),
-    updatePromoCode: builder.mutation<void, { id: number; body: Partial<PromoCodeDto> }>({
-      query: ({ id, body }) => ({ url: `PromoCodes/${id}`, method: 'PUT', body }),
-      invalidatesTags: ['PromoCode'],
+    updatePromoCode: builder.mutation<void, { id: number; dto: PromoCodeDto }>({
+      query: ({ id, dto }) => ({
+        url: `PromoCodes/${id}`,
+        method: 'PUT',
+        body: dto,
+      }),
+      invalidatesTags: (_result, _err, { id }) => [{ type: 'PromoCode', id }, 'PromoCode'],
     }),
     deletePromoCode: builder.mutation<void, number>({
-      query: (id) => ({ url: `PromoCodes/${id}`, method: 'DELETE' }),
+      query: (id) => ({
+        url: `PromoCodes/${id}`,
+        method: 'DELETE',
+      }),
       invalidatesTags: ['PromoCode'],
     }),
     validatePromoCode: builder.mutation<PromoValidationResultDto, ValidatePromoCodeDto>({
-      query: (body) => ({ url: 'PromoCodes/validate', method: 'POST', body }),
+      query: (dto) => ({
+        url: 'PromoCodes/validate',
+        method: 'POST',
+        body: dto,
+      }),
+    }),
+    recordPromoUsage: builder.mutation<void, RecordPromoUsageDto>({
+      query: (dto) => ({
+        url: 'PromoCodes/record-usage',
+        method: 'POST',
+        body: dto,
+      }),
     }),
   }),
 });
@@ -80,4 +111,5 @@ export const {
   useUpdatePromoCodeMutation,
   useDeletePromoCodeMutation,
   useValidatePromoCodeMutation,
+  useRecordPromoUsageMutation,
 } = promoCodeApi;

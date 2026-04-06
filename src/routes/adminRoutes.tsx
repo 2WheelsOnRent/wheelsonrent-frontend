@@ -14,46 +14,48 @@ import BookingsPage from '../pages/admin/BookingsPage';
 import UsersPage from '../pages/admin/UsersPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import OfflineBookingPage from '../pages/admin/OfflineBookingPage';
+import SuperAdminPage from '../pages/admin/SuperAdminPage'; // ← ADD THIS
+import PromoCodesPage from '../pages/admin/PromoCodesPage';
+
 export const adminRoutes: RouteObject[] = [
-    // Auth pages (no layout - standalone)
-    { path: '/', element: <AdminLogin /> },
-    { path: '/login', element: <AdminLogin /> },
-    { path: '/forgot-password', element: <AdminForgotPassword /> },
+  // Auth pages — no layout
+  { path: '', element: <AdminLogin /> },
+  { path: 'login', element: <AdminLogin /> },
+  { path: 'forgot-password', element: <AdminForgotPassword /> },
+  {
+    path: 'change-password',
+    element: (
+      <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+        <AdminChangePassword />
+      </ProtectedRoute>
+    ),
+  },
 
-    // Change password (standalone - no sidebar, but protected)
-    {
-        path: '/change-password',
+  // Protected pages with AdminLayout sidebar
+  {
+    element: (
+      <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      { path: 'dashboard', element: <AdminDashboard /> },
+      { path: 'vehicles', element: <VehiclesPage /> },
+      { path: 'bookings', element: <BookingsPage /> },
+      { path: 'users', element: <UsersPage /> },
+      { path: 'offline-booking', element: <OfflineBookingPage /> },
+      { path: 'promo-codes', element: <PromoCodesPage /> },
+      {
+        path: 'superadmin',
         element: (
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
-                <AdminChangePassword />
-            </ProtectedRoute>
+          <ProtectedRoute allowedRoles={['superadmin']}>
+            <SuperAdminPage />  {/* ← WAS AdminDashboard, NOW SuperAdminPage */}
+          </ProtectedRoute>
         ),
-    },
+      },
+    ],
+  },
 
-    // Protected pages with AdminLayout (sidebar)
-    {
-        element: (
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
-                <AdminLayout />
-            </ProtectedRoute>
-        ),
-        children: [
-            { path: '/dashboard', element: <AdminDashboard /> },
-            { path: '/vehicles', element: <VehiclesPage /> },
-            { path: '/bookings', element: <BookingsPage /> },
-            { path: '/users', element: <UsersPage /> },
-            { path: '/offline-booking', element: <OfflineBookingPage /> },
-            {
-                path: '/superadmin',
-                element: (
-                    <ProtectedRoute allowedRoles={['superadmin']}>
-                        <AdminDashboard />
-                    </ProtectedRoute>
-                ),
-            },
-        ],
-    },
-
-    // Catch-all 404
-    { path: '*', element: <NotFoundPage /> },
+  // Catch-all
+  { path: '*', element: <NotFoundPage /> },
 ];
