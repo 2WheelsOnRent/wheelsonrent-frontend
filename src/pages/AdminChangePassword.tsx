@@ -85,7 +85,7 @@ const AdminChangePassword: React.FC = () => {
       // Use fetch directly so we can guarantee the Authorization header is sent
       // regardless of whether RTK Query's prepareHeaders has the token yet
       const response = await fetch(
-        `${API_CONFIG.BASE_URL}/admin/admins/${adminId}/change-password`,
+        `${API_CONFIG.BASE_URL}/Admins/${adminId}/change-password`,
         {
           method: 'POST',
           headers: {

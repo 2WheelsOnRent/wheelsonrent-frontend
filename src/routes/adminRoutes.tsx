@@ -12,9 +12,11 @@ import AdminChangePassword from '../pages/AdminChangePassword';
 import VehiclesPage from '../pages/admin/VehiclesPage';
 import BookingsPage from '../pages/admin/BookingsPage';
 import UsersPage from '../pages/admin/UsersPage';
+import ProfilePage from '../pages/admin/ProfilePage';
+import StaffManagementPage from '../pages/admin/StaffManagementPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import OfflineBookingPage from '../pages/admin/OfflineBookingPage';
-import SuperAdminPage from '../pages/admin/SuperAdminPage'; // ← ADD THIS
+import SuperAdminPage from '../pages/admin/SuperAdminPage';
 import PromoCodesPage from '../pages/admin/PromoCodesPage';
 
 export const adminRoutes: RouteObject[] = [
@@ -31,7 +33,7 @@ export const adminRoutes: RouteObject[] = [
     ),
   },
 
-  // Protected pages with AdminLayout sidebar
+  // Protected pages with AdminLayout (sidebar)
   {
     element: (
       <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
@@ -43,19 +45,21 @@ export const adminRoutes: RouteObject[] = [
       { path: 'vehicles', element: <VehiclesPage /> },
       { path: 'bookings', element: <BookingsPage /> },
       { path: 'users', element: <UsersPage /> },
+      { path: 'staff', element: <StaffManagementPage /> },
+      { path: 'profile', element: <ProfilePage /> },
       { path: 'offline-booking', element: <OfflineBookingPage /> },
       { path: 'promo-codes', element: <PromoCodesPage /> },
       {
         path: 'superadmin',
         element: (
           <ProtectedRoute allowedRoles={['superadmin']}>
-            <SuperAdminPage />  {/* ← WAS AdminDashboard, NOW SuperAdminPage */}
+            <SuperAdminPage />
           </ProtectedRoute>
         ),
       },
     ],
   },
 
-  // Catch-all
+  // Catch-all 404
   { path: '*', element: <NotFoundPage /> },
 ];

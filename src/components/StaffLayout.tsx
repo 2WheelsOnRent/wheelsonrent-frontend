@@ -2,62 +2,58 @@ import React from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
     LayoutDashboard,
-    Users,
-    Bike,
     Calendar,
     LogOut,
     User,
-    UserCog,
-    ShieldCheck,
-    Tag,
+    FileText,
 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { logout } from '../store/slices/authSlice';
-import { useGetAdminProfileQuery } from '../store/api/adminApi';
+import { staffLogout } from '../store/slices/staffAuthSlice';
+import { useStaffLogoutMutation, useGetStaffProfileQuery } from '../store/api/staffApi';
 
 type NavItem = {
     id: string;
     path: string;
     icon: React.ElementType;
     label: string;
-    roles?: string[];
 };
 
-const navItems: NavItem[] = [
+const baseNavItems: NavItem[] = [
     { id: 'dashboard', path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { id: 'vehicles', path: '/vehicles', icon: Bike, label: 'Vehicles' },
     { id: 'bookings', path: '/bookings', icon: Calendar, label: 'Bookings' },
-    { id: 'users', path: '/users', icon: Users, label: 'Users' },
-    { id: 'staff', path: '/staff', icon: UserCog, label: 'Staff' },
-    { id: 'promo-codes', path: '/promo-codes', icon: Tag, label: 'Promo Codes' },
-    { id: 'superadmin', path: '/superadmin', icon: ShieldCheck, label: 'Admins', roles: ['superadmin'] },
 ];
 
 /**
- * Admin site layout (admin.scootyonrent.com)
- * Provides sidebar navigation for admin pages
+ * Staff site layout (staff.scootyonrent.com)
+ * Provides sidebar navigation for staff pages
  */
-const AdminLayout: React.FC = () => {
+const StaffLayout: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useAppDispatch();
-    const adminUser = useAppSelector((state) => state.auth.user);
-    const { data: profile } = useGetAdminProfileQuery();
+    const staffUser = useAppSelector((state) => state.staffAuth.staff);
+    const { data: profile } = useGetStaffProfileQuery();
+    const [logoutApi] = useStaffLogoutMutation();
 
-    const handleLogout = () => {
-        dispatch(logout());
+    // Build nav items dynamically based on permissions
+    const canOfflineBook = staffUser?.canOfflineBook || profile?.canOfflineBook;
+    const navItems: NavItem[] = [
+        ...baseNavItems,
+        ...(canOfflineBook ? [{ id: 'offline-booking', path: '/offline-booking', icon: FileText, label: 'Offline Booking' }] : []),
+    ];
+
+    const handleLogout = async () => {
+        try {
+            await logoutApi().unwrap();
+        } catch {
+            // Ignore logout API errors
+        }
+        dispatch(staffLogout());
         localStorage.clear();
-        window.dispatchEvent(new Event('user-logout'));
         navigate('/login', { replace: true });
     };
 
-    const isActive = (path: string) => location.pathname === path;
-
-    // Filter nav items based on user role
-    const visibleNavItems = navItems.filter((item) => {
-        if (!item.roles) return true;
-        return item.roles.includes(adminUser?.userType || '');
-    });
+    const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');
 
     return (
         <div className="min-h-screen bg-gray-50 flex">
@@ -67,15 +63,15 @@ const AdminLayout: React.FC = () => {
                     <h2 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-indigo-600 bg-clip-text text-transparent mb-1">
                         scootyonrent
                     </h2>
-                    <p className="text-xs text-gray-500">Admin Panel</p>
+                    <p className="text-xs text-gray-500">Staff Portal</p>
 
-                    {adminUser && (
+                    {staffUser && (
                         <div className="mt-3 p-3 bg-primary-50 rounded-lg flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full overflow-hidden bg-primary-100 flex items-center justify-center flex-shrink-0">
                                 {profile?.profilePicUrl ? (
                                     <img
                                         src={profile.profilePicUrl}
-                                        alt={adminUser.name}
+                                        alt={staffUser.username}
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (
@@ -83,15 +79,15 @@ const AdminLayout: React.FC = () => {
                                 )}
                             </div>
                             <div className="min-w-0">
-                                <p className="text-sm font-medium text-blue-900 truncate">{adminUser.name}</p>
-                                <p className="text-xs text-primary-600 capitalize">{adminUser.userType}</p>
+                                <p className="text-sm font-medium text-blue-900 truncate">{staffUser.username}</p>
+                                <p className="text-xs text-primary-600">{profile?.districtName || `District #${staffUser.districtId}`}</p>
                             </div>
                         </div>
                     )}
                 </div>
 
                 <nav className="px-4 space-y-2">
-                    {visibleNavItems.map(({ id, path, icon: Icon, label }) => (
+                    {navItems.map(({ id, path, icon: Icon, label }) => (
                         <button
                             key={id}
                             onClick={() => navigate(path)}
@@ -138,4 +134,4 @@ const AdminLayout: React.FC = () => {
     );
 };
 
-export default AdminLayout;
+export default StaffLayout;

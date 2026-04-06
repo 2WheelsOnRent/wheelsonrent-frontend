@@ -3,6 +3,7 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 
 import authReducer from './slices/authSlice';
 import adminAuthReducer from './slices/adminAuthSlice';
+import staffAuthReducer from './slices/staffAuthSlice';
 
 import { vehicleApi } from './api/vehicleApi';
 import { vehicleImageApi } from './api/vehicleImageApi';
@@ -17,10 +18,13 @@ import { websiteReviewApi } from './api/websiteReviewApi';
 import { adminApi } from './api/adminApi';        // ← replaces adminAuthApi
 import { promoCodeApi } from './api/promoCodeApi'; // ← NEW
 import { offlineBookingApi } from './api/offlineBookingApi';
+import { staffApi } from './api/staffApi';
+
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     adminAuth: adminAuthReducer, // ← NEW
+    staffAuth: staffAuthReducer, // ← Staff auth
 
     [vehicleApi.reducerPath]: vehicleApi.reducer,
     [vehicleImageApi.reducerPath]: vehicleImageApi.reducer,
@@ -35,6 +39,7 @@ export const store = configureStore({
     [adminApi.reducerPath]: adminApi.reducer,       // reducerPath = 'adminAuthApi' (unchanged)
     [promoCodeApi.reducerPath]: promoCodeApi.reducer, // reducerPath = 'promoCodeApi'
     [offlineBookingApi.reducerPath]: offlineBookingApi.reducer, // reducerPath = 'offlineBookingApi'
+    [staffApi.reducerPath]: staffApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -50,7 +55,8 @@ export const store = configureStore({
       websiteReviewApi.middleware,
       adminApi.middleware,
       promoCodeApi.middleware,
-      offlineBookingApi.middleware
+      offlineBookingApi.middleware,
+      staffApi.middleware
     ),
 });
 
