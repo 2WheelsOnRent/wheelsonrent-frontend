@@ -218,19 +218,19 @@ export const adminApi = createApi({
 
     // ── Staff CRUD (Admin + SuperAdmin) ────────────────────────────────
     getStaff: builder.query<StaffDto[], { page?: number; size?: number }>({
-      query: ({ page = 1, size = 100 } = {}) => `/admin/staff?page=${page}&size=${size}`,
+      query: ({ page = 1, size = 100 } = {}) => `/Staff?page=${page}&size=${size}`,
       providesTags: (result) =>
         result
           ? [...result.map(({ id }) => ({ type: 'Staff' as const, id })), 'Staff']
           : ['Staff'],
     }),
     getStaffById: builder.query<StaffDto, number>({
-      query: (id) => `/admin/staff/${id}`,
+      query: (id) => `/Staff/${id}`,
       providesTags: (_result, _error, id) => [{ type: 'Staff', id }],
     }),
     createStaff: builder.mutation<StaffDto, CreateStaffDto>({
       query: (staff) => ({
-        url: '/admin/staff',
+        url: '/Staff',
         method: 'POST',
         body: staff,
       }),
@@ -238,7 +238,7 @@ export const adminApi = createApi({
     }),
     updateStaff: builder.mutation<void, { id: number; staff: UpdateStaffDto }>({
       query: ({ id, staff }) => ({
-        url: `/admin/staff/${id}`,
+        url: `/Staff/${id}`,
         method: 'PUT',
         body: staff,
       }),
@@ -246,7 +246,7 @@ export const adminApi = createApi({
     }),
     deleteStaff: builder.mutation<void, number>({
       query: (id) => ({
-        url: `/admin/staff/${id}`,
+        url: `/Staff/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Staff'],
@@ -261,12 +261,12 @@ export const adminApi = createApi({
 
     // ── Profile Endpoints ──────────────────────────────────────────────────
     getAdminProfile: builder.query<AdminProfileDto, void>({
-      query: () => '/admin/admins/me',
+      query: () => '/Admins/me',
       providesTags: ['AdminProfile'],
     }),
     updateAdminProfile: builder.mutation<AdminProfileDto, { username: string; number: string }>({
       query: (body) => ({
-        url: '/admin/admins/me',
+        url: '/Admins/me',
         method: 'PUT',
         body,
       }),
@@ -274,14 +274,14 @@ export const adminApi = createApi({
     }),
     changeMyPassword: builder.mutation<{ success: boolean; message?: string }, { currentPassword: string; newPassword: string }>({
       query: (body) => ({
-        url: '/admin/admins/me/change-password',
+        url: '/Admins/me/change-password',
         method: 'POST',
         body,
       }),
     }),
     uploadProfilePic: builder.mutation<{ success: boolean; profilePicUrl?: string; error?: string }, FormData>({
       query: (formData) => ({
-        url: '/admin/admins/me/profile-pic',
+        url: '/Admins/me/profile-pic',
         method: 'POST',
         body: formData,
         // Don't set Content-Type, browser will set it with boundary for FormData

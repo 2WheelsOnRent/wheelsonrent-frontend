@@ -27,16 +27,16 @@ export const userApi = createApi({
   tagTypes: ['User'],
   endpoints: (builder) => ({
     getUsers: builder.query<UserDto[], { page?: number; size?: number }>({
-      query: ({ page = 1, size = 10 }) => `/admin/Users?page=${page}&size=${size}`,
+      query: ({ page = 1, size = 10 }) => `/Users?page=${page}&size=${size}`,
       providesTags: ['User'],
     }),
     getUserById: builder.query<UserDto, number>({
-      query: (id) => `/admin/Users/${id}`,
+      query: (id) => `/Users/${id}`,
       providesTags: (_result, _error, id) => [{ type: 'User', id }],
     }),
     createUser: builder.mutation<UserDto, Omit<UserDto, 'id'>>({
       query: (user) => ({
-        url: '/admin/Users',
+        url: '/Users',
         method: 'POST',
         body: user,
       }),
@@ -44,14 +44,14 @@ export const userApi = createApi({
     }),
     updateUser: builder.mutation<void, { id: number; user: UserDto }>({
       query: ({ id, user }) => ({
-        url: `/admin/Users/${id}`,
+        url: `/Users/${id}`,
         method: 'PUT',
         body: user,
       }),
       invalidatesTags: (_result, _error, { id }) => [{ type: 'User', id }, 'User'],
     }),
     deleteUser: builder.mutation<void, number>({
-      query: (id) => ({ url: `admin/Users/${id}`, method: 'DELETE' }),
+      query: (id) => ({ url: `/Users/${id}`, method: 'DELETE' }),
       invalidatesTags: ['User'],
     }),
 

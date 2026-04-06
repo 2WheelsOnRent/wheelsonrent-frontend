@@ -20,46 +20,46 @@ import SuperAdminPage from '../pages/admin/SuperAdminPage';
 import PromoCodesPage from '../pages/admin/PromoCodesPage';
 
 export const adminRoutes: RouteObject[] = [
-    // Auth pages — no layout
-    { path: '', element: <AdminLogin /> },
-    { path: 'login', element: <AdminLogin /> },
-    { path: 'forgot-password', element: <AdminForgotPassword /> },
-    {
-        path: 'change-password',
-        element: (
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
-                <AdminChangePassword />
-            </ProtectedRoute>
-        ),
-    },
+  // Auth pages — no layout
+  { path: '', element: <AdminLogin /> },
+  { path: 'login', element: <AdminLogin /> },
+  { path: 'forgot-password', element: <AdminForgotPassword /> },
+  {
+    path: 'change-password',
+    element: (
+      <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+        <AdminChangePassword />
+      </ProtectedRoute>
+    ),
+  },
 
-    // Protected pages with AdminLayout (sidebar)
-    {
+  // Protected pages with AdminLayout (sidebar)
+  {
+    element: (
+      <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      { path: 'dashboard', element: <AdminDashboard /> },
+      { path: 'vehicles', element: <VehiclesPage /> },
+      { path: 'bookings', element: <BookingsPage /> },
+      { path: 'users', element: <UsersPage /> },
+      { path: 'staff', element: <StaffManagementPage /> },
+      { path: 'profile', element: <ProfilePage /> },
+      { path: 'offline-booking', element: <OfflineBookingPage /> },
+      { path: 'promo-codes', element: <PromoCodesPage /> },
+      {
+        path: 'superadmin',
         element: (
-            <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
-                <AdminLayout />
-            </ProtectedRoute>
+          <ProtectedRoute allowedRoles={['superadmin']}>
+            <SuperAdminPage />
+          </ProtectedRoute>
         ),
-        children: [
-            { path: 'dashboard', element: <AdminDashboard /> },
-            { path: 'vehicles', element: <VehiclesPage /> },
-            { path: 'bookings', element: <BookingsPage /> },
-            { path: 'users', element: <UsersPage /> },
-            { path: 'staff', element: <StaffManagementPage /> },
-            { path: 'profile', element: <ProfilePage /> },
-            { path: 'offline-booking', element: <OfflineBookingPage /> },
-            { path: 'promo-codes', element: <PromoCodesPage /> },
-            {
-                path: 'superadmin',
-                element: (
-                    <ProtectedRoute allowedRoles={['superadmin']}>
-                        <SuperAdminPage />
-                    </ProtectedRoute>
-                ),
-            },
-        ],
-    },
+      },
+    ],
+  },
 
-    // Catch-all 404
-    { path: '*', element: <NotFoundPage /> },
+  // Catch-all 404
+  { path: '*', element: <NotFoundPage /> },
 ];

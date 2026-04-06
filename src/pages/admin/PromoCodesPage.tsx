@@ -198,8 +198,16 @@ const PromoCodesPage: React.FC = () => {
               <tbody className="divide-y divide-gray-100">
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-12 text-center text-gray-400 text-sm">
-                      No promo codes found{search ? ' matching your search' : ''}
+                    <td colSpan={7} className="px-4 py-16 text-center">
+                      <Tag className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                      <p className="text-gray-500 font-medium">
+                        {search ? 'No promo codes matching your search' : 'No promo codes yet'}
+                      </p>
+                      {!search && (
+                        <p className="text-gray-400 text-sm mt-1">
+                          Click "Add Promo Code" to create your first promo code
+                        </p>
+                      )}
                     </td>
                   </tr>
                 ) : (

@@ -11,13 +11,13 @@ export const API_ENDPOINTS = {
   LOGOUT: `Auth/logout`,
   REFRESH: `Auth/refresh`,
 
-  // Admin Management (under /admin/ prefix)
-  ADMINS: '/admin/Admins',
-  ADMIN_BY_ID: (id: number) => `/admin/Admins/${id}`,
+  // Admin Management
+  ADMINS: '/Admins',
+  ADMIN_BY_ID: (id: number) => `/Admins/${id}`,
 
-  // User Management (admin only, under /admin/ prefix)
-  USERS: '/admin/Users',
-  USER_BY_ID: (id: number) => `/admin/Users/${id}`,
+  // User Management (admin only)
+  USERS: '/Users',
+  USER_BY_ID: (id: number) => `/Users/${id}`,
 
   // Vehicles
   VEHICLES: '/Vehicles',
@@ -49,12 +49,12 @@ export const API_ENDPOINTS = {
   PAYMENTS: '/Payments',
   PAYMENTS_BY_USER: (userId: number) => `/Payments/user/${userId}`,
 
-  // Alerts (admin only, under /admin/ prefix)
-  ALERTS_BY_ADMIN: (adminId: number) => `/admin/Alerts/admin/${adminId}`,
-  MARK_ALERT_READ: (id: number) => `/admin/Alerts/${id}/read`,
+  // Alerts (admin only)
+  ALERTS_BY_ADMIN: (adminId: number) => `/Alerts/admin/${adminId}`,
+  MARK_ALERT_READ: (id: number) => `/Alerts/${id}/read`,
 
   // Offline Bookings
-OFFLINE_BOOKINGS: 'OfflineBookings',
+  OFFLINE_BOOKINGS: 'OfflineBookings',
 
   // Pickup Locations (NEW)
   PICKUP_LOCATIONS: '/PickupLocations',

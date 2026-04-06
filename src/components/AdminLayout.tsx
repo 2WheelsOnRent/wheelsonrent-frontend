@@ -10,7 +10,6 @@ import {
     UserCog,
     ShieldCheck,
     Tag,
-    Settings,
 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { logout } from '../store/slices/authSlice';
@@ -32,7 +31,6 @@ const navItems: NavItem[] = [
     { id: 'staff', path: '/staff', icon: UserCog, label: 'Staff' },
     { id: 'promo-codes', path: '/promo-codes', icon: Tag, label: 'Promo Codes' },
     { id: 'superadmin', path: '/superadmin', icon: ShieldCheck, label: 'Admins', roles: ['superadmin'] },
-    { id: 'settings', path: '/settings', icon: Settings, label: 'Settings', roles: ['superadmin'] },
 ];
 
 /**
@@ -108,7 +106,7 @@ const AdminLayout: React.FC = () => {
                     ))}
                 </nav>
 
-                {/* Profile and Logout at bottom - Option B: Background box */}
+                {/* Profile and Logout at bottom */}
                 <div className="absolute bottom-6 left-0 right-0 px-4">
                     <div className="bg-gray-100 rounded-xl p-3">
                         <button
