@@ -18,6 +18,7 @@ import NotFoundPage from '../pages/NotFoundPage';
 import OfflineBookingPage from '../pages/admin/OfflineBookingPage';
 import SuperAdminPage from '../pages/admin/SuperAdminPage';
 import PromoCodesPage from '../pages/admin/PromoCodesPage';
+import CitiesPage from '../pages/admin/CitiesPage';
 
 export const adminRoutes: RouteObject[] = [
   // Auth pages — no layout
@@ -54,6 +55,14 @@ export const adminRoutes: RouteObject[] = [
         element: (
           <ProtectedRoute allowedRoles={['superadmin']}>
             <SuperAdminPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'cities',
+        element: (
+          <ProtectedRoute allowedRoles={['superadmin']}>
+            <CitiesPage />
           </ProtectedRoute>
         ),
       },

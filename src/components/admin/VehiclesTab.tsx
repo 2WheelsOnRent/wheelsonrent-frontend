@@ -12,7 +12,7 @@ import {
   useDeleteVehicleMutation,
   type VehicleDto,
 } from '../../store/api/vehicleApi';
-import { useGetDistrictsQuery } from '../../store/api/districtApi';
+import { useGetCitiesQuery } from '../../store/api/cityApi';
 import {
   useGetVehicleImagesByVehicleIdQuery,
   useCreateVehicleImageMutation,
@@ -26,7 +26,7 @@ import { FormField } from './FormField';
 
 // ── Vehicle Form Initial State ─────────────────────────────────────────────
 const EMPTY_VEHICLE: Omit<VehicleDto, 'id'> = {
-  name: '', make: '', model: '', districtId: 1,
+  name: '', make: '', model: '', cityId: 1,
   isAvailable: true, featured: false,
   pricePerHour: 0, pricePerDay: 0, minBookingHours: 4,
   kmLimit: 100, excessKmCharge: 5, lateReturnCharge: 80,
@@ -49,7 +49,7 @@ const VehiclesTab: React.FC = () => {
 
   // ── API Calls ──────────────────────────────────────────────────────────
   const { data: vehicles = [], isLoading: vehiclesLoading, refetch: refetchVehicles } = useGetVehiclesQuery(undefined);
-  const { data: districts = [] } = useGetDistrictsQuery({ page: 1, size: 100 });
+  const { data: cities = [] } = useGetCitiesQuery({ page: 1, size: 100 });
 
   const {
     data: vehicleImages = [],
@@ -78,7 +78,7 @@ const VehiclesTab: React.FC = () => {
     setEditingVehicle(vehicle);
     setVehicleForm({
       name: vehicle.name, make: vehicle.make, model: vehicle.model,
-      districtId: vehicle.districtId, isAvailable: vehicle.isAvailable,
+      cityId: vehicle.cityId, isAvailable: vehicle.isAvailable,
       featured: vehicle.featured, pricePerHour: vehicle.pricePerHour,
       pricePerDay: vehicle.pricePerDay, minBookingHours: vehicle.minBookingHours,
       kmLimit: vehicle.kmLimit, excessKmCharge: vehicle.excessKmCharge,
@@ -287,11 +287,10 @@ const VehiclesTab: React.FC = () => {
                   <button
                     key={tab}
                     onClick={() => setVehicleModalTab(tab)}
-                    className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold capitalize border-b-2 transition mr-2 ${
-                      vehicleModalTab === tab
+                    className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold capitalize border-b-2 transition mr-2 ${vehicleModalTab === tab
                         ? 'border-primary-600 text-primary-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700'
-                    }`}
+                      }`}
                   >
                     {tab === 'images'
                       ? <><Image className="w-4 h-4" />Images ({vehicleImages.length})</>
@@ -311,8 +310,8 @@ const VehiclesTab: React.FC = () => {
                     <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Basic Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField label="Vehicle Name" value={vehicleForm.name} onChange={(v) => setVehicleForm({ ...vehicleForm, name: v })} required placeholder="e.g. Honda Activa 6G" />
-                      <FormField label="Make / Brand"  value={vehicleForm.make} onChange={(v) => setVehicleForm({ ...vehicleForm, make: v })} required placeholder="e.g. Honda" />
-                      <FormField label="Model"         value={vehicleForm.model} onChange={(v) => setVehicleForm({ ...vehicleForm, model: v })} required placeholder="e.g. Activa 6G" />
+                      <FormField label="Make / Brand" value={vehicleForm.make} onChange={(v) => setVehicleForm({ ...vehicleForm, make: v })} required placeholder="e.g. Honda" />
+                      <FormField label="Model" value={vehicleForm.model} onChange={(v) => setVehicleForm({ ...vehicleForm, model: v })} required placeholder="e.g. Activa 6G" />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                       <FormField label="Vehicle Type">
@@ -328,9 +327,9 @@ const VehiclesTab: React.FC = () => {
                           <option value="Electric">Electric</option>
                         </select>
                       </FormField>
-                      <FormField label="District">
-                        <select value={vehicleForm.districtId} onChange={(e) => setVehicleForm({ ...vehicleForm, districtId: Number(e.target.value) })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none text-sm">
-                          {districts.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+                      <FormField label="City">
+                        <select value={vehicleForm.cityId} onChange={(e) => setVehicleForm({ ...vehicleForm, cityId: Number(e.target.value) })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none text-sm">
+                          {cities.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
                         </select>
                       </FormField>
                     </div>
@@ -356,12 +355,12 @@ const VehiclesTab: React.FC = () => {
                   <div>
                     <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Pricing</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <FormField label="Price/Hour (₹)"  value={vehicleForm.pricePerHour}    onChange={(v) => setVehicleForm({ ...vehicleForm, pricePerHour: v })}    type="number" required />
-                      <FormField label="Price/Day (₹)"   value={vehicleForm.pricePerDay}     onChange={(v) => setVehicleForm({ ...vehicleForm, pricePerDay: v })}     type="number" />
+                      <FormField label="Price/Hour (₹)" value={vehicleForm.pricePerHour} onChange={(v) => setVehicleForm({ ...vehicleForm, pricePerHour: v })} type="number" required />
+                      <FormField label="Price/Day (₹)" value={vehicleForm.pricePerDay} onChange={(v) => setVehicleForm({ ...vehicleForm, pricePerDay: v })} type="number" />
                       <FormField label="Min Booking Hrs" value={vehicleForm.minBookingHours} onChange={(v) => setVehicleForm({ ...vehicleForm, minBookingHours: v })} type="number" />
-                      <FormField label="KM Limit/Day"    value={vehicleForm.kmLimit}         onChange={(v) => setVehicleForm({ ...vehicleForm, kmLimit: v })}         type="number" />
+                      <FormField label="KM Limit/Day" value={vehicleForm.kmLimit} onChange={(v) => setVehicleForm({ ...vehicleForm, kmLimit: v })} type="number" />
                       <FormField label="Excess KM Charge" value={vehicleForm.excessKmCharge} onChange={(v) => setVehicleForm({ ...vehicleForm, excessKmCharge: v })} type="number" />
-                      <FormField label="Late Return/Hr"  value={vehicleForm.lateReturnCharge} onChange={(v) => setVehicleForm({ ...vehicleForm, lateReturnCharge: v })} type="number" />
+                      <FormField label="Late Return/Hr" value={vehicleForm.lateReturnCharge} onChange={(v) => setVehicleForm({ ...vehicleForm, lateReturnCharge: v })} type="number" />
                     </div>
                   </div>
 
@@ -387,10 +386,10 @@ const VehiclesTab: React.FC = () => {
                   <div>
                     <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Specifications</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <FormField label="Mileage"   value={vehicleForm.specs?.mileage}         onChange={(v) => setVehicleForm({ ...vehicleForm, specs: { ...vehicleForm.specs!, mileage: v } })}         placeholder="45 km/l" />
-                      <FormField label="Engine"    value={vehicleForm.specs?.engineCapacity}   onChange={(v) => setVehicleForm({ ...vehicleForm, specs: { ...vehicleForm.specs!, engineCapacity: v } })}   placeholder="110cc" />
-                      <FormField label="Top Speed" value={vehicleForm.specs?.topSpeed}         onChange={(v) => setVehicleForm({ ...vehicleForm, specs: { ...vehicleForm.specs!, topSpeed: v } })}         placeholder="90 km/h" />
-                      <FormField label="Weight"    value={vehicleForm.specs?.weight}           onChange={(v) => setVehicleForm({ ...vehicleForm, specs: { ...vehicleForm.specs!, weight: v } })}           placeholder="107 kg" />
+                      <FormField label="Mileage" value={vehicleForm.specs?.mileage} onChange={(v) => setVehicleForm({ ...vehicleForm, specs: { ...vehicleForm.specs!, mileage: v } })} placeholder="45 km/l" />
+                      <FormField label="Engine" value={vehicleForm.specs?.engineCapacity} onChange={(v) => setVehicleForm({ ...vehicleForm, specs: { ...vehicleForm.specs!, engineCapacity: v } })} placeholder="110cc" />
+                      <FormField label="Top Speed" value={vehicleForm.specs?.topSpeed} onChange={(v) => setVehicleForm({ ...vehicleForm, specs: { ...vehicleForm.specs!, topSpeed: v } })} placeholder="90 km/h" />
+                      <FormField label="Weight" value={vehicleForm.specs?.weight} onChange={(v) => setVehicleForm({ ...vehicleForm, specs: { ...vehicleForm.specs!, weight: v } })} placeholder="107 kg" />
                     </div>
                   </div>
 

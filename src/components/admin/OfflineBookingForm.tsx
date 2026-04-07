@@ -6,7 +6,6 @@ import {
 import { toast } from 'sonner';
 import { useCreateOfflineBookingMutation, type CreateOfflineBookingDto, type OfflineBookingDocumentDto } from '../../store/api/offlineBookingApi';
 import { useGetVehiclesQuery } from '../../store/api/vehicleApi';
-//import { useGetLocationsByDistrictIdQuery } from '../../store/api/locationApi';
 
 const ID_TYPES = [
   { value: 'aadhaar', label: 'Aadhaar Card' },
@@ -76,15 +75,10 @@ const INITIAL_FORM: FormState = {
 
 const OfflineBookingForm: React.FC = () => {
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
-  //const [districtId, setDistrictId] = useState<string>('');
   const [successData, setSuccessData] = useState<{ bookingId: number; userId: number } | null>(null);
 
   const [createOfflineBooking, { isLoading }] = useCreateOfflineBookingMutation();
   const { data: vehicles = [] } = useGetVehiclesQuery(undefined);
-//   const { data: pickupLocations = [] } = useGetLocationsByDistrictIdQuery(
-//     parseInt(districtId),
-//     { skip: !districtId }
-//   );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -131,7 +125,6 @@ const OfflineBookingForm: React.FC = () => {
 
   const handleReset = () => {
     setForm(INITIAL_FORM);
-    //setDistrictId('');
     setSuccessData(null);
   };
 
@@ -362,39 +355,6 @@ const OfflineBookingForm: React.FC = () => {
               className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
             />
           </div>
-          {/* <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">District</label>
-            <select
-              value={districtId}
-              onChange={e => { setDistrictId(e.target.value); setForm({ ...form, pickupLocationId: '' }); }}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition bg-white"
-            >
-              <option value="">Select district</option>
-              {[...new Map(vehicles.map((v: any) => [v.districtId, v])).values()].map((v: any) => (
-                <option key={v.districtId} value={v.districtId}>District {v.districtId}</option>
-              ))}
-            </select>
-          </div> */}
-          {/* <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Pickup Location <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <MapPin className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <select
-                name="pickupLocationId"
-                value={form.pickupLocationId}
-                onChange={handleChange}
-                required
-                className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition bg-white"
-              >
-                <option value="">Select pickup location</option>
-                {pickupLocations.map((loc: any) => (
-                  <option key={loc.id} value={loc.id}>{loc.name}</option>
-                ))}
-              </select>
-            </div>
-          </div> */}
         </div>
       </div>
 

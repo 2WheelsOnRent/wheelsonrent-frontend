@@ -67,7 +67,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
     if (image) {
       setEditingImage(image);
       setFormData({ isPrimary: image.isPrimary, displayOrder: image.displayOrder });
-      setPreviewUrl(image.imageUrl); 
+      setPreviewUrl(image.imageUrl);
       setSelectedFile(null);
     } else {
       setEditingImage(null);
@@ -100,7 +100,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
 
     try {
       if (selectedFile) {
-        
+
         setIsUploading(true);
         const formDataPayload = new FormData();
         formDataPayload.append('file', selectedFile);
@@ -112,7 +112,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
             method: 'POST',
             headers: {
               Authorization: `Bearer ${token}`,
-              
+
             },
             body: formDataPayload,
           }
@@ -125,7 +125,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
 
         toast.success('Image uploaded successfully!');
       } else if (editingImage) {
-        
+
         await updateImage({
           id: editingImage.id,
           image: {
@@ -197,7 +197,7 @@ const AdminVehicleImagesManagement: React.FC = () => {
             <option value="">Choose a vehicle</option>
             {vehicles?.map((vehicle) => (
               <option key={vehicle.id} value={vehicle.id}>
-                {vehicle.name} - {vehicle.make} {vehicle.model} (District {vehicle.districtId})
+                {vehicle.name} - {vehicle.make} {vehicle.model} (City {vehicle.cityId})
               </option>
             ))}
           </select>

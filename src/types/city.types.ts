@@ -1,8 +1,9 @@
-export interface DistrictDto {
+export interface CityDto {
   id: number;
   name: string;
   stateId: number;
   isActive: boolean;
+  isComingSoon: boolean;
 }
 
 export interface StateDto {

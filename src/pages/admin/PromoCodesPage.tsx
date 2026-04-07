@@ -10,7 +10,7 @@ import {
   useDeletePromoCodeMutation,
   type PromoCodeDto,
 } from '../../store/api/promoCodeApi';
-import { useGetDistrictsQuery } from '../../store/api/districtApi';
+import { useGetCitiesQuery } from '../../store/api/cityApi';
 import { useAppSelector } from '../../store/hooks';
 import { toast } from 'sonner';
 
@@ -26,7 +26,7 @@ const EMPTY_FORM: Omit<PromoCodeDto, 'id' | 'usedCount' | 'createdAt' | 'updated
   isActive: true,
   validFrom: new Date().toISOString().slice(0, 10),
   validUntil: undefined,
-  districtId: null,
+  cityId: null,
 };
 
 const PromoCodesPage: React.FC = () => {
@@ -34,7 +34,7 @@ const PromoCodesPage: React.FC = () => {
   const isSuperAdmin = adminUser?.userType === 'superadmin';
 
   const { data: promoCodes = [], isLoading, isError, refetch } = useGetPromoCodesQuery({});
-  const { data: districts = [] } = useGetDistrictsQuery({ page: 1, size: 100 });
+  const { data: cities = [] } = useGetCitiesQuery({ page: 1, size: 100 });
   const [createPromoCode, { isLoading: isCreating }] = useCreatePromoCodeMutation();
   const [updatePromoCode, { isLoading: isUpdating }] = useUpdatePromoCodeMutation();
   const [deletePromoCode] = useDeletePromoCodeMutation();
@@ -48,9 +48,9 @@ const PromoCodesPage: React.FC = () => {
 
   const isSaving = isCreating || isUpdating;
 
-  const getDistrictName = (id?: number | null) => {
-    if (!id) return 'Global (All Districts)';
-    return districts.find((d: any) => d.id === id)?.name ?? `District ${id}`;
+  const getCityName = (id?: number | null) => {
+    if (!id) return 'Global (All Cities)';
+    return cities.find((d: any) => d.id === id)?.name ?? `City ${id}`;
   };
 
   const handleOpenAdd = () => {
@@ -58,8 +58,8 @@ const PromoCodesPage: React.FC = () => {
     setFormError(null);
     setForm({
       ...EMPTY_FORM,
-      // Pre-fill district for admin (they can only create for their own district)
-      districtId: isSuperAdmin ? null : (adminUser?.districtId ?? null),
+      // Pre-fill city for admin (they can only create for their own city)
+      cityId: isSuperAdmin ? null : (adminUser?.cityId ?? null),
     });
     setShowModal(true);
   };
@@ -79,7 +79,7 @@ const PromoCodesPage: React.FC = () => {
       isActive: promo.isActive,
       validFrom: promo.validFrom?.slice(0, 10) ?? '',
       validUntil: promo.validUntil?.slice(0, 10) ?? '',
-      districtId: promo.districtId ?? null,
+      cityId: promo.cityId ?? null,
     });
     setShowModal(true);
   };
@@ -188,7 +188,7 @@ const PromoCodesPage: React.FC = () => {
                 <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
                   <th className="px-4 py-3 text-left font-semibold">Code</th>
                   <th className="px-4 py-3 text-left font-semibold">Discount</th>
-                  <th className="px-4 py-3 text-left font-semibold">District</th>
+                  <th className="px-4 py-3 text-left font-semibold">City</th>
                   <th className="px-4 py-3 text-left font-semibold">Validity</th>
                   <th className="px-4 py-3 text-left font-semibold">Usage</th>
                   <th className="px-4 py-3 text-left font-semibold">Status</th>
@@ -238,9 +238,9 @@ const PromoCodesPage: React.FC = () => {
                         )}
                       </td>
                       <td className="px-4 py-3 text-gray-600 text-xs">
-                        {promo.districtId ? (
+                        {promo.cityId ? (
                           <span className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full font-medium">
-                            {getDistrictName(promo.districtId)}
+                            {getCityName(promo.cityId)}
                           </span>
                         ) : (
                           <span className="px-2 py-0.5 bg-green-50 text-green-700 rounded-full font-medium">
@@ -480,31 +480,31 @@ const PromoCodesPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* District — only superadmin can choose */}
+              {/* City — only superadmin can choose */}
               {isSuperAdmin ? (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">District Scope</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">City Scope</label>
                   <select
-                    value={form.districtId ?? ''}
-                    onChange={(e) => setForm({ ...form, districtId: e.target.value ? Number(e.target.value) : null })}
+                    value={form.cityId ?? ''}
+                    onChange={(e) => setForm({ ...form, cityId: e.target.value ? Number(e.target.value) : null })}
                     className="w-full px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-purple-400 outline-none transition bg-white"
                   >
-                    <option value="">Global (all districts)</option>
-                    {districts.map((d: any) => (
+                    <option value="">Global (all cities)</option>
+                    {cities.map((d: any) => (
                       <option key={d.id} value={d.id}>{d.name}</option>
                     ))}
                   </select>
                   <p className="text-xs text-gray-400 mt-1">
-                    Global promos apply to all districts. District-specific promos apply only to that district's bookings.
+                    Global promos apply to all cities. City-specific promos apply only to that city's bookings.
                   </p>
                 </div>
               ) : (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">District</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">City</label>
                   <div className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-600">
-                    {getDistrictName(adminUser?.districtId)}
+                    {getCityName(adminUser?.cityId)}
                     <p className="text-xs text-gray-400 mt-0.5">
-                      Promo codes you create are automatically scoped to your district.
+                      Promo codes you create are automatically scoped to your city.
                     </p>
                   </div>
                 </div>

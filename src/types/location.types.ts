@@ -1,7 +1,7 @@
 export interface LocationDto {
   id: number;
   name: string;
-  districtId: number;
+  cityId: number;
   latitude?: number;
   longitude?: number;
 }

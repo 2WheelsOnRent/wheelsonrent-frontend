@@ -6,56 +6,6 @@ import FAQSection from '../components/FAQSection';
 import RatingsSection from '../components/RatingsSection';
 
 const HomePage: React.FC = () => {
-  // const [searchData] = useState({
-  //   districtId: '',
-  //   startDate: '',
-  //   endDate: '',
-  //   startTime: '',
-  //   endTime: ''
-  // });
-
-  //const navigate = useNavigate();
-
-  // const { data: vehiclesData } = useGetVehiclesQuery({ page: 1, size: 6 });
-  // const { data: reviewsData } = useGetActiveWebsiteReviewsQuery();
-
-  // const handleSearch = (e: React.FormEvent) => {
-  //   e.preventDefault();
-    
-  //   if (!searchData.districtId || !searchData.startDate || !searchData.endDate || !searchData.startTime || !searchData.endTime) {
-  //     alert('Please fill all search fields');
-  //     return;
-  //   }
-
-  //   const params = new URLSearchParams({
-  //     districtId: searchData.districtId,
-  //     startDate: searchData.startDate,
-  //     endDate: searchData.endDate,
-  //     startTime: searchData.startTime,
-  //     endTime: searchData.endTime
-  //   });
-  //   navigate(`/vehicles?${params.toString()}`);
-  // };
-
-  // const handleVehicleClick = (vehicleId: number) => {
-  //   navigate(`/vehicles/${vehicleId}`);
-  // };
-
-  // const featuredVehicles = vehiclesData?.slice(0, 3).map(v => enhanceVehicleData(v)) || [];
-
-  // const features = [
-  //   { icon: Shield, title: 'Fully Insured', description: 'All vehicles come with comprehensive insurance coverage' },
-  //   { icon: Headphones, title: '24/7 Support', description: 'Our team is always available to assist you' },
-  //   { icon: Clock, title: 'Flexible Hours', description: 'Rent by the hour with no hidden charges' }
-  // ];
-
-  // const customerReviews = reviewsData && reviewsData.length > 0 ? reviewsData : [
-  //   { id: 1, customerName: 'Rahul Shah', rating: 5, reviewText: 'Excellent service! The bike was in perfect condition.', isActive: true, displayOrder: 1 },
-  //   { id: 2, customerName: 'Priya Patel', rating: 5, reviewText: 'Very convenient and affordable.', isActive: true, displayOrder: 2 },
-  //   { id: 3, customerName: 'Amit Kumar', rating: 4, reviewText: 'Good experience overall.', isActive: true, displayOrder: 3 },
-  //   { id: 4, customerName: 'Sneha Desai', rating: 5, reviewText: 'Best service in Gujarat!', isActive: true, displayOrder: 4 }
-  // ];
-
   return (
     <>
       <Header />

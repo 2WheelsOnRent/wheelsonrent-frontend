@@ -35,11 +35,11 @@ export const API_ENDPOINTS = {
 
   // Locations
   LOCATIONS: '/Locations',
-  LOCATIONS_BY_DISTRICT: (districtId: number) => `/Locations/district/${districtId}`,
+  LOCATIONS_BY_CITY: (cityId: number) => `/Locations/city/${cityId}`,
 
-  // Districts
-  DISTRICTS: '/Districts',
-  DISTRICT_BY_ID: (id: number) => `/Districts/${id}`,
+  // Cities
+  CITIES: '/Cities',
+  CITY_BY_ID: (id: number) => `/Cities/${id}`,
 
   // States
   STATES: '/States',
@@ -58,8 +58,8 @@ export const API_ENDPOINTS = {
 
   // Pickup Locations (NEW)
   PICKUP_LOCATIONS: '/PickupLocations',
-  PICKUP_LOCATIONS_BY_DISTRICT: (districtId: number) => `/PickupLocations/district/${districtId}`,
-  PICKUP_LOCATIONS_ACTIVE_BY_DISTRICT: (districtId: number) => `/PickupLocations/district/${districtId}/active`,
+  PICKUP_LOCATIONS_BY_CITY: (cityId: number) => `/PickupLocations/city/${cityId}`,
+  PICKUP_LOCATIONS_ACTIVE_BY_CITY: (cityId: number) => `/PickupLocations/city/${cityId}/active`,
 
   INITIATEPAYMENT: `Payments/initiate`,
   VERIFYPAYMENT: `Payments/verify`,
@@ -80,10 +80,5 @@ export const API_ENDPOINTS = {
   ADMIN_RESET_PASSWORD: 'Auth/admin/reset-password',
   ADMIN_CHANGE_PASSWORD: 'Auth/admin/change-password',
 };
-export const EASEBUZZ_CONFIG = {
-  MERCHANT_KEY: 'W0JXM1KFH7',
-  MERCHANT_SALT: 'ZHVQXJKEI0',
-  PAYMENT_URL: 'https://testpay.easebuzz.in/payment/initiateLink', // Test URL
-  // PAYMENT_URL: 'https://pay.easebuzz.in/payment/initiateLink', // Production URL
-};
+
 export default API_CONFIG;

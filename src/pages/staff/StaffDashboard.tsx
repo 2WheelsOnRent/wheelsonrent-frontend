@@ -25,7 +25,7 @@ const StaffDashboard: React.FC = () => {
         <div>
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-gray-900">Welcome, {staff?.username}!</h1>
-                <p className="text-gray-500 mt-1">Here's what's happening in your district today.</p>
+                <p className="text-gray-500 mt-1">Here's what's happening in your city today.</p>
             </div>
 
             {/* Stats */}

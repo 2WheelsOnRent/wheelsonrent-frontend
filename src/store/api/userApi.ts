@@ -5,7 +5,7 @@ import { API_CONFIG } from '../../config/api.config';
 export interface UserDto {
   id: number;
   userNumber: string;
-  districtId?: number;
+  cityId?: number;
   name?: string;
   email?: string;
 }

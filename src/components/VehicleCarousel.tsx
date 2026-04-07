@@ -2,13 +2,19 @@ import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import VehicleCard from './VehicleCard';
 import { useGetFeaturedVehiclesQuery } from '../store/api/vehicleApi';
+import { useAppSelector } from '../store/hooks';
 
 export default function VehicleCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  // ✅ Use RTK Query hook instead of manual fetch
-  const { data: vehicles = [], isLoading, error } = useGetFeaturedVehiclesQuery();
+  // Get selected city from Redux
+  const selectedCity = useAppSelector((state) => state.city.selectedCity);
+
+  // ✅ Pass cityId to featured vehicles API
+  const { data: vehicles = [], isLoading, error } = useGetFeaturedVehiclesQuery(
+    selectedCity ? { cityId: selectedCity.id } : undefined
+  );
 
   // Auto-rotate carousel every 6 seconds
   useEffect(() => {
@@ -120,24 +126,23 @@ export default function VehicleCarousel() {
             {getVisibleSlides().map((slide) => (
               <div
                 key={`${slide.vehicle.id}-${slide.index}`}
-                className={`absolute transition-all duration-700 ease-in-out cursor-pointer ${
-                  slide.position === 'center'
-                    ? 'z-10 scale-100 opacity-100'
-                    : slide.position === 'left' || slide.position === 'right'
+                className={`absolute transition-all duration-700 ease-in-out cursor-pointer ${slide.position === 'center'
+                  ? 'z-10 scale-100 opacity-100'
+                  : slide.position === 'left' || slide.position === 'right'
                     ? 'z-5 scale-85 opacity-70'
                     : 'z-0 scale-70 opacity-40'
-                }`}
+                  }`}
                 style={{
                   transform:
                     slide.position === 'center'
                       ? 'translateX(0) translateZ(0px) rotateY(0deg) scale(1)'
                       : slide.position === 'left'
-                      ? 'translateX(-380px) translateZ(-150px) rotateY(25deg) scale(0.85)'
-                      : slide.position === 'right'
-                      ? 'translateX(380px) translateZ(-150px) rotateY(-25deg) scale(0.85)'
-                      : slide.position === 'far-left'
-                      ? 'translateX(-680px) translateZ(-300px) rotateY(40deg) scale(0.7)'
-                      : 'translateX(680px) translateZ(-300px) rotateY(-40deg) scale(0.7)',
+                        ? 'translateX(-380px) translateZ(-150px) rotateY(25deg) scale(0.85)'
+                        : slide.position === 'right'
+                          ? 'translateX(380px) translateZ(-150px) rotateY(-25deg) scale(0.85)'
+                          : slide.position === 'far-left'
+                            ? 'translateX(-680px) translateZ(-300px) rotateY(40deg) scale(0.7)'
+                            : 'translateX(680px) translateZ(-300px) rotateY(-40deg) scale(0.7)',
                 }}
                 onClick={() => slide.position !== 'center' && goToSlide(slide.index)}
               >
@@ -155,11 +160,10 @@ export default function VehicleCarousel() {
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`transition-all ${
-                index === currentIndex
-                  ? 'bg-primary-500 w-10 h-3 rounded-full'
-                  : 'bg-gray-300 hover:bg-gray-400 w-3 h-3 rounded-full'
-              }`}
+              className={`transition-all ${index === currentIndex
+                ? 'bg-primary-500 w-10 h-3 rounded-full'
+                : 'bg-gray-300 hover:bg-gray-400 w-3 h-3 rounded-full'
+                }`}
               aria-label={`Go to vehicle ${index + 1}`}
             />
           ))}

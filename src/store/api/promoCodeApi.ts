@@ -15,7 +15,7 @@ export interface PromoCodeDto {
   isActive: boolean;
   validFrom: string;
   validUntil?: string;
-  districtId?: number | null; // null = global (superadmin), number = district-specific
+  cityId?: number | null; // null = global (superadmin), number = city-specific
   createdAt: string;
   updatedAt: string;
 }
@@ -24,7 +24,7 @@ export interface ValidatePromoCodeDto {
   code: string;
   userId: number;
   orderAmount: number;
-  districtId: number;
+  cityId: number;
 }
 
 export interface PromoValidationResultDto {

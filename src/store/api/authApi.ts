@@ -20,7 +20,7 @@ export interface LoginResponse {
     username?: string;
     email?: string;
     userNumber?: string;
-    districtId?: number;
+    cityId?: number;
     role?: number;
   };
 }
@@ -49,7 +49,7 @@ export interface VerifyOtpResponse {
   user?: {
     id: number;
     userNumber: string;
-    districtId?: number;
+    cityId?: number;
     name?: string;
     email?: string;
   };

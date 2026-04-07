@@ -224,9 +224,9 @@ const StaffProfilePage: React.FC = () => {
                                 <span className="px-3 py-1 bg-white/20 rounded-full text-sm text-white font-medium">
                                     Staff
                                 </span>
-                                {profile.districtName && (
+                                {profile.cityName && (
                                     <span className="px-3 py-1 bg-white/20 rounded-full text-sm text-white font-medium">
-                                        {profile.districtName}
+                                        {profile.cityName}
                                     </span>
                                 )}
                             </div>
@@ -281,16 +281,16 @@ const StaffProfilePage: React.FC = () => {
                         />
                     </div>
 
-                    {/* Read-only: District and Offline Booking */}
+                    {/* Read-only: City and Offline Booking */}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 <MapPin className="w-4 h-4 inline mr-2" />
-                                District
+                                City
                             </label>
                             <div className="px-4 py-3 rounded-xl bg-gray-50 border border-gray-200">
                                 <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700">
-                                    {profile.districtName || `District #${profile.districtId}`}
+                                    {profile.cityName || `City #${profile.cityId}`}
                                 </span>
                             </div>
                         </div>

@@ -17,10 +17,10 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
     const endDate = searchParams.get('endDate');
     const endTime = searchParams.get('endTime');
 
-    const districtIdValue = vehicle.districtId ?? 1;
+    const cityIdValue = vehicle.cityId ?? 1;
 
     const params = new URLSearchParams({
-      districtId: districtIdValue.toString(),
+      cityId: cityIdValue.toString(),
     });
 
     // only append datetime params if ALL exist
@@ -44,7 +44,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
-      
+
       {/* Image */}
       <div className="relative h-48 bg-gray-100">
         <img

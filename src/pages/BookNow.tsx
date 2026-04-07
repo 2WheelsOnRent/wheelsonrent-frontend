@@ -90,17 +90,17 @@ export default function BookNow() {
 
     // If not logged in — save booking intent then redirect to login
     if (!user) {
-  // Save booking intent so Login.tsx can restore it after OTP
-  sessionStorage.setItem('bookingIntent', JSON.stringify({
-    vehicleId: vehicleData?.id,
-    startDate: bookingDates.startDate,
-    startTime: bookingDates.startTime,
-    endDate: bookingDates.endDate,
-    endTime: bookingDates.endTime,
-  }));
-  navigate('/login');
-  return;
-}
+      // Save booking intent so Login.tsx can restore it after OTP
+      sessionStorage.setItem('bookingIntent', JSON.stringify({
+        vehicleId: vehicleData?.id,
+        startDate: bookingDates.startDate,
+        startTime: bookingDates.startTime,
+        endDate: bookingDates.endDate,
+        endTime: bookingDates.endTime,
+      }));
+      navigate('/login');
+      return;
+    }
 
 
     if (!vehicleData) return;
@@ -193,7 +193,7 @@ export default function BookNow() {
               <div>
                 <h3 className="text-xl text-black mb-4">Select Pickup Location</h3>
                 <MapWithLocations
-                  districtId={vehicleData.districtId}
+                  cityId={vehicleData.cityId}
                   onLocationSelect={handleMapLocationSelect}
                   selectedLocationId={selectedPickup ? parseInt(selectedPickup) : undefined}
                 />

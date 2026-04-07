@@ -50,6 +50,11 @@ temp/
 .git/
 .gitignore
 
+# Documentation
+README.md
+*.md
+.gitignore
+
 # Coverage directory used by tools like istanbul
 coverage/
 

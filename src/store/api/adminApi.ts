@@ -19,7 +19,8 @@ export interface AdminLoginResponse {
     id: number;
     username: string;
     email: string;
-    districtId: number;
+    cityId?: number;
+    cityIds: number[];
     role: number;
     number: string;
   };
@@ -73,7 +74,8 @@ export interface AdminDto {
   id: number;
   username: string;
   email: string;
-  districtId: number;
+  cityId?: number;
+  cityIds: number[];
   role: number;           // 1 = Admin, 2 = SuperAdmin
   number: string;
   isActive: boolean;
@@ -84,8 +86,10 @@ export interface AdminProfileDto {
   id: number;
   username: string;
   email: string;
-  districtId: number | null;
-  districtName: string | null;
+  cityId?: number | null;
+  cityName?: string | null;
+  cityIds: number[];
+  cityNames: string[];
   role: number;
   roleName: string;
   number: string;
@@ -101,8 +105,8 @@ export interface StaffDto {
   username: string;
   email: string;
   number: string;
-  districtId: number;
-  districtName?: string;
+  cityId: number;
+  cityName?: string;
   isActive: boolean;
   canOfflineBook: boolean;
   hasChangedPassword: boolean;
@@ -115,7 +119,7 @@ export interface CreateStaffDto {
   username: string;
   email: string;
   number: string;
-  districtId: number;
+  cityId: number;
   canOfflineBook?: boolean;
 }
 
@@ -123,7 +127,7 @@ export interface UpdateStaffDto {
   username?: string;
   email?: string;
   number?: string;
-  districtId?: number;
+  cityId?: number;
   isActive?: boolean;
   canOfflineBook?: boolean;
 }

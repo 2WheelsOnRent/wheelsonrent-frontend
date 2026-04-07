@@ -50,7 +50,7 @@ const UsersTab: React.FC = () => {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                {['User ID', 'Phone Number', 'District ID', 'Actions'].map((h) => (
+                {['User ID', 'Phone Number', 'City ID', 'Actions'].map((h) => (
                   <th key={h} className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">{h}</th>
                 ))}
               </tr>
@@ -67,7 +67,7 @@ const UsersTab: React.FC = () => {
                       {user.userNumber}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{user.districtId ?? 'N/A'}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{user.cityId ?? 'N/A'}</td>
                   <td className="px-6 py-4">
                     <button onClick={() => handleDeleteUser(user.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition">
                       <Trash2 className="w-4 h-4" />

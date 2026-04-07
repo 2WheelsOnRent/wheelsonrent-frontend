@@ -212,13 +212,19 @@ const ProfilePage: React.FC = () => {
                         </div>
                         <div>
                             <h2 className="text-2xl font-bold text-white">{profile.username}</h2>
-                            <div className="flex gap-2 mt-2">
+                            <div className="flex flex-wrap gap-2 mt-2">
                                 <span className="px-3 py-1 bg-white/20 rounded-full text-sm text-white font-medium">
                                     {profile.roleName}
                                 </span>
-                                {profile.districtName && (
+                                {(profile.cityNames && profile.cityNames.length > 0) ? (
+                                    profile.cityNames.map((name, idx) => (
+                                        <span key={idx} className="px-3 py-1 bg-white/20 rounded-full text-sm text-white font-medium">
+                                            {name}
+                                        </span>
+                                    ))
+                                ) : profile.cityName && (
                                     <span className="px-3 py-1 bg-white/20 rounded-full text-sm text-white font-medium">
-                                        {profile.districtName}
+                                        {profile.cityName}
                                     </span>
                                 )}
                             </div>
@@ -290,16 +296,24 @@ const ProfilePage: React.FC = () => {
                             </div>
                         </div>
 
-                        {profile.districtName && (
+                        {((profile.cityNames && profile.cityNames.length > 0) || profile.cityName) && (
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     <MapPin className="w-4 h-4 inline mr-2" />
-                                    District
+                                    {(profile.cityNames?.length ?? 0) > 1 ? 'Cities' : 'City'}
                                 </label>
-                                <div className="px-4 py-3 rounded-xl bg-gray-50 border border-gray-200">
-                                    <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700">
-                                        {profile.districtName}
-                                    </span>
+                                <div className="px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 flex flex-wrap gap-2">
+                                    {(profile.cityNames && profile.cityNames.length > 0) ? (
+                                        profile.cityNames.map((name, idx) => (
+                                            <span key={idx} className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700">
+                                                {name}
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700">
+                                            {profile.cityName}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         )}
