@@ -81,7 +81,7 @@ export default function Login() {
               name: response.user.userNumber,
               phone: response.user.userNumber,
               userType: 'user',
-              districtId: response.user.districtId,
+              cityId: response.user.cityId,
             },
             token: response.token,
           })
@@ -279,11 +279,10 @@ export default function Login() {
                   <button
                     onClick={handleResendOTP}
                     disabled={countdown > 0 || isSending}
-                    className={`text-sm ${
-                      countdown > 0
+                    className={`text-sm ${countdown > 0
                         ? 'text-gray-400 cursor-not-allowed'
                         : 'text-primary-500 hover:text-primary-600'
-                    }`}
+                      }`}
                   >
                     {countdown > 0 ? `Resend OTP in ${countdown}s` : 'Resend OTP'}
                   </button>

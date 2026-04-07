@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MapPin, Gauge, Clock, Shield, AlertCircle, ChevronLeft, Fuel, Calendar } from 'lucide-react';
 import { useNavigate, useParams, Link, useSearchParams } from 'react-router-dom';
 import { useGetVehicleByIdQuery } from '../store/api/vehicleApi';
-import { useGetActivePickupLocationsByDistrictQuery } from '../store/api/pickupLocationApi';
+import { useGetActivePickupLocationsByCityQuery } from '../store/api/pickupLocationApi';
 import { useCreateBookingMutation } from '../store/api/bookingApi';
 import { useInitiatePaymentMutation } from '../store/api/paymentApi';
 import { LoadingSpinner } from '../components/LoadingSpinner';
@@ -22,7 +22,7 @@ const VehicleDetailsPage: React.FC = () => {
   const navigate = useNavigate();
 
   // Get search params from URL
-  const districtId = searchParams.get('districtId');
+  const cityId = searchParams.get('cityId');
   const startDate = searchParams.get('startDate');
   const startTime = searchParams.get('startTime');
   const endDate = searchParams.get('endDate');
@@ -40,10 +40,10 @@ const VehicleDetailsPage: React.FC = () => {
     parseInt(id || '0')
   );
 
-  // Fetch locations for the vehicle's district
-  const { data: locationsData, isLoading: locationsLoading } = useGetActivePickupLocationsByDistrictQuery(
-    vehicleData?.districtId || parseInt(districtId || '1'),
-    { skip: !vehicleData && !districtId }
+  // Fetch locations for the vehicle's city
+  const { data: locationsData, isLoading: locationsLoading } = useGetActivePickupLocationsByCityQuery(
+    vehicleData?.cityId || parseInt(cityId || '1'),
+    { skip: !vehicleData && !cityId }
   );
 
   const [createBooking] = useCreateBookingMutation();
@@ -228,7 +228,7 @@ const VehicleDetailsPage: React.FC = () => {
 
               <div className="flex items-center text-gray-600 mb-6">
                 <MapPin className="w-5 h-5 mr-2 text-primary-600" />
-                <span>Available in District {vehicleData.districtId}</span>
+                <span>Available in City {vehicleData.cityId}</span>
               </div>
 
               {/* Specifications */}

@@ -23,13 +23,13 @@ import {
     type CreateStaffDto,
     type UpdateStaffDto,
 } from '../../store/api/adminApi';
-import { useGetDistrictsQuery } from '../../store/api/districtApi';
+import { useGetCitiesQuery } from '../../store/api/cityApi';
 
 interface FormState {
     username: string;
     email: string;
     number: string;
-    districtId: number | '';
+    cityId: number | '';
     canOfflineBook: boolean;
     isActive: boolean;
 }
@@ -38,7 +38,7 @@ const EMPTY_FORM: FormState = {
     username: '',
     email: '',
     number: '',
-    districtId: '',
+    cityId: '',
     canOfflineBook: false,
     isActive: true,
 };
@@ -56,7 +56,7 @@ const StaffManagementPage: React.FC = () => {
 
     // API calls
     const { data: staff = [], isLoading } = useGetStaffQuery({});
-    const { data: districts = [] } = useGetDistrictsQuery({});
+    const { data: cities = [] } = useGetCitiesQuery({});
     const [createStaff, { isLoading: isCreating }] = useCreateStaffMutation();
     const [updateStaff, { isLoading: isUpdating }] = useUpdateStaffMutation();
     const [deleteStaff, { isLoading: isDeleting }] = useDeleteStaffMutation();
@@ -73,7 +73,7 @@ const StaffManagementPage: React.FC = () => {
             username: s.username,
             email: s.email,
             number: s.number?.replace(/^\+91\s*/, '') || '',
-            districtId: s.districtId,
+            cityId: s.cityId,
             canOfflineBook: s.canOfflineBook,
             isActive: s.isActive,
         });
@@ -92,8 +92,8 @@ const StaffManagementPage: React.FC = () => {
             toast.error('Username, email, and phone number are required.');
             return;
         }
-        if (!form.districtId) {
-            toast.error('Please select a district.');
+        if (!form.cityId) {
+            toast.error('Please select a city.');
             return;
         }
 
@@ -103,7 +103,7 @@ const StaffManagementPage: React.FC = () => {
                     username: form.username.trim(),
                     email: form.email.trim(),
                     number: `+91${form.number.trim()}`,
-                    districtId: form.districtId as number,
+                    cityId: form.cityId as number,
                     isActive: form.isActive,
                 };
                 if (isSuperAdmin) {
@@ -116,7 +116,7 @@ const StaffManagementPage: React.FC = () => {
                     username: form.username.trim(),
                     email: form.email.trim(),
                     number: `+91${form.number.trim()}`,
-                    districtId: form.districtId as number,
+                    cityId: form.cityId as number,
                 };
                 if (isSuperAdmin) {
                     payload.canOfflineBook = form.canOfflineBook;
@@ -149,9 +149,9 @@ const StaffManagementPage: React.FC = () => {
         }
     };
 
-    const getDistrictName = (districtId: number) => {
-        const district = districts.find((d) => d.id === districtId);
-        return district?.name || `District #${districtId}`;
+    const getCityName = (cityId: number) => {
+        const city = cities.find((d) => d.id === cityId);
+        return city?.name || `City #${cityId}`;
     };
 
     const formatDate = (iso: string) =>
@@ -216,7 +216,7 @@ const StaffManagementPage: React.FC = () => {
                             <tr className="bg-gray-50 text-gray-600 uppercase text-xs">
                                 <th className="px-5 py-3 text-left">Staff</th>
                                 <th className="px-5 py-3 text-left">Contact</th>
-                                <th className="px-5 py-3 text-left">District</th>
+                                <th className="px-5 py-3 text-left">City</th>
                                 <th className="px-5 py-3 text-left">Offline Booking</th>
                                 <th className="px-5 py-3 text-left">Status</th>
                                 <th className="px-5 py-3 text-left">Joined</th>
@@ -259,7 +259,7 @@ const StaffManagementPage: React.FC = () => {
                                     </td>
                                     <td className="px-5 py-4">
                                         <span className="inline-flex items-center bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-medium">
-                                            {s.districtName || getDistrictName(s.districtId)}
+                                            {s.cityName || getCityName(s.cityId)}
                                         </span>
                                     </td>
                                     <td className="px-5 py-4">
@@ -328,9 +328,9 @@ const StaffManagementPage: React.FC = () => {
 
             {/* Add/Edit Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-y-auto py-8">
-                    <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-xl mx-4">
-                        <div className="flex items-center justify-between mb-4">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl w-full max-w-lg shadow-xl max-h-[90vh] flex flex-col">
+                        <div className="flex items-center justify-between p-6 border-b border-gray-100 flex-shrink-0">
                             <h2 className="text-lg font-bold text-gray-900">
                                 {editingStaff ? 'Edit Staff Member' : 'Add Staff Member'}
                             </h2>
@@ -338,7 +338,7 @@ const StaffManagementPage: React.FC = () => {
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
-                        <form onSubmit={handleSubmit} className="space-y-4">
+                        <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto flex-1">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     Username *
@@ -389,16 +389,16 @@ const StaffManagementPage: React.FC = () => {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    District *
+                                    City *
                                 </label>
                                 <select
-                                    value={form.districtId}
-                                    onChange={(e) => setForm({ ...form, districtId: Number(e.target.value) })}
+                                    value={form.cityId}
+                                    onChange={(e) => setForm({ ...form, cityId: Number(e.target.value) })}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                                     required
                                 >
-                                    <option value="">Select District</option>
-                                    {districts.map((d) => (
+                                    <option value="">Select City</option>
+                                    {cities.map((d) => (
                                         <option key={d.id} value={d.id}>
                                             {d.name}
                                         </option>
@@ -443,27 +443,28 @@ const StaffManagementPage: React.FC = () => {
                                     </label>
                                 </div>
                             )}
-
-                            <div className="flex gap-3 pt-2">
-                                <button
-                                    type="button"
-                                    onClick={closeModal}
-                                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={isCreating || isUpdating}
-                                    className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                                >
-                                    {(isCreating || isUpdating) && (
-                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                    )}
-                                    {editingStaff ? 'Update' : 'Create'}
-                                </button>
-                            </div>
                         </form>
+
+                        {/* Footer */}
+                        <div className="flex gap-3 p-6 border-t border-gray-100 flex-shrink-0 bg-white">
+                            <button
+                                type="button"
+                                onClick={closeModal}
+                                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSubmit}
+                                disabled={isCreating || isUpdating}
+                                className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                            >
+                                {(isCreating || isUpdating) && (
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                )}
+                                {editingStaff ? 'Update' : 'Create'}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

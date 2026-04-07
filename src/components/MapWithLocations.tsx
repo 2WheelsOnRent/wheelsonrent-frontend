@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { MapPin, Navigation, Loader2, AlertCircle } from 'lucide-react';
 import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
-import { useGetActivePickupLocationsByDistrictQuery } from '../store/api/pickupLocationApi';
+import { useGetActivePickupLocationsByCityQuery } from '../store/api/pickupLocationApi';
 import { toast } from 'sonner';
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_KEY;
@@ -9,13 +9,13 @@ const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_KEY;
 interface Location {
   id: number;
   name: string;
-  districtId: number;
+  cityId: number;
   latitude?: number;
   longitude?: number;
 }
 
 interface MapWithLocationsProps {
-  districtId?: number;
+  cityId?: number;
   onLocationSelect?: (location: Location) => void;
   selectedLocationId?: number;
 }
@@ -30,10 +30,10 @@ const defaultCenter = {
   lng: 73.7125,
 };
 
-export default function MapWithLocations({ 
-  districtId = 1, 
+export default function MapWithLocations({
+  cityId = 1,
   onLocationSelect,
-  selectedLocationId 
+  selectedLocationId
 }: MapWithLocationsProps) {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
@@ -41,7 +41,7 @@ export default function MapWithLocations({
   const [mapZoom, setMapZoom] = useState(12);
 
   // Fetch locations from API
-  const { data: locations, isLoading, error } = useGetActivePickupLocationsByDistrictQuery(districtId);
+  const { data: locations, isLoading, error } = useGetActivePickupLocationsByCityQuery(cityId);
 
   // Get user's current location
   useEffect(() => {
@@ -66,7 +66,7 @@ export default function MapWithLocations({
       const location = locations.find(loc => loc.id === selectedLocationId);
       if (location) {
         setSelectedLocation(location);
-        
+
         // Center map on selected location if it has coordinates
         if (location.latitude && location.longitude) {
           setMapCenter({
@@ -81,7 +81,7 @@ export default function MapWithLocations({
 
   const handleLocationClick = (location: Location) => {
     setSelectedLocation(location);
-    
+
     // Center map on clicked location
     if (location.latitude && location.longitude) {
       setMapCenter({
@@ -90,7 +90,7 @@ export default function MapWithLocations({
       });
       setMapZoom(14);
     }
-    
+
     if (onLocationSelect) {
       onLocationSelect(location);
     }
@@ -103,7 +103,7 @@ export default function MapWithLocations({
     }
 
     let mapsUrl = '';
-    
+
     if (userLocation) {
       // Directions from current location to pickup point
       mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLocation.lat},${userLocation.lng}&destination=${location.latitude},${location.longitude}&travelmode=driving`;
@@ -208,22 +208,19 @@ export default function MapWithLocations({
                 <button
                   key={location.id}
                   onClick={() => handleLocationClick(location)}
-                  className={`w-full text-left p-4 rounded-lg border transition-all ${
-                    selectedLocation?.id === location.id
+                  className={`w-full text-left p-4 rounded-lg border transition-all ${selectedLocation?.id === location.id
                       ? 'border-primary-500 bg-primary-50 shadow-md'
                       : 'border-gray-200 hover:border-primary-300 hover:bg-gray-50'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-start flex-1">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                        selectedLocation?.id === location.id
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${selectedLocation?.id === location.id
                           ? 'bg-primary-500'
                           : 'bg-gray-200'
-                      }`}>
-                        <MapPin className={`w-5 h-5 ${
-                          selectedLocation?.id === location.id ? 'text-white' : 'text-gray-600'
-                        }`} />
+                        }`}>
+                        <MapPin className={`w-5 h-5 ${selectedLocation?.id === location.id ? 'text-white' : 'text-gray-600'
+                          }`} />
                       </div>
                       <div className="ml-3 flex-1">
                         <h4 className="font-semibold text-gray-900">{location.name}</h4>
@@ -234,18 +231,17 @@ export default function MapWithLocations({
                         )}
                       </div>
                     </div>
-                    
+
                     {location.latitude && location.longitude && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           openGoogleMapsDirections(location);
                         }}
-                        className={`ml-2 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center transition-colors ${
-                          selectedLocation?.id === location.id
+                        className={`ml-2 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center transition-colors ${selectedLocation?.id === location.id
                             ? 'bg-primary-500 text-white hover:bg-primary-600'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
+                          }`}
                       >
                         <Navigation className="w-4 h-4 mr-1" />
                         Directions
@@ -258,7 +254,7 @@ export default function MapWithLocations({
           ) : (
             <div className="text-center py-12 text-gray-500">
               <MapPin className="w-12 h-12 mx-auto mb-3 text-gray-400" />
-              <p>No pickup locations available for this district</p>
+              <p>No pickup locations available for this city</p>
             </div>
           )}
         </div>

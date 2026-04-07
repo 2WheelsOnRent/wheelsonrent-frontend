@@ -10,6 +10,7 @@ import {
     UserCog,
     ShieldCheck,
     Tag,
+    MapPin,
 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { logout } from '../store/slices/authSlice';
@@ -30,6 +31,7 @@ const navItems: NavItem[] = [
     { id: 'users', path: '/users', icon: Users, label: 'Users' },
     { id: 'staff', path: '/staff', icon: UserCog, label: 'Staff' },
     { id: 'promo-codes', path: '/promo-codes', icon: Tag, label: 'Promo Codes' },
+    { id: 'cities', path: '/cities', icon: MapPin, label: 'Cities', roles: ['superadmin'] },
     { id: 'superadmin', path: '/superadmin', icon: ShieldCheck, label: 'Admins', roles: ['superadmin'] },
 ];
 
@@ -62,8 +64,8 @@ const AdminLayout: React.FC = () => {
     return (
         <div className="min-h-screen bg-gray-50 flex">
             {/* Sidebar */}
-            <aside className="w-64 bg-white shadow-lg fixed h-full z-20">
-                <div className="p-6">
+            <aside className="w-64 bg-white shadow-lg fixed h-full z-20 flex flex-col">
+                <div className="p-6 flex-shrink-0">
                     <h2 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-indigo-600 bg-clip-text text-transparent mb-1">
                         scootyonrent
                     </h2>
@@ -90,7 +92,8 @@ const AdminLayout: React.FC = () => {
                     )}
                 </div>
 
-                <nav className="px-4 space-y-2">
+                {/* Scrollable navigation */}
+                <nav className="px-4 space-y-2 overflow-y-auto flex-1 pb-4">
                     {visibleNavItems.map(({ id, path, icon: Icon, label }) => (
                         <button
                             key={id}
@@ -107,7 +110,7 @@ const AdminLayout: React.FC = () => {
                 </nav>
 
                 {/* Profile and Logout at bottom */}
-                <div className="absolute bottom-6 left-0 right-0 px-4">
+                <div className="px-4 pb-6 flex-shrink-0">
                     <div className="bg-gray-100 rounded-xl p-3">
                         <button
                             onClick={() => navigate('/profile')}

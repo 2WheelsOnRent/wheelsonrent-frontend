@@ -69,7 +69,7 @@ const AdminLogin: React.FC = () => {
               email: userData.email,
               phone: userData.number ?? "",
               userType: userType,
-              districtId: userData.districtId,
+              cityId: userData.cityId,
             },
             token: response.token,
             refreshToken: response.refreshToken ?? undefined,

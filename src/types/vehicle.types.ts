@@ -3,7 +3,7 @@ export interface VehicleDto {
   name: string;
   make: string;
   model: string;
-  districtId: number;
+  cityId: number;
   hourlyRate: number;
   minBookingHours: number;
   isAvailable: boolean;
@@ -16,7 +16,7 @@ export interface VehicleDto {
 }
 
 export interface VehicleSearchParams {
-  districtId?: number;
+  cityId?: number;
   startDate?: string;
   endDate?: string;
   startTime?: string;
@@ -33,6 +33,6 @@ export interface VehicleFilters {
 }
 
 export interface VehicleDisplay extends VehicleDto {
-  image: string; 
-  districtName?: string;
+  image: string;
+  cityName?: string;
 }

@@ -20,7 +20,7 @@ export interface User {
   name: string;
   phone: string;
   email?: string;
-  districtId?: number;
+  cityId?: number;
   token?: string;
   userType: 'user' | 'admin' | 'superadmin';
 }

@@ -5,7 +5,7 @@ import type { RootState } from '../store';
 export interface LocationDto {
   id: number;
   name: string;
-  districtId: number;
+  cityId: number;
   latitude?: number;
   longitude?: number;
 }
@@ -30,8 +30,8 @@ export const locationApi = createApi({
       query: ({ page = 1, size = 100 }) => `${API_ENDPOINTS.LOCATIONS}?page=${page}&size=${size}`,
       providesTags: ['Location'],
     }),
-    getLocationsByDistrictId: builder.query<LocationDto[], number>({
-      query: (districtId) => API_ENDPOINTS.LOCATIONS_BY_DISTRICT(districtId),
+    getLocationsByCityId: builder.query<LocationDto[], number>({
+      query: (cityId) => API_ENDPOINTS.LOCATIONS_BY_CITY(cityId),
       providesTags: ['Location'],
     }),
   }),
@@ -39,5 +39,5 @@ export const locationApi = createApi({
 
 export const {
   useGetLocationsQuery,
-  useGetLocationsByDistrictIdQuery,
+  useGetLocationsByCityIdQuery,
 } = locationApi;

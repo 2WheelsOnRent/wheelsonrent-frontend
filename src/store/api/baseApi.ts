@@ -9,7 +9,7 @@ export const baseApi = createApi({
     'Booking',
     'User',
     'Admin',
-    'District',
+    'City',
     'State',
     'Location',
     'Payment',

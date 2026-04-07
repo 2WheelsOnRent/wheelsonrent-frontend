@@ -80,7 +80,7 @@ const StaffLayout: React.FC = () => {
                             </div>
                             <div className="min-w-0">
                                 <p className="text-sm font-medium text-blue-900 truncate">{staffUser.username}</p>
-                                <p className="text-xs text-primary-600">{profile?.districtName || `District #${staffUser.districtId}`}</p>
+                                <p className="text-xs text-primary-600">{profile?.cityName || `City #${staffUser.cityId}`}</p>
                             </div>
                         </div>
                     )}

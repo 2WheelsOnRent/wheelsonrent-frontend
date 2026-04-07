@@ -8,11 +8,11 @@ import {
   useDeletePickupLocationMutation,
   type PickupLocationDto,
 } from '../../store/api/pickupLocationApi';
-import { useGetDistrictsQuery } from '../../store/api/districtApi';
+import { useGetCitiesQuery } from '../../store/api/cityApi';
 
 const EMPTY_FORM: Partial<PickupLocationDto> = {
   name: '',
-  districtId: 0,
+  cityId: 0,
   address: '',
   latitude: undefined,
   longitude: undefined,
@@ -27,7 +27,7 @@ const AdminPickupPoints: React.FC = () => {
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
 
   const { data: locations = [], isLoading } = useGetAllPickupLocationsQuery({});
-  const { data: districts = [] } = useGetDistrictsQuery({ page: 1, size: 100 });
+  const { data: cities = [] } = useGetCitiesQuery({ page: 1, size: 100 });
   const [createLocation, { isLoading: isCreating }] = useCreatePickupLocationMutation();
   const [updateLocation, { isLoading: isUpdating }] = useUpdatePickupLocationMutation();
   const [deleteLocation, { isLoading: isDeleting }] = useDeletePickupLocationMutation();
@@ -52,8 +52,8 @@ const AdminPickupPoints: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name?.trim() || !form.districtId) {
-      toast.error('Name and district are required.');
+    if (!form.name?.trim() || !form.cityId) {
+      toast.error('Name and city are required.');
       return;
     }
     try {
@@ -89,8 +89,8 @@ const AdminPickupPoints: React.FC = () => {
     }
   };
 
-  const getDistrictName = (id: number) =>
-    districts.find((d: any) => d.id === id)?.name ?? `District ${id}`;
+  const getCityName = (id: number) =>
+    cities.find((d: any) => d.id === id)?.name ?? `City ${id}`;
 
   return (
     <div>
@@ -124,7 +124,7 @@ const AdminPickupPoints: React.FC = () => {
             <thead>
               <tr className="bg-gray-50 text-gray-600 uppercase text-xs">
                 <th className="px-6 py-3 text-left">Name</th>
-                <th className="px-6 py-3 text-left">District</th>
+                <th className="px-6 py-3 text-left">City</th>
                 <th className="px-6 py-3 text-left">Address</th>
                 <th className="px-6 py-3 text-left">Order</th>
                 <th className="px-6 py-3 text-left">Status</th>
@@ -138,7 +138,7 @@ const AdminPickupPoints: React.FC = () => {
                     <MapPin className="w-4 h-4 text-primary-500 flex-shrink-0" />
                     {loc.name}
                   </td>
-                  <td className="px-6 py-4 text-gray-600">{getDistrictName(loc.districtId)}</td>
+                  <td className="px-6 py-4 text-gray-600">{getCityName(loc.cityId)}</td>
                   <td className="px-6 py-4 text-gray-500 max-w-xs truncate">{loc.address || '—'}</td>
                   <td className="px-6 py-4 text-gray-600">{loc.displayOrder}</td>
                   <td className="px-6 py-4">
@@ -199,15 +199,15 @@ const AdminPickupPoints: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">District *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">City *</label>
                 <select
-                  value={form.districtId || 0}
-                  onChange={(e) => setForm({ ...form, districtId: Number(e.target.value) })}
+                  value={form.cityId || 0}
+                  onChange={(e) => setForm({ ...form, cityId: Number(e.target.value) })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                   required
                 >
-                  <option value={0}>Select district</option>
-                  {districts.map((d: any) => (
+                  <option value={0}>Select city</option>
+                  {cities.map((d: any) => (
                     <option key={d.id} value={d.id}>{d.name}</option>
                   ))}
                 </select>

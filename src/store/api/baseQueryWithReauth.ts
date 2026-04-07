@@ -59,7 +59,7 @@ export const baseQueryWithReauth: BaseQueryFn<
                             username?: string;
                             email?: string;
                             userNumber?: string;
-                            districtId?: number;
+                            cityId?: number;
                             role?: number;
                         };
                         userType?: string;
@@ -74,7 +74,7 @@ export const baseQueryWithReauth: BaseQueryFn<
                                     name: data.userData.username || '',
                                     phone: data.userData.userNumber || '',
                                     email: data.userData.email,
-                                    districtId: data.userData.districtId,
+                                    cityId: data.userData.cityId,
                                     userType: (data.userType?.toLowerCase() as 'user' | 'admin' | 'superadmin') || 'admin',
                                 },
                                 token: data.token,

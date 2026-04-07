@@ -5,8 +5,8 @@ export interface StaffUser {
     username: string;
     email: string;
     number: string;
-    districtId: number;
-    districtName?: string;
+    cityId: number;
+    cityName?: string;
     canOfflineBook: boolean;
     hasChangedPassword: boolean;
     profilePicUrl?: string;

@@ -100,7 +100,7 @@ const BookingsList: React.FC = () => {
                 <div className="flex flex-col items-center justify-center py-20 text-gray-500">
                     <Calendar className="w-12 h-12 mb-3 text-gray-400" />
                     <p className="text-lg font-medium">No bookings found</p>
-                    <p className="text-sm">Bookings from your district will appear here.</p>
+                    <p className="text-sm">Bookings from your city will appear here.</p>
                 </div>
             ) : (
                 <div className="bg-white rounded-xl shadow-md overflow-x-auto">

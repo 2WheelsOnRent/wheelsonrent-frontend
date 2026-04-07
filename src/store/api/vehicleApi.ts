@@ -23,7 +23,7 @@ export interface VehicleDto {
   name: string;
   make: string;
   model: string;
-  districtId: number;
+  cityId: number;
   isAvailable: boolean;
   featured: boolean;
   pricePerHour: number;
@@ -64,7 +64,7 @@ export interface VehicleSearchParams {
   startTime?: string;
   endDate?: string;
   endTime?: string;
-  districtId?: number;
+  cityId?: number;
 }
 
 export interface VehicleFilterParams {
@@ -72,7 +72,7 @@ export interface VehicleFilterParams {
   fuelType?: string;
   minPrice?: number;
   maxPrice?: number;
-  districtId?: number;
+  cityId?: number;
 }
 
 export const vehicleApi = createApi({
@@ -101,8 +101,14 @@ export const vehicleApi = createApi({
       providesTags: (_result, _error, id) => [{ type: 'Vehicle', id }],
     }),
 
-    getFeaturedVehicles: builder.query<VehicleWithImagesDto[], void>({
-      query: () => '/Vehicles/featured',
+    getFeaturedVehicles: builder.query<VehicleWithImagesDto[], { cityId?: number } | void>({
+      query: (params) => {
+        const cityId = params && 'cityId' in params ? params.cityId : undefined;
+        if (cityId) {
+          return `/Vehicles/featured?cityId=${cityId}`;
+        }
+        return '/Vehicles/featured';
+      },
       providesTags: ['Vehicle'],
     }),
 
@@ -113,7 +119,7 @@ export const vehicleApi = createApi({
         if (params.startTime) queryParams.append('startTime', params.startTime);
         if (params.endDate) queryParams.append('endDate', params.endDate);
         if (params.endTime) queryParams.append('endTime', params.endTime);
-        if (params.districtId) queryParams.append('districtId', params.districtId.toString());
+        if (params.cityId) queryParams.append('cityId', params.cityId.toString());
 
         return `/Vehicles/search?${queryParams.toString()}`;
       },
@@ -127,7 +133,7 @@ export const vehicleApi = createApi({
         if (params.fuelType) queryParams.append('fuelType', params.fuelType);
         if (params.minPrice) queryParams.append('minPrice', params.minPrice.toString());
         if (params.maxPrice) queryParams.append('maxPrice', params.maxPrice.toString());
-        if (params.districtId) queryParams.append('districtId', params.districtId.toString());
+        if (params.cityId) queryParams.append('cityId', params.cityId.toString());
 
         return `/Vehicles/filter?${queryParams.toString()}`;
       },
