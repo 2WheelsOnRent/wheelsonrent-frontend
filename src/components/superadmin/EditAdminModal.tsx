@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { X, Loader2, AlertCircle, User, Phone } from 'lucide-react';
+import { X, Loader2, AlertCircle, User } from 'lucide-react';
 import { useUpdateAdminMutation, type AdminDto } from '../../store/api/adminApi';
-import { useGetDistrictsQuery } from '../../store/api/districtApi';
+import { useGetCitiesQuery } from '../../store/api/cityApi';
 import { toast } from 'sonner';
 
 interface Props {
@@ -11,13 +11,13 @@ interface Props {
 }
 
 const EditAdminModal: React.FC<Props> = ({ admin, onClose, onSuccess }) => {
-  const { data: districts, isLoading: loadingDistricts } = useGetDistrictsQuery({});
+  const { data: cities, isLoading: loadingCities } = useGetCitiesQuery({});
   const [updateAdmin, { isLoading }] = useUpdateAdminMutation();
 
   const [form, setForm] = useState({
     username: admin.username,
-    number: admin.number,
-    districtId: admin.districtId,
+    number: admin.number?.replace(/^\+91\s*/, '') || '',
+    cityIds: admin.cityIds ?? (admin.cityId ? [admin.cityId] : []),
     role: admin.role,
     isActive: admin.isActive,
   });
@@ -27,13 +27,30 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, onSuccess }) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleCityToggle = (cityId: number) => {
+    setForm((prev) => ({
+      ...prev,
+      cityIds: prev.cityIds.includes(cityId)
+        ? prev.cityIds.filter((id) => id !== cityId)
+        : [...prev.cityIds, cityId],
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     if (!form.username.trim()) { setError('Name is required'); return; }
     if (!form.number.trim()) { setError('Mobile number is required'); return; }
-    if (!form.districtId) { setError('Please select a district'); return; }
+
+    // Validate phone number format (exactly 10 digits)
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(form.number.trim())) {
+      setError('Mobile number must be exactly 10 digits');
+      return;
+    }
+
+    if (form.cityIds.length === 0) { setError('Please select at least one city'); return; }
 
     try {
       await updateAdmin({
@@ -41,8 +58,8 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, onSuccess }) => {
         admin: {
           ...admin,
           username: form.username.trim(),
-          number: form.number.trim(),
-          districtId: form.districtId,
+          number: `+91${form.number.trim()}`,
+          cityIds: form.cityIds,
           role: form.role,
           isActive: form.isActive,
         },
@@ -51,16 +68,33 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, onSuccess }) => {
       toast.success('Admin updated successfully');
       onSuccess();
     } catch (err: any) {
-      setError(err?.data?.message || 'Failed to update admin. Please try again.');
+      // Handle different error formats from API
+      const data = err?.data;
+      let errorMessage = 'Failed to update admin. Please try again.';
+
+      if (data?.message) {
+        errorMessage = data.message;
+      } else if (data?.error) {
+        errorMessage = data.error;
+      } else if (data?.errors) {
+        // FluentValidation returns errors as { errors: { "FieldName": ["error message"] } }
+        const errorMessages = Object.values(data.errors).flat();
+        errorMessage = errorMessages.join('. ');
+      } else if (data?.title && data?.status === 400) {
+        // ASP.NET validation problem details format
+        errorMessage = data.title;
+      }
+
+      setError(errorMessage);
     }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden">
+      <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
           <div>
             <h2 className="text-lg font-semibold text-gray-800">Edit Admin</h2>
             <p className="text-xs text-gray-400 mt-0.5">{admin.email}</p>
@@ -75,7 +109,7 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, onSuccess }) => {
         </div>
 
         {/* Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto flex-1">
           {error && (
             <div className="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-xl">
               <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
@@ -101,46 +135,55 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, onSuccess }) => {
           {/* Mobile */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Mobile Number</label>
-            <div className="relative">
-              <Phone className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <div className="flex">
+              <span className="inline-flex items-center px-3 bg-gray-100 border border-r-0 border-gray-300 rounded-l-xl text-gray-600 text-sm">
+                +91
+              </span>
               <input
                 type="tel"
                 value={form.number}
-                onChange={(e) => handleChange('number', e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none transition"
+                onChange={(e) => handleChange('number', e.target.value.replace(/\D/g, '').slice(0, 10))}
+                placeholder="9876543210"
+                maxLength={10}
+                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-r-xl text-sm focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none transition"
                 required
               />
             </div>
           </div>
 
-          {/* District */}
+          {/* City Multi-Select */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">District</label>
-            {loadingDistricts ? (
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Cities <span className="text-xs text-gray-400">(select one or more)</span>
+            </label>
+            {loadingCities ? (
               <div className="flex items-center gap-2 py-2 text-sm text-gray-400">
                 <Loader2 className="w-4 h-4 animate-spin" /> Loading...
               </div>
             ) : (
               <div className="border border-gray-300 rounded-xl overflow-hidden max-h-40 overflow-y-auto divide-y divide-gray-100">
-                {(districts ?? []).map((district: any) => (
+                {(cities ?? []).map((city: any) => (
                   <label
-                    key={district.id}
-                    className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-50 transition ${
-                      form.districtId === district.id ? 'bg-purple-50' : ''
-                    }`}
+                    key={city.id}
+                    className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-50 transition ${form.cityIds.includes(city.id) ? 'bg-purple-50' : ''
+                      }`}
                   >
                     <input
-                      type="radio"
-                      name="edit-district"
-                      value={district.id}
-                      checked={form.districtId === district.id}
-                      onChange={() => handleChange('districtId', district.id)}
-                      className="accent-purple-600"
+                      type="checkbox"
+                      value={city.id}
+                      checked={form.cityIds.includes(city.id)}
+                      onChange={() => handleCityToggle(city.id)}
+                      className="accent-purple-600 w-4 h-4"
                     />
-                    <span className="text-sm text-gray-700">{district.name}</span>
+                    <span className="text-sm text-gray-700">{city.name}</span>
                   </label>
                 ))}
               </div>
+            )}
+            {form.cityIds.length > 0 && (
+              <p className="text-xs text-purple-600 mt-1">
+                {form.cityIds.length} {form.cityIds.length === 1 ? 'city' : 'cities'} selected
+              </p>
             )}
           </div>
 
@@ -161,13 +204,11 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, onSuccess }) => {
           <label className="flex items-center gap-3 cursor-pointer">
             <div
               onClick={() => handleChange('isActive', !form.isActive)}
-              className={`relative w-11 h-6 rounded-full transition-colors ${
-                form.isActive ? 'bg-green-500' : 'bg-gray-300'
-              }`}
+              className={`relative w-11 h-6 rounded-full transition-colors ${form.isActive ? 'bg-green-500' : 'bg-gray-300'
+                }`}
             >
-              <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-                form.isActive ? 'translate-x-5' : 'translate-x-0'
-              }`} />
+              <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${form.isActive ? 'translate-x-5' : 'translate-x-0'
+                }`} />
             </div>
             <span className="text-sm text-gray-700">
               {form.isActive ? 'Active' : 'Inactive'}
@@ -176,7 +217,7 @@ const EditAdminModal: React.FC<Props> = ({ admin, onClose, onSuccess }) => {
         </form>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 px-6 pb-6">
+        <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100 flex-shrink-0 bg-white">
           <button
             type="button"
             onClick={onClose}

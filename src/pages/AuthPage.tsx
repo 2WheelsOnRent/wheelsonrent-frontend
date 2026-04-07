@@ -208,7 +208,7 @@ const AuthPage: React.FC = () => {
           phone: response.user.userNumber,
           email: response.user.email ?? undefined,
           userType: 'user',
-          districtId: response.user.districtId ?? undefined,
+          cityId: response.user.cityId ?? undefined,
         },
         token: response.token,
       })

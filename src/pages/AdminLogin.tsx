@@ -3,6 +3,7 @@ import { Lock, Mail, Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
 import { useLoginMutation } from "../store/api/authApi";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setCredentials } from "../store/slices/authSlice";
+import { markPasswordChanged, resetPasswordChangeFlag } from "../store/slices/adminAuthSlice";
 import { toast } from "sonner";
 import { Navigate, useNavigate } from "react-router-dom";
 
@@ -53,6 +54,13 @@ const AdminLogin: React.FC = () => {
           return;
         }
 
+        // Store hasChangedPassword from backend response (localStorage + Redux)
+        if (userData.hasChangedPassword) {
+          dispatch(markPasswordChanged());
+        } else {
+          dispatch(resetPasswordChangeFlag());
+        }
+
         dispatch(
           setCredentials({
             user: {
@@ -61,7 +69,7 @@ const AdminLogin: React.FC = () => {
               email: userData.email,
               phone: userData.number ?? "",
               userType: userType,
-              districtId: userData.districtId,
+              cityId: userData.cityId,
             },
             token: response.token,
             refreshToken: response.refreshToken ?? undefined,

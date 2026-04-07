@@ -3,12 +3,14 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 
 import authReducer from './slices/authSlice';
 import adminAuthReducer from './slices/adminAuthSlice';
+import staffAuthReducer from './slices/staffAuthSlice';
+import cityReducer from './slices/citySlice';
 
 import { vehicleApi } from './api/vehicleApi';
 import { vehicleImageApi } from './api/vehicleImageApi';
 import { userApi } from './api/userApi';
 import { bookingApi } from './api/bookingApi';
-import { districtApi } from './api/districtApi';
+import { cityApi } from './api/cityApi';
 import { locationApi } from './api/locationApi';
 import { pickupLocationApi } from './api/pickupLocationApi';
 import { paymentApi } from './api/paymentApi';
@@ -17,16 +19,20 @@ import { websiteReviewApi } from './api/websiteReviewApi';
 import { adminApi } from './api/adminApi';        // ← replaces adminAuthApi
 import { promoCodeApi } from './api/promoCodeApi'; // ← NEW
 import { offlineBookingApi } from './api/offlineBookingApi';
+import { staffApi } from './api/staffApi';
+
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     adminAuth: adminAuthReducer, // ← NEW
+    staffAuth: staffAuthReducer, // ← Staff auth
+    city: cityReducer, // ← City selection
 
     [vehicleApi.reducerPath]: vehicleApi.reducer,
     [vehicleImageApi.reducerPath]: vehicleImageApi.reducer,
     [userApi.reducerPath]: userApi.reducer,
     [bookingApi.reducerPath]: bookingApi.reducer,
-    [districtApi.reducerPath]: districtApi.reducer,
+    [cityApi.reducerPath]: cityApi.reducer,
     [locationApi.reducerPath]: locationApi.reducer,
     [pickupLocationApi.reducerPath]: pickupLocationApi.reducer,
     [paymentApi.reducerPath]: paymentApi.reducer,
@@ -35,6 +41,7 @@ export const store = configureStore({
     [adminApi.reducerPath]: adminApi.reducer,       // reducerPath = 'adminAuthApi' (unchanged)
     [promoCodeApi.reducerPath]: promoCodeApi.reducer, // reducerPath = 'promoCodeApi'
     [offlineBookingApi.reducerPath]: offlineBookingApi.reducer, // reducerPath = 'offlineBookingApi'
+    [staffApi.reducerPath]: staffApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -42,7 +49,7 @@ export const store = configureStore({
       vehicleImageApi.middleware,
       userApi.middleware,
       bookingApi.middleware,
-      districtApi.middleware,
+      cityApi.middleware,
       locationApi.middleware,
       pickupLocationApi.middleware,
       paymentApi.middleware,
@@ -50,7 +57,8 @@ export const store = configureStore({
       websiteReviewApi.middleware,
       adminApi.middleware,
       promoCodeApi.middleware,
-      offlineBookingApi.middleware
+      offlineBookingApi.middleware,
+      staffApi.middleware
     ),
 });
 

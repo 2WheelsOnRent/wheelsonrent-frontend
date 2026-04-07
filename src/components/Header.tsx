@@ -1,14 +1,16 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
-import { User, LogOut } from 'lucide-react';
+import { User, LogOut, MapPin, ChevronDown } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { logout } from '../store/slices/authSlice';
+import { openCityModal } from '../store/slices/citySlice';
 
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const selectedCity = useAppSelector((state) => state.city.selectedCity);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -44,8 +46,8 @@ export default function Header() {
     <header className="border-b border-gray-200 bg-white sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex-1">
+          {/* Logo & City Selector */}
+          <div className="flex-1 flex items-center gap-4">
             <a
               href="/"
               onClick={handleLogoClick}
@@ -55,6 +57,17 @@ export default function Header() {
                 Scooty<span className="text-primary-500">onrent</span>
               </h1>
             </a>
+            {/* City Selector */}
+            {selectedCity && (
+              <button
+                onClick={() => dispatch(openCityModal())}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-all text-sm"
+              >
+                <MapPin className="w-4 h-4 text-primary-500" />
+                <span className="font-medium text-gray-700">{selectedCity.name}</span>
+                <ChevronDown className="w-3 h-3 text-gray-400" />
+              </button>
+            )}
           </div>
 
           {/* Navigation - Centered */}

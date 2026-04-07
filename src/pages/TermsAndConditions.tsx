@@ -183,10 +183,10 @@ const TermsAndConditions: React.FC = () => {
               </h2>
               <div className="space-y-3 text-gray-700">
                 <p className="leading-relaxed">
-                  Vehicles are restricted to use within the booking district only. Cross-district or interstate travel is strictly prohibited.
+                  Vehicles are restricted to use within the booking city only. Cross-city or interstate travel is strictly prohibited.
                 </p>
                 <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded space-y-2">
-                  <p><strong>Crossing District Boundary:</strong> ₹2,000 penalty</p>
+                  <p><strong>Crossing City Boundary:</strong> ₹2,000 penalty</p>
                   <p><strong>Crossing State Boundary:</strong> ₹10,000 penalty</p>
                   <p className="text-sm text-red-700">GPS tracking is enabled on all vehicles. Violations will be automatically detected.</p>
                 </div>

@@ -1,7 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://wgzuxebehzhvfjycshqs.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_KRoZdMBvHfe9K0grk6HYQg_l469tOhJ';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are required');
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -48,7 +52,7 @@ export async function deleteVehicleImage(imageUrl: string): Promise<void> {
       console.warn('Invalid image URL format:', imageUrl);
       return;
     }
-    
+
     const filePath = urlParts[1];
 
     const { error } = await supabase.storage

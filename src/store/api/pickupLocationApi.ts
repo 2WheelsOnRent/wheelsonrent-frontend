@@ -4,7 +4,7 @@ import APICONFIG from '../../config/api.config';
 export interface PickupLocationDto {
   id: number;
   name: string;
-  districtId: number;
+  cityId: number;
   address?: string;
   latitude?: number;
   longitude?: number;
@@ -26,12 +26,12 @@ export const pickupLocationApi = createApi({
   tagTypes: ['PickupLocation'],
   endpoints: (builder) => ({
     // User-facing
-    getPickupLocationsByDistrict: builder.query<PickupLocationDto[], number>({
-      query: (districtId) => `PickupLocations/district/${districtId}`,
+    getPickupLocationsByCity: builder.query<PickupLocationDto[], number>({
+      query: (cityId) => `PickupLocations/city/${cityId}`,
       providesTags: ['PickupLocation'],
     }),
-    getActivePickupLocationsByDistrict: builder.query<PickupLocationDto[], number>({
-      query: (districtId) => `PickupLocations/district/${districtId}/active`,
+    getActivePickupLocationsByCity: builder.query<PickupLocationDto[], number>({
+      query: (cityId) => `PickupLocations/city/${cityId}/active`,
       providesTags: ['PickupLocation'],
     }),
     // Admin-facing
@@ -60,8 +60,8 @@ export const pickupLocationApi = createApi({
 });
 
 export const {
-  useGetPickupLocationsByDistrictQuery,
-  useGetActivePickupLocationsByDistrictQuery,
+  useGetPickupLocationsByCityQuery,
+  useGetActivePickupLocationsByCityQuery,
   useGetAllPickupLocationsQuery,
   useGetPickupLocationByIdQuery,
   useCreatePickupLocationMutation,

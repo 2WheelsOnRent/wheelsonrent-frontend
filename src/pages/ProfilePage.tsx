@@ -99,7 +99,7 @@ export default function ProfilePage() {
           userNumber: user.phone,
           name: editedName.trim(),
           email: user.email ?? '',
-          districtId: user.districtId,
+          cityId: user.cityId,
         },
       }).unwrap();
       const updatedUser = { ...user, name: editedName.trim() };

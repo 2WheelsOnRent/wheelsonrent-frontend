@@ -6,14 +6,14 @@ import {
   useUpdateAdminMutation,
   type AdminDto,
 } from '../../store/api/adminApi';
-import { useGetDistrictsQuery } from '../../store/api/districtApi';
+import { useGetCitiesQuery } from '../../store/api/cityApi';
 import { toast } from 'sonner';
 import AddAdminModal from './AddAdminModal';
 import EditAdminModal from './EditAdminModal';
 
 const AdminManagementTab: React.FC = () => {
   const { data: admins, isLoading, isError, refetch } = useGetAdminsQuery({});
-  const { data: districts } = useGetDistrictsQuery({});
+  const { data: cities } = useGetCitiesQuery({});
   const [deleteAdmin, { isLoading: isDeleting }] = useDeleteAdminMutation();
   const [updateAdmin, { isLoading: isUpdating }] = useUpdateAdminMutation();
 
@@ -22,8 +22,14 @@ const AdminManagementTab: React.FC = () => {
   const [editingAdmin, setEditingAdmin] = useState<AdminDto | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
 
-  const getDistrictName = (id: number) =>
-    districts?.find((d: any) => d.id === id)?.name ?? `District ${id}`;
+  const getCityName = (id: number) =>
+    cities?.find((d: any) => d.id === id)?.name ?? `City ${id}`;
+
+  const getCityNames = (admin: AdminDto) => {
+    const ids = admin.cityIds ?? (admin.cityId ? [admin.cityId] : []);
+    if (ids.length === 0) return '—';
+    return ids.map(id => getCityName(id)).join(', ');
+  };
 
   const filtered = (admins ?? []).filter((a) =>
     `${a.username} ${a.email} ${a.number}`.toLowerCase().includes(search.toLowerCase())
@@ -109,7 +115,7 @@ const AdminManagementTab: React.FC = () => {
                 <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
                   <th className="px-4 py-3 text-left font-semibold">Admin</th>
                   <th className="px-4 py-3 text-left font-semibold">Mobile</th>
-                  <th className="px-4 py-3 text-left font-semibold">District</th>
+                  <th className="px-4 py-3 text-left font-semibold">Cities</th>
                   <th className="px-4 py-3 text-left font-semibold">Role</th>
                   <th className="px-4 py-3 text-left font-semibold">Status</th>
                   <th className="px-4 py-3 text-right font-semibold">Actions</th>
@@ -130,13 +136,12 @@ const AdminManagementTab: React.FC = () => {
                         <p className="text-xs text-gray-400">{admin.email}</p>
                       </td>
                       <td className="px-4 py-3 text-gray-600">{admin.number || '—'}</td>
-                      <td className="px-4 py-3 text-gray-600">{getDistrictName(admin.districtId)}</td>
+                      <td className="px-4 py-3 text-gray-600 max-w-[200px] truncate" title={getCityNames(admin)}>{getCityNames(admin)}</td>
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                          admin.role === 2
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${admin.role === 2
                             ? 'bg-purple-100 text-purple-700'
                             : 'bg-blue-100 text-blue-700'
-                        }`}>
+                          }`}>
                           {admin.role === 2 ? 'SuperAdmin' : 'Admin'}
                         </span>
                       </td>

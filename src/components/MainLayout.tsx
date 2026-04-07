@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import WhatsAppButton from './WhatsAppButton';
+import CitySelectorModal from './CitySelectorModal';
 
 /**
  * Main site layout (scootyonrent.com)
@@ -9,6 +10,7 @@ import WhatsAppButton from './WhatsAppButton';
 const MainLayout: React.FC = () => {
     return (
         <>
+            <CitySelectorModal />
             <Outlet />
             <WhatsAppButton />
         </>

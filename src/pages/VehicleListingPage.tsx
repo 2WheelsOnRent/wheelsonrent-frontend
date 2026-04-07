@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -6,13 +6,17 @@ import VehicleCard from '../components/VehicleCard';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { useSearchAvailableVehiclesQuery } from '../store/api/vehicleApi';
+import { useGetCitiesQuery } from '../store/api/cityApi';
+import { useAppSelector } from '../store/hooks';
 import BackgroundSlideshow from '../components/BackgroundSlideshow';
 import { Slider } from '../components/ui/slider';
-import { AlertCircle, Filter, X, SlidersHorizontal } from 'lucide-react';
+import { AlertCircle, Filter, X, SlidersHorizontal, MapPin } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
 const VehicleListingPage: React.FC = () => {
   const [searchParams] = useSearchParams();
+  const selectedCity = useAppSelector((state) => state.city.selectedCity);
+  const { data: cities = [] } = useGetCitiesQuery({ page: 1, size: 100 });
 
   // Get search params from URL
   const startDate = searchParams.get('startDate');
@@ -25,13 +29,22 @@ const VehicleListingPage: React.FC = () => {
   const [selectedFuel, setSelectedFuel] = useState<string>('');
   const [priceRange, setPriceRange] = useState<number[]>([0, 500]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [selectedCityId, setSelectedCityId] = useState<number | undefined>(undefined);
 
-  // Fetch vehicles based on search params
+  // Initialize city filter from selected city
+  useEffect(() => {
+    if (selectedCity && !selectedCityId) {
+      setSelectedCityId(selectedCity.id);
+    }
+  }, [selectedCity, selectedCityId]);
+
+  // Fetch vehicles based on search params + city filter
   const { data: vehicles, isLoading, error } = useSearchAvailableVehiclesQuery({
     startDate: startDate || undefined,
     startTime: startTime || undefined,
     endDate: endDate || undefined,
     endTime: endTime || undefined,
+    cityId: selectedCityId,
   });
 
   // Apply client-side filters
@@ -46,9 +59,10 @@ const VehicleListingPage: React.FC = () => {
     setSelectedType('');
     setSelectedFuel('');
     setPriceRange([0, 500]);
+    setSelectedCityId(selectedCity?.id);
   };
 
-  const hasActiveFilters = !!selectedType || !!selectedFuel || priceRange[0] > 0 || priceRange[1] < 500;
+  const hasActiveFilters = !!selectedType || !!selectedFuel || priceRange[0] > 0 || priceRange[1] < 500 || selectedCityId !== selectedCity?.id;
 
   if (isLoading) return <LoadingSpinner fullScreen message="Loading available vehicles..." />;
   if (error) return <ErrorMessage fullScreen message="Failed to load vehicles" />;
@@ -216,6 +230,28 @@ const VehicleListingPage: React.FC = () => {
                       <option value="">All Fuel Types</option>
                       <option value="Petrol">⛽ Petrol</option>
                       <option value="Electric">⚡ Electric</option>
+                    </select>
+                  </div>
+
+                  <div className="border-t border-gray-100" />
+
+                  {/* ── City ── */}
+                  <div>
+                    <h4 className="text-sm font-bold text-gray-800 uppercase tracking-wide mb-3 flex items-center gap-1">
+                      <MapPin className="w-4 h-4 text-primary-500" />
+                      City
+                    </h4>
+                    <select
+                      value={selectedCityId || ''}
+                      onChange={(e) => setSelectedCityId(e.target.value ? Number(e.target.value) : undefined)}
+                      className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none text-sm text-gray-700"
+                    >
+                      <option value="">All Cities</option>
+                      {cities.filter(d => d.isActive && !d.isComingSoon).map((city) => (
+                        <option key={city.id} value={city.id}>
+                          {city.name}
+                        </option>
+                      ))}
                     </select>
                   </div>
 

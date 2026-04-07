@@ -52,9 +52,9 @@ class VehicleAPI {
     return response.json();
   }
 
-  async getAvailableVehicles(districtId?: number): Promise<Vehicle[]> {
-    const url = districtId
-      ? `${API_BASE_URL}/vehicles/available?districtId=${districtId}`
+  async getAvailableVehicles(cityId?: number): Promise<Vehicle[]> {
+    const url = cityId
+      ? `${API_BASE_URL}/vehicles/available?cityId=${cityId}`
       : `${API_BASE_URL}/vehicles/available`;
     const response = await fetch(url, { credentials: 'include' });
     if (!response.ok) throw new Error('Failed to fetch available vehicles');
@@ -71,13 +71,13 @@ class VehicleAPI {
     vehicleType?: string;
     fuelType?: string;
     maxPricePerDay?: number;
-    districtId?: number;
+    cityId?: number;
   }): Promise<Vehicle[]> {
     const params = new URLSearchParams();
     if (filters.vehicleType) params.append('vehicleType', filters.vehicleType);
     if (filters.fuelType) params.append('fuelType', filters.fuelType);
     if (filters.maxPricePerDay) params.append('maxPricePerDay', filters.maxPricePerDay.toString());
-    if (filters.districtId) params.append('districtId', filters.districtId.toString());
+    if (filters.cityId) params.append('cityId', filters.cityId.toString());
 
     const response = await fetch(`${API_BASE_URL}/vehicles/filter?${params}`, { credentials: 'include' });
     if (!response.ok) throw new Error('Failed to filter vehicles');
