@@ -1,11 +1,23 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API_CONFIG } from '../../config/api.config';
 
+const getOfflineBookingToken = () => (
+  localStorage.getItem('staff_token')
+  || localStorage.getItem('token')
+  || localStorage.getItem('adminToken')
+);
+
 export interface OfflineBookingDocumentDto {
   documentType: string;
   fileUrl: string;
   fileType: string;
   label?: string;
+}
+
+export interface UploadOfflineBookingDocumentResponseDto {
+  fileUrl: string;
+  fileType: string;
+  fileName: string;
 }
 
 export interface CreateOfflineBookingDto {
@@ -27,6 +39,8 @@ export interface CreateOfflineBookingDto {
   numberOfDays: number;
   openingKm?: number;
   closingKm?: number;
+  openingKms?: Array<number | null>;
+  closingKms?: Array<number | null>;
   securityAmount?: number;
   drivingLicenseNo?: string;
   idType?: string;
@@ -48,12 +62,20 @@ export const offlineBookingApi = createApi({
     baseUrl: API_CONFIG.BASE_URL,
     credentials: 'include',
     prepareHeaders: (headers) => {
-      const token = localStorage.getItem('token') || localStorage.getItem('adminToken');
+      const token = getOfflineBookingToken();
       if (token) headers.set('Authorization', `Bearer ${token}`);
       return headers;
     },
   }),
   endpoints: (builder) => ({
+    uploadOfflineBookingDocument: builder.mutation<UploadOfflineBookingDocumentResponseDto, FormData>({
+      query: (formData) => ({
+        url: 'OfflineBookings/upload-document',
+        method: 'POST',
+        body: formData,
+        formData: true,
+      }),
+    }),
     createOfflineBooking: builder.mutation<CreateOfflineBookingResponseDto, CreateOfflineBookingDto>({
       query: (dto) => ({
         url: 'OfflineBookings',
@@ -64,4 +86,7 @@ export const offlineBookingApi = createApi({
   }),
 });
 
-export const { useCreateOfflineBookingMutation } = offlineBookingApi;
+export const {
+  useCreateOfflineBookingMutation,
+  useUploadOfflineBookingDocumentMutation,
+} = offlineBookingApi;

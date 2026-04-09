@@ -119,7 +119,16 @@ const BookingsList: React.FC = () => {
                         <tbody className="divide-y divide-gray-100">
                             {filteredBookings.map((booking) => (
                                 <tr key={booking.id} className="hover:bg-gray-50 transition">
-                                    <td className="px-5 py-4 font-medium text-gray-900">#{booking.id}</td>
+                                    <td className="px-5 py-4">
+                                        <div className="flex flex-col gap-1">
+                                            <p className="font-medium text-gray-900">#{booking.id}</p>
+                                            {booking.isOfflineBooking && (
+                                                <span className="inline-flex w-fit rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
+                                                    Offline Booking
+                                                </span>
+                                            )}
+                                        </div>
+                                    </td>
                                     <td className="px-5 py-4">
                                         <p className="font-medium text-gray-900">{booking.vehicleName || 'N/A'}</p>
                                         <p className="text-xs text-gray-500">{booking.vehicleNumber}</p>
@@ -136,14 +145,14 @@ const BookingsList: React.FC = () => {
                                     <td className="px-5 py-4">
                                         <span
                                             className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${booking.status === 'confirmed'
-                                                    ? 'bg-green-100 text-green-700'
-                                                    : booking.status === 'pending'
-                                                        ? 'bg-yellow-100 text-yellow-700'
-                                                        : booking.status === 'active'
-                                                            ? 'bg-blue-100 text-blue-700'
-                                                            : booking.status === 'completed'
-                                                                ? 'bg-gray-100 text-gray-700'
-                                                                : 'bg-red-100 text-red-700'
+                                                ? 'bg-green-100 text-green-700'
+                                                : booking.status === 'pending'
+                                                    ? 'bg-yellow-100 text-yellow-700'
+                                                    : booking.status === 'active'
+                                                        ? 'bg-blue-100 text-blue-700'
+                                                        : booking.status === 'completed'
+                                                            ? 'bg-gray-100 text-gray-700'
+                                                            : 'bg-red-100 text-red-700'
                                                 }`}
                                         >
                                             {booking.status}
@@ -259,15 +268,22 @@ const BookingDetail: React.FC<BookingDetailProps> = ({ bookingId, onBack }) => {
                 <div className="lg:col-span-2 space-y-6">
                     <div className="bg-white rounded-xl shadow-md p-6">
                         <div className="flex justify-between items-start mb-4">
-                            <h2 className="text-xl font-bold text-gray-900">Booking #{booking.id}</h2>
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-900">Booking #{booking.id}</h2>
+                                {booking.isOfflineBooking && (
+                                    <span className="mt-2 inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
+                                        Offline Booking
+                                    </span>
+                                )}
+                            </div>
                             <span
                                 className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${booking.status === 'confirmed'
-                                        ? 'bg-green-100 text-green-700'
-                                        : booking.status === 'pending'
-                                            ? 'bg-yellow-100 text-yellow-700'
-                                            : booking.status === 'active'
-                                                ? 'bg-blue-100 text-blue-700'
-                                                : 'bg-gray-100 text-gray-700'
+                                    ? 'bg-green-100 text-green-700'
+                                    : booking.status === 'pending'
+                                        ? 'bg-yellow-100 text-yellow-700'
+                                        : booking.status === 'active'
+                                            ? 'bg-blue-100 text-blue-700'
+                                            : 'bg-gray-100 text-gray-700'
                                     }`}
                             >
                                 {booking.status}
