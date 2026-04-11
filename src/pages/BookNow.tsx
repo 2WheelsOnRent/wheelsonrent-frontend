@@ -12,6 +12,7 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { useGetVehicleByIdQuery } from '../store/api/vehicleApi';
 import { useCreateBookingMutation } from '../store/api/bookingApi';
+import { useRecordPromoUsageMutation } from '../store/api/promoCodeApi';
 import { useAppSelector } from '../store/hooks';
 import { calculateTotalPrice, calculateDuration } from '../utils/vehicleUtils';
 import { toast } from 'sonner';
@@ -40,11 +41,13 @@ export default function BookNow() {
   const [finalBookingAmount, setFinalBookingAmount] = useState<number>(0);
   const [selectedPickup, setSelectedPickup] = useState<string>('');
   const [bookingError, setBookingError] = useState<string>('');
+  const [pendingPromoCodeId, setPendingPromoCodeId] = useState<number | undefined>(undefined);
 
   const { data: vehicleData, isLoading: vehicleLoading, error: vehicleError } =
     useGetVehicleByIdQuery(parseInt(id || '0'));
 
   const [createBooking, { isLoading: bookingLoading }] = useCreateBookingMutation();
+  const [recordPromoUsage] = useRecordPromoUsageMutation();
 
   const handleMapLocationSelect = (location: any) => {
     setSelectedPickup(location.id.toString());
@@ -84,13 +87,12 @@ export default function BookNow() {
     );
   };
 
-  // Called by PriceCalculator with the final discounted+GST amount
-  const handleBooking = async (finalAmount?: number) => {
+  // Called by PriceCalculator with the final discounted+GST amount and optional promoCodeId
+  const handleBooking = async (finalAmount?: number, promoCodeId?: number) => {
     setBookingError('');
 
     // If not logged in — save booking intent then redirect to login
     if (!user) {
-      // Save booking intent so Login.tsx can restore it after OTP
       sessionStorage.setItem('bookingIntent', JSON.stringify({
         vehicleId: vehicleData?.id,
         startDate: bookingDates.startDate,
@@ -101,7 +103,6 @@ export default function BookNow() {
       navigate('/login');
       return;
     }
-
 
     if (!vehicleData) return;
 
@@ -139,9 +140,10 @@ export default function BookNow() {
 
       const result = await createBooking(bookingRequest).unwrap();
 
-      // Store the final amount and booking ID, then open payment modal
+      // Store the final amount, booking ID, and promoCodeId for post-payment recording
       setFinalBookingAmount(amountToCharge);
       setCreatedBookingId(result.id!);
+      setPendingPromoCodeId(promoCodeId);
       setShowPaymentModal(true);
     } catch (error: any) {
       console.error('Booking error:', error);
@@ -149,10 +151,24 @@ export default function BookNow() {
     }
   };
 
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = async () => {
     setShowPaymentModal(false);
+
+    // Record promo usage after successful payment — non-blocking
+    if (pendingPromoCodeId && user?.id && createdBookingId) {
+      try {
+        await recordPromoUsage({
+          userId: user.id,
+          promoCodeId: pendingPromoCodeId,
+          bookingId: createdBookingId,
+        }).unwrap();
+      } catch {
+        // Non-blocking: do not interrupt the success flow if this fails
+        console.warn('Promo usage recording failed, but payment was successful');
+      }
+    }
+
     toast.success('Booking Confirmed!', { description: 'Your payment was successful' });
-    // Navigate to dynamic booking success page with all details
     navigate(`/booking-success?bookingId=${createdBookingId}&amount=${finalBookingAmount}`);
   };
 
@@ -322,33 +338,9 @@ export default function BookNow() {
                 isLoading={bookingLoading}
                 isLoggedIn={!!user}
                 minBookingHours={vehicleData.minBookingHours}
+                userId={user?.id}
+                cityId={vehicleData.cityId}
               />
-
-              {/* Login notice shown below PriceCalculator when not logged in */}
-              {/* {!user && (
-                <div className="mt-4 p-4 bg-primary-50 rounded-lg border border-primary-200 text-center">
-                  <p className="text-sm text-gray-700 mb-3">
-                    You'll be asked to login before completing payment
-                  </p>
-                  <Button
-                    onClick={() => {
-                      const intent = {
-                        vehicleId: id,
-                        startDate: bookingDates.startDate,
-                        startTime: bookingDates.startTime,
-                        endDate: bookingDates.endDate,
-                        endTime: bookingDates.endTime,
-                        pickupLocationId: selectedPickup,
-                      };
-                      sessionStorage.setItem('bookingIntent', JSON.stringify(intent));
-                      navigate(`/auth?redirect=/book/${id}`);
-                    }}
-                    className="bg-primary-500 hover:bg-primary-600 text-white"
-                  >
-                    Login to Continue
-                  </Button>
-                </div>
-              )} */}
             </div>
           </div>
         </div>

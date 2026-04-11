@@ -1,17 +1,20 @@
-import { useState } from 'react';
-import { Tag, AlertCircle, CheckCircle } from 'lucide-react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { toast } from 'sonner';
+import { useState } from 'react'
+import { Tag, AlertCircle, CheckCircle, Loader2 } from 'lucide-react'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
+import { toast } from 'sonner'
+import { useValidatePromoCodeMutation } from '../store/api/promoCodeApi'
 
 interface PriceCalculatorProps {
-  basePrice: number; // hourly rate
-  hours: number; // total hours
-  vehicleName: string;
-  onProceedToPayment?: (finalAmount: number) => void;
-  isLoading?: boolean;
-  isLoggedIn?: boolean;
-  minBookingHours?: number;
+  basePrice: number        // hourly rate
+  hours: number            // total hours
+  vehicleName: string
+  onProceedToPayment?: (finalAmount: number, promoCodeId?: number) => void
+  isLoading?: boolean
+  isLoggedIn?: boolean
+  minBookingHours?: number
+  userId?: number
+  cityId?: number
 }
 
 export default function PriceCalculator({
@@ -22,39 +25,80 @@ export default function PriceCalculator({
   isLoading = false,
   isLoggedIn = false,
   minBookingHours = 0,
+  userId,
+  cityId,
 }: PriceCalculatorProps) {
-  const [promoCode, setPromoCode] = useState('');
-  const [discount, setDiscount] = useState(0);
-  const [promoApplied, setPromoApplied] = useState(false);
+  const [promoCode, setPromoCode] = useState('')
+  const [discount, setDiscount] = useState(0)
+  const [promoApplied, setPromoApplied] = useState(false)
+  const [appliedPromoCodeId, setAppliedPromoCodeId] = useState<number | undefined>(undefined)
+  const [promoMessage, setPromoMessage] = useState('')
 
-  const handleApplyPromo = () => {
-    // Mock promo code validation
-    if (promoCode.toUpperCase() === 'FIRST10') {
-      setDiscount(0.1); // 10% discount
-      setPromoApplied(true);
-    } else if (promoCode.toUpperCase() === 'SAVE20') {
-      setDiscount(0.2); // 20% discount
-      setPromoApplied(true);
-    } else {
-      setDiscount(0);
-      setPromoApplied(false);
-      toast.error('Invalid promo code');
+  const [validatePromoCode, { isLoading: isValidating }] = useValidatePromoCodeMutation()
+
+  const subtotal = basePrice * hours
+  const discountAmount = subtotal * discount
+  const gst = (subtotal - discountAmount) * 0.18
+  const total = subtotal - discountAmount + gst
+
+  const canProceed = hours > 0 && hours >= minBookingHours
+
+  const handleApplyPromo = async () => {
+    if (!promoCode.trim()) return
+
+    if (!isLoggedIn || !userId) {
+      toast.error('Please log in to apply a promo code')
+      return
     }
-  };
+
+    if (!cityId) {
+      toast.error('City information is missing. Please refresh and try again.')
+      return
+    }
+
+    try {
+      const result = await validatePromoCode({
+        code: promoCode.trim().toUpperCase(),
+        userId,
+        orderAmount: subtotal,
+        cityId,
+      }).unwrap()
+
+      if (result.isValid) {
+        // Calculate discount as a fraction of subtotal for internal use
+        const discountFraction = subtotal > 0 ? result.discountAmount / subtotal : 0
+        setDiscount(discountFraction)
+        setPromoApplied(true)
+        setAppliedPromoCodeId(result.promoCodeId ?? undefined)
+        setPromoMessage(result.message ?? 'Promo code applied successfully!')
+        toast.success(result.message ?? 'Promo code applied!')
+      } else {
+        setDiscount(0)
+        setPromoApplied(false)
+        setAppliedPromoCodeId(undefined)
+        toast.error(result.message ?? 'Invalid promo code')
+      }
+    } catch (err: unknown) {
+      const error = err as { data?: { message?: string; error?: string }; status?: number }
+      const message =
+        error?.data?.message ??
+        error?.data?.error ??
+        'Failed to validate promo code'
+      setDiscount(0)
+      setPromoApplied(false)
+      setAppliedPromoCodeId(undefined)
+      toast.error(message)
+    }
+  }
 
   const handleRemovePromo = () => {
-    setPromoCode('');
-    setDiscount(0);
-    setPromoApplied(false);
-    toast.success('Promo code removed');
-  };
-
-  const subtotal = basePrice * hours;
-  const discountAmount = subtotal * discount;
-  const gst = (subtotal - discountAmount) * 0.18; // 18% GST
-  const total = subtotal - discountAmount + gst;
-
-  const canProceed = hours > 0 && hours >= minBookingHours;
+    setPromoCode('')
+    setDiscount(0)
+    setPromoApplied(false)
+    setAppliedPromoCodeId(undefined)
+    setPromoMessage('')
+    toast.success('Promo code removed')
+  }
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6 sticky top-24">
@@ -85,19 +129,16 @@ export default function PriceCalculator({
           <span className="text-gray-600">Rate × {hours} hours</span>
           <span className="text-black">₹{subtotal.toFixed(2)}</span>
         </div>
-
         {discount > 0 && (
           <div className="flex justify-between text-green-600">
-            <span>Discount ({discount * 100}%)</span>
+            <span>Discount ({Math.round(discount * 100)}%)</span>
             <span>-₹{discountAmount.toFixed(2)}</span>
           </div>
         )}
-
         <div className="flex justify-between">
           <span className="text-gray-600">GST (18%)</span>
           <span className="text-black">₹{gst.toFixed(2)}</span>
         </div>
-
         <div className="pt-3 border-t border-gray-200">
           <div className="flex justify-between items-center">
             <span className="text-lg text-black font-semibold">Total Amount</span>
@@ -118,7 +159,7 @@ export default function PriceCalculator({
               value={promoCode}
               onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
               className="pl-10"
-              disabled={promoApplied}
+              disabled={promoApplied || isValidating}
             />
           </div>
           {!promoApplied ? (
@@ -126,9 +167,13 @@ export default function PriceCalculator({
               onClick={handleApplyPromo}
               variant="outline"
               className="border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white"
-              disabled={!promoCode}
+              disabled={!promoCode.trim() || isValidating}
             >
-              Apply
+              {isValidating ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                'Apply'
+              )}
             </Button>
           ) : (
             <Button
@@ -143,11 +188,8 @@ export default function PriceCalculator({
         {promoApplied && (
           <p className="text-sm text-green-600 mt-2 flex items-center">
             <CheckCircle className="w-4 h-4 mr-1" />
-            Promo code applied successfully! (Save {discount * 100}%)
+            {promoMessage || 'Promo code applied successfully!'}
           </p>
-        )}
-        {!promoApplied && (
-          <p className="text-xs text-gray-500 mt-2">Try FIRST10 or SAVE20</p>
         )}
       </div>
 
@@ -165,21 +207,19 @@ export default function PriceCalculator({
       <div className="bg-primary-50 rounded-lg p-4 mb-6">
         <h4 className="text-sm font-medium text-black mb-2">Important Information</h4>
         <ul className="text-sm text-gray-600 space-y-1">
-          <li>• Valid driving license and ID proof required at pickup</li>
-          <li>• Security Deposit: ₹2000 collected at pickup (refundable)</li>
+          <li>Valid driving license and ID proof required at pickup</li>
+          <li>Security Deposit ₹2000 collected at pickup (refundable)</li>
         </ul>
       </div>
 
       {/* Proceed Button */}
-      {onProceedToPayment && (
-        <Button
-          onClick={() => onProceedToPayment?.(total)}
-          disabled={!canProceed || isLoading}
-          className="w-full bg-primary-500 hover:bg-primary-600 text-white py-6 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoading ? 'Processing...' : 'Proceed to Payment'}
-        </Button>
-      )}
+      <Button
+        onClick={() => onProceedToPayment?.(total, appliedPromoCodeId)}
+        disabled={!canProceed || isLoading}
+        className="w-full bg-primary-500 hover:bg-primary-600 text-white py-6 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isLoading ? 'Processing...' : 'Proceed to Payment'}
+      </Button>
 
       {/* Info Alert */}
       {isLoggedIn && (
@@ -191,15 +231,15 @@ export default function PriceCalculator({
         </div>
       )}
 
-      {/* Cancellation Policy
+      {/* Cancellation Policy */}
       <div className="mt-6 pt-6 border-t border-gray-200">
         <h4 className="text-sm font-medium text-black mb-2">Cancellation Policy</h4>
         <ul className="text-sm text-gray-600 space-y-1">
-          <li>• Free cancellation up to 24 hours before pickup</li>
-          <li>• 50% refund if cancelled 12-24 hours before</li>
-          <li>• No refund if cancelled within 12 hours</li>
+          <li>Free cancellation up to 24 hours before pickup</li>
+          <li>50% refund if cancelled 12-24 hours before</li>
+          <li>No refund if cancelled within 12 hours</li>
         </ul>
-      </div> */}
+      </div>
     </div>
-  );
+  )
 }
